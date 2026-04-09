@@ -1,14 +1,18 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, FlatList } from 'react-native';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
 import Header from '../../components/Header';
 import ProductCard from '../../components/ProductCard';
 import Footer from '../../components/Footer';
+import { useRef } from 'react';
+import { useState } from 'react';
+
+
 
 interface Category {
   title: string;
-  image: any; // Se usa any para los recursos de require()
+  image: any; 
 }
 
 export default function Home() {
@@ -28,6 +32,28 @@ export default function Home() {
     { title: 'Agro', image: require('../../assets/agro.png') },
   ];
 
+  const { width } = Dimensions.get('window');
+  const cardWidth = (width - 40) / 3;
+  const flatListRef = useRef<FlatList>(null);
+  const scrollRef = useRef<ScrollView>(null);
+
+const [scrollOffset, setScrollOffset] = useState(0);
+
+const scrollLeft = () => {
+  const newOffset = Math.max(0, scrollOffset - (cardWidth + 10));
+  scrollRef.current?.scrollTo({ x: newOffset, animated: true });
+  setScrollOffset(newOffset);
+};
+
+const scrollRight = () => {
+  const newOffset = scrollOffset + (cardWidth + 10);
+  scrollRef.current?.scrollTo({ x: newOffset, animated: true });
+  setScrollOffset(newOffset);
+};
+
+  const scrollToIndex = (index: number) => {
+    flatListRef.current?.scrollToIndex({ index, animated: true });
+  };
   return (
     <ScrollView>
       <Header />
@@ -56,30 +82,40 @@ export default function Home() {
           </Text>
         </TouchableOpacity>
       </View>
-
       {/* PRODUCTOS */}
-      <View style={styles.section}>
-        <Text style={styles.subtitle}>Productos Destacados</Text>
+      <View style={styles.sectionDestacados}>
+        <View style={styles.headerRow}>
+          <Text style={styles.subtitleDestacados}>Productos Destacados</Text>
+        </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <ProductCard
-            name="Broca HSS-Co"
-            price={12.99}
-            image="https://cdn-icons-png.flaticon.com/512/809/809957.png"
-          />
-          <ProductCard
-            name="Taladro TEENO"
-            price={299.99}
-            image="https://cdn-icons-png.flaticon.com/512/1040/1040230.png"
-          />
-          <ProductCard
-            name="Ponchadora RJ45"
-            price={20.99}
-            image="https://cdn-icons-png.flaticon.com/512/4149/4149675.png"
-          />
-        </ScrollView>
+        <View style={styles.carouselContainer}>
+          {/* Flecha Izquierda */}
+          <TouchableOpacity style={[styles.arrowBtn, styles.leftArrow]} onPress={scrollLeft}>
+            <Text style={styles.arrowText}>{"<"}</Text>
+          </TouchableOpacity>
+
+
+          <ScrollView
+            ref={scrollRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={cardWidth + 10} // <-- ESTO es lo que hace que pase de 1 en 1 como imán
+            decelerationRate="fast"
+            snapToAlignment="center" // <-- Centra la carta en la pantalla
+            contentContainerStyle={{ paddingHorizontal: 10 }} // Espacio inicial para que la primera no pegue al borde
+          >
+            <ProductCard name="Broca HSS-Co" price={12.99} image="https://suconel.com/_next/image?url=https%3A%2F%2Fcms.suconel.com%2Fuploads%2Fht2008r_d74531a064.png&w=1200&q=75" width={cardWidth} />
+            <ProductCard name="Taladro TEENO" price={299.99} image="https://suconel.com/_next/image?url=https%3A%2F%2Fcms.suconel.com%2Fuploads%2Fht2008r_d74531a064.png&w=1200&q=75" width={cardWidth} />
+            <ProductCard name="Ponchadora RJ45" price={20.99} image="https://suconel.com/_next/image?url=https%3A%2F%2Fcms.suconel.com%2Fuploads%2Fht2008r_d74531a064.png&w=1200&q=75" width={cardWidth} />
+            <ProductCard name="Ponchadora RJ45" price={20.99} image="https://suconel.com/_next/image?url=https%3A%2F%2Fcms.suconel.com%2Fuploads%2Fht2008r_d74531a064.png&w=1200&q=75" width={cardWidth} />
+          </ScrollView>
+
+          {/* Flecha Derecha */}
+          <TouchableOpacity style={[styles.arrowBtn, styles.rightArrow]} onPress={scrollRight}>
+            <Text style={styles.arrowText}>{">"}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
       {/* OFERTAS */}
       <View style={styles.offer}>
         <Text style={styles.offerText}>Ofertas especiales</Text>
@@ -94,6 +130,9 @@ export default function Home() {
   );
 }
 
+const { width } = Dimensions.get('window');
+// Calculamos el ancho: (Ancho total - padding lateral - espacios entre tarjetas) / 3
+const cardWidth = (width - 60) / 3;
 const styles = StyleSheet.create({
   section: {
     padding: 15,
@@ -102,9 +141,11 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+
     justifyContent: 'center',
     gap: 10,   
     paddingVertical: 10,
+
   },
 
   redBtn: {
@@ -118,7 +159,9 @@ const styles = StyleSheet.create({
 
   btnText: {
     color: '#fff',
-    fontWeight: '600',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
   },
 
   subtitle: {
@@ -153,4 +196,55 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   },
 
+  gridDestacados: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',       // <--- Esto hace que la 4ta carta baje
+    justifyContent: 'flex-start', // Las alinea a la izquierda para que sigan el orden
+    width: '100%',
+  },
+
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  subtitleDestacados: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  verMasText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+
+  sectionDestacados: {
+    paddingVertical: 20,
+    backgroundColor: '#666', // El gris oscuro de tu imagen
+  },
+  carouselContainer: {
+    position: 'relative',
+    paddingHorizontal: 10, // Espacio para que las cartas no toquen el borde
+  },
+  arrowBtn: {
+    position: 'absolute',
+    zIndex: 10,
+    top: '40%',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Súper transparente como pediste
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  leftArrow: { left: 5 },
+  rightArrow: { right: 5 },
+  arrowText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000'
+  },
 });
