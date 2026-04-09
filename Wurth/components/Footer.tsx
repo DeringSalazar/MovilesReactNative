@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type FooterLink = {
   label: string;
@@ -34,6 +35,14 @@ const defaultColumns: FooterColumn[] = [
 
 export default function Footer({ columns = defaultColumns }: Props) {
   return (
+    
+    <LinearGradient
+      colors={['#000000', '#202020', '#000000']}
+      
+      start={{ x: 0, y: 0.5 }}
+      end={{ x: 1, y: 0.5 }}
+      style={styles.footer}
+    >
     <View style={styles.footer}>
       
       {/* LOGO */}
@@ -85,12 +94,14 @@ export default function Footer({ columns = defaultColumns }: Props) {
       </Text>
 
     </View>
+
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   footer: {
-    backgroundColor: '#000',
+    
     paddingVertical: 30,
     paddingHorizontal: 15,
   },

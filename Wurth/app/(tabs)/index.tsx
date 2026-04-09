@@ -17,12 +17,17 @@ export default function Home() {
       <View style={styles.section}>
         <View style={styles.grid}>
           {[
-            'Herramientas',
-            'Anclajes',
-            'Tornillería',
-            'Corte y Desbaste',
+            'Corte, Taladro y Desbaste',
             'Químicos',
-            'Agronomía',
+            'Tornillería',
+            'Auto y Cargo',
+            'Anclajes',
+            'Electricidad',
+            'Herramientas',
+            'Maquinas',
+            'Seguridad e Higiene',
+            'Orsy',
+            'Agro',
           ].map((item) => (
             <CategoryCard key={item} title={item} />
           ))}
