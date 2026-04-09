@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import ProductCard from '../../components/ProductCard';
-
 
 interface Category {
   title: string;
@@ -13,6 +13,7 @@ interface Category {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [showAll, setShowAll] = useState(false);
 
   const categories: Category[] = [
@@ -34,39 +35,47 @@ export default function Home() {
   const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView>(null);
 
-const [scrollOffset, setScrollOffset] = useState(0);
+  const [scrollOffset, setScrollOffset] = useState(0);
 
-const scrollLeft = () => {
-  const newOffset = Math.max(0, scrollOffset - (cardWidth + 10));
-  scrollRef.current?.scrollTo({ x: newOffset, animated: true });
-  setScrollOffset(newOffset);
-};
+  const scrollLeft = () => {
+    const newOffset = Math.max(0, scrollOffset - (cardWidth + 10));
+    scrollRef.current?.scrollTo({ x: newOffset, animated: true });
+    setScrollOffset(newOffset);
+  };
 
-const scrollRight = () => {
-  const newOffset = scrollOffset + (cardWidth + 10);
-  scrollRef.current?.scrollTo({ x: newOffset, animated: true });
-  setScrollOffset(newOffset);
-};
+  const scrollRight = () => {
+    const newOffset = scrollOffset + (cardWidth + 10);
+    scrollRef.current?.scrollTo({ x: newOffset, animated: true });
+    setScrollOffset(newOffset);
+  };
 
   const scrollToIndex = (index: number) => {
     flatListRef.current?.scrollToIndex({ index, animated: true });
   };
+
   return (
     <ScrollView>
       <Header />
 
-      {/* HERO */}
       <Carrusel />
 
-      {/* CATEGORÍAS */}
       <View style={styles.section}>
         <View style={styles.grid}>
           {(showAll ? categories : categories.slice(0, 6)).map((item) => (
-            <CategoryCard 
-              key={item.title} 
-              title={item.title} 
-              image={item.image} 
-            />
+            <TouchableOpacity
+              key={item.title}
+              onPress={() => {
+                if (item.title === 'Corte, Taladro y Desbaste') {
+                  router.push('/catalogo-corte-taladro-desbaste');
+                }
+              }}
+              activeOpacity={0.8}
+            >
+              <CategoryCard
+                title={item.title}
+                image={item.image}
+              />
+            </TouchableOpacity>
           ))}
         </View>
 
@@ -79,41 +88,38 @@ const scrollRight = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      {/* PRODUCTOS */}
+
       <View style={styles.sectionDestacados}>
         <View style={styles.headerRow}>
           <Text style={styles.subtitleDestacados}>Productos Destacados</Text>
         </View>
 
         <View style={styles.carouselContainer}>
-          {/* Flecha Izquierda */}
           <TouchableOpacity style={[styles.arrowBtn, styles.leftArrow]} onPress={scrollLeft}>
             <Text style={styles.arrowText}>{"<"}</Text>
           </TouchableOpacity>
-
 
           <ScrollView
             ref={scrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
-            snapToInterval={cardWidth + 10} 
+            snapToInterval={cardWidth + 10}
             decelerationRate="fast"
-            snapToAlignment="center" 
+            snapToAlignment="center"
             contentContainerStyle={{ paddingHorizontal: 10 }}
           >
-            <ProductCard name="Broca HSS-Co" price={12.99} image= "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777" width={cardWidth} />
+            <ProductCard name="Broca HSS-Co" price={12.99} image="https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777" width={cardWidth} />
             <ProductCard name="Taladro TEENO" price={299.99} image="https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp" width={cardWidth} />
             <ProductCard name="Ponchadora RJ45" price={20.99} image="https://www.irs.com.co/cdn/shop/products/Capturadepantalla2022-05-11105142_900x.jpg?v=1652285505" width={cardWidth} />
             <ProductCard name="Tornillo para madera" price={5.00} image="https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg" width={cardWidth} />
           </ScrollView>
 
-          {/* Flecha Derecha */}
           <TouchableOpacity style={[styles.arrowBtn, styles.rightArrow]} onPress={scrollRight}>
             <Text style={styles.arrowText}>{">"}</Text>
           </TouchableOpacity>
         </View>
       </View>
-      {/* OFERTAS */}
+
       <View style={styles.offer}>
         <Text style={styles.offerText}>Ofertas especiales</Text>
         <TouchableOpacity style={styles.blackBtn}>
@@ -121,7 +127,6 @@ const scrollRight = () => {
         </TouchableOpacity>
       </View>
 
-      {/* FOOTER */}
       <Footer />
     </ScrollView>
   );
@@ -138,7 +143,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 10,   
+    gap: 10,
     paddingVertical: 10,
   },
 
@@ -184,16 +189,16 @@ const styles = StyleSheet.create({
   },
 
   card: {
-  width: '30%', 
-  aspectRatio: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
+    width: '30%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   gridDestacados: {
     flexDirection: 'row',
-    flexWrap: 'wrap',      
-    justifyContent: 'flex-start', 
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
     width: '100%',
   },
 
@@ -217,17 +222,17 @@ const styles = StyleSheet.create({
 
   sectionDestacados: {
     paddingVertical: 20,
-    backgroundColor: '#7A7A7A', 
+    backgroundColor: '#7A7A7A',
   },
   carouselContainer: {
     position: 'relative',
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
   },
   arrowBtn: {
     position: 'absolute',
     zIndex: 10,
     top: '40%',
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
     width: 30,
     height: 30,
     borderRadius: 15,
