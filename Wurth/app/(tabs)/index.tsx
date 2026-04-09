@@ -1,98 +1,244 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useRef, useState } from 'react';
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Carrusel from '../../components/Carrusel';
+import CategoryCard from '../../components/CategoryCard';
+import Footer from '../../components/Footer';
+import Header from '../../components/Header';
+import ProductCard from '../../components/ProductCard';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
 
-export default function HomeScreen() {
+interface Category {
+  title: string;
+  image: any; 
+}
+
+export default function Home() {
+  const [showAll, setShowAll] = useState(false);
+
+  const categories: Category[] = [
+    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
+    { title: 'Químicos', image: require('../../assets/quimicos.jpeg') },
+    { title: 'Tornillería', image: require('../../assets/tornilleria.png') },
+    { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg') },
+    { title: 'Anclajes', image: require('../../assets/anclaje.png') },
+    { title: 'Electricidad', image: require('../../assets/electrecidad.png') },
+    { title: 'Herramientas', image: require('../../assets/herramientas.jpeg') },
+    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg') },
+    { title: 'Orsy', image: require('../../assets/orsy.jpeg') },
+    { title: 'Agro', image: require('../../assets/agronomia.png') },
+  ];
+
+  const { width } = Dimensions.get('window');
+  const cardWidth = (width - 40) / 3;
+  const flatListRef = useRef<FlatList>(null);
+  const scrollRef = useRef<ScrollView>(null);
+
+const [scrollOffset, setScrollOffset] = useState(0);
+
+const scrollLeft = () => {
+  const newOffset = Math.max(0, scrollOffset - (cardWidth + 10));
+  scrollRef.current?.scrollTo({ x: newOffset, animated: true });
+  setScrollOffset(newOffset);
+};
+
+const scrollRight = () => {
+  const newOffset = scrollOffset + (cardWidth + 10);
+  scrollRef.current?.scrollTo({ x: newOffset, animated: true });
+  setScrollOffset(newOffset);
+};
+
+  const scrollToIndex = (index: number) => {
+    flatListRef.current?.scrollToIndex({ index, animated: true });
+  };
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <ScrollView>
+      <Header />
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {/* HERO */}
+      <Carrusel />
+
+      {/* CATEGORÍAS */}
+      <View style={styles.section}>
+        <View style={styles.grid}>
+          {(showAll ? categories : categories.slice(0, 6)).map((item) => (
+            <CategoryCard 
+              key={item.title} 
+              title={item.title} 
+              image={item.image} 
+            />
+          ))}
+        </View>
+
+        <TouchableOpacity
+          style={styles.redBtn}
+          onPress={() => setShowAll(!showAll)}
+        >
+          <Text style={styles.btnText}>
+            {showAll ? 'Ver menos' : 'Ver más'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {/* PRODUCTOS */}
+      <View style={styles.sectionDestacados}>
+        <View style={styles.headerRow}>
+          <Text style={styles.subtitleDestacados}>Productos Destacados</Text>
+        </View>
+
+        <View style={styles.carouselContainer}>
+          {/* Flecha Izquierda */}
+          <TouchableOpacity style={[styles.arrowBtn, styles.leftArrow]} onPress={scrollLeft}>
+            <Text style={styles.arrowText}>{"<"}</Text>
+          </TouchableOpacity>
+
+
+          <ScrollView
+            ref={scrollRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={cardWidth + 10} 
+            decelerationRate="fast"
+            snapToAlignment="center" 
+            contentContainerStyle={{ paddingHorizontal: 10 }}
+          >
+            <ProductCard name="Broca HSS-Co" price={12.99} image= "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777" width={cardWidth} />
+            <ProductCard name="Taladro TEENO" price={299.99} image="https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp" width={cardWidth} />
+            <ProductCard name="Ponchadora RJ45" price={20.99} image="https://www.irs.com.co/cdn/shop/products/Capturadepantalla2022-05-11105142_900x.jpg?v=1652285505" width={cardWidth} />
+            <ProductCard name="Tornillo para madera" price={5.00} image="https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg" width={cardWidth} />
+          </ScrollView>
+
+          {/* Flecha Derecha */}
+          <TouchableOpacity style={[styles.arrowBtn, styles.rightArrow]} onPress={scrollRight}>
+            <Text style={styles.arrowText}>{">"}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* OFERTAS */}
+      <View style={styles.offer}>
+        <Text style={styles.offerText}>Ofertas especiales</Text>
+        <TouchableOpacity style={styles.blackBtn}>
+          <Text style={styles.btnText}>Ver ofertas</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* FOOTER */}
+      <Footer />
+    </ScrollView>
   );
 }
 
+const { width } = Dimensions.get('window');
+const cardWidth = (width - 60) / 3;
 const styles = StyleSheet.create({
-  titleContainer: {
+  section: {
+    padding: 15,
+  },
+
+  grid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 10,   
+    paddingVertical: 10,
+  },
+
+  redBtn: {
+    backgroundColor: '#d32f2f',
+    padding: 10,
+    borderRadius: 5,
+    alignSelf: 'center',
+    marginTop: 10,
+    paddingHorizontal: 30,
+  },
+
+  btnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+
+  offer: {
+    backgroundColor: '#fbc02d',
+    padding: 20,
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+
+  offerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+
+  blackBtn: {
+    backgroundColor: '#000',
+    padding: 10,
+    borderRadius: 5,
+    paddingHorizontal: 25,
+  },
+
+  card: {
+  width: '30%', 
+  aspectRatio: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  },
+
+  gridDestacados: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',      
+    justifyContent: 'flex-start', 
+    width: '100%',
+  },
+
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  subtitleDestacados: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  verMasText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+
+  sectionDestacados: {
+    paddingVertical: 20,
+    backgroundColor: '#7A7A7A', 
+  },
+  carouselContainer: {
+    position: 'relative',
+    paddingHorizontal: 10, 
+  },
+  arrowBtn: {
     position: 'absolute',
+    zIndex: 10,
+    top: '40%',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', 
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  leftArrow: { left: 5 },
+  rightArrow: { right: 5 },
+  arrowText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000'
   },
 });
