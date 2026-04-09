@@ -3,6 +3,7 @@ import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
 import Header from '../../components/Header';
 import ProductCard from '../../components/ProductCard';
+import Footer from '../../components/Footer';
 
 export default function Home() {
   return (
@@ -64,9 +65,7 @@ export default function Home() {
       </View>
 
       {/* FOOTER */}
-      <View style={styles.footer}>
-        <Text style={{ color: '#fff' }}>WÜRTH</Text>
-      </View>
+      <Footer />
     </ScrollView>
   );
 }
