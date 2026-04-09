@@ -1,13 +1,10 @@
-
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, FlatList } from 'react-native';
+import { useRef, useState } from 'react';
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
+import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import ProductCard from '../../components/ProductCard';
-import Footer from '../../components/Footer';
-import { useRef } from 'react';
-import { useState } from 'react';
-
 
 
 interface Category {
@@ -140,11 +137,9 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-
     justifyContent: 'center',
     gap: 10,   
     paddingVertical: 10,
-
   },
 
   redBtn: {

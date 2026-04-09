@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type FooterLink = {
   label: string;
@@ -37,7 +37,7 @@ export default function Footer({ columns = defaultColumns }: Props) {
   return (
     
     <LinearGradient
-      colors={['#000000', '#202020', '#000000']}
+      colors={['#000000', '#2e2e2e', '#000000']}
       
       start={{ x: 0, y: 0.5 }}
       end={{ x: 1, y: 0.5 }}

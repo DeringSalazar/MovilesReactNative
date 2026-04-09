@@ -1,16 +1,20 @@
-import { View, Text, StyleSheet, Image, ImageSourcePropType } from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 type Props = {
   title: string;
-  image: ImageSourcePropType; // Tipo específico de RN para imágenes
+  image: ImageSourcePropType;
 };
 
 export default function CategoryCard({ title, image }: Props) {
+  const { width } = useWindowDimensions();
+  const cardWidth = width / 4; 
+  const imageSize = cardWidth * 0.55;
+
   return (
-    <View style={styles.card}>
-      <Image 
-        source={image} 
-        style={styles.imageIcon} 
+    <View style={[styles.card, { width: cardWidth }]}>
+      <Image
+        source={image}
+        style={{ width: imageSize, height: imageSize, resizeMode: 'cover' }}
       />
       <Text style={styles.text}>{title}</Text>
     </View>
@@ -19,27 +23,22 @@ export default function CategoryCard({ title, image }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    width: '30%',
-    backgroundColor: '#fff', // Cambiado a blanco para que resalte como en la imagen
-    padding: 10,
+    backgroundColor: '#fff',
+    paddingVertical: 2,
+    paddingHorizontal: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
-    // Sombras opcionales para parecerse a la imagen de referencia
+    borderRadius: 6,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-  },
-  imageIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: 'contain', // Importante para que no se deforme el icono
+    marginBottom: 4,
   },
   text: {
-    marginTop: 8,
-    fontSize: 11,
+    marginTop: 4,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#333',
