@@ -2,6 +2,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'react-native';
+import { findFocusedRoute } from '@react-navigation/native';
 
 export default function Header() {
   return (
@@ -12,16 +13,16 @@ export default function Header() {
       style={styles.wrapper}
     >
       <View style={styles.container}>
-        
         <View style={styles.row}>
           
-          {/* LOGO */}
-
-        <Image 
-            source={require('../assets/Logo.png')}
-            style={styles.logoImage}
-        />
-          <Text style={styles.logo}>WÜRTH</Text>
+          {/* Logo */}
+          <View style={styles.logoGroup}>
+            <Image 
+                source={require('../assets/Logo.png')}
+                style={styles.logoImage}
+            />
+            <Text style={styles.logo}>WÜRTH</Text>
+          </View>
 
           {/* NAV */}
           <View style={styles.nav}>
@@ -53,7 +54,8 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingVertical: 15,
+    paddingVertical: 18,
+    paddingTop: 25,
   },
 
   container: {
@@ -64,11 +66,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    width: '100%',
   },
   
   logoGroup: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 0,
   },
 
   logo: {
@@ -76,6 +80,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginLeft: 4,
+    includeFontPadding: false,
   },
 
   logoImage: {
@@ -86,15 +91,16 @@ const styles = StyleSheet.create({
 
   nav: {
     flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'center',
-    gap: 15,
+    flex: 2, // Toma el espacio del medio proporcionalmente
+    justifyContent: 'space-evenly', // Reparte los links sin usar paddings fijos
+    marginHorizontal: 10,
   },
 
   link: {
     color: '#fff',
     fontSize: 13,
-    paddingHorizontal: 50,
+    fontWeight: 'bold',
+    // Eliminamos el paddingHorizontal: 50 porque empujaba los elementos fuera de la pantalla
   },
 
   input: {
@@ -102,6 +108,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 8,
     height: 35,
-    width: 300,
+    flex: 1, // El input ahora crece o encoge según el espacio restante
+    minWidth: 100, // No se hará más pequeño que esto
+    maxWidth: 300, // No se hará más grande que tu diseño original
   },
 });
