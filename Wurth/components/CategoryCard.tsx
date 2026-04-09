@@ -16,7 +16,7 @@ export default function CategoryCard({ title }: Props) {
 const styles = StyleSheet.create({
   card: {
     width: '30%',
-    backgroundColor: '#eee',
+    backgroundColor: '#ffffff',
     padding: 15,
     marginBottom: 10,
     alignItems: 'center',

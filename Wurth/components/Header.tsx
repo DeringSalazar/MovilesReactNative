@@ -17,10 +17,10 @@ export default function Header() {
           
           {/* LOGO */}
 
-        {/**<Image 
-            source={require('../assets/logo.png')}
+        <Image 
+            source={require('../assets/Logo.png')}
             style={styles.logoImage}
-        />*/}
+        />
           <Text style={styles.logo}>WÜRTH</Text>
 
           {/* NAV */}
