@@ -10,6 +10,7 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
+  ImageSourcePropType,
 } from "react-native";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -32,7 +33,71 @@ type Producto = {
 
 type CategoriaPrincipal = "TODOS" | "CORTE" | "TALADRO" | "DESBASTE";
 
-const SUBCATEGORIAS: Record<Exclude<CategoriaPrincipal, "TODOS">, { codigo: string; nombre: string }[]> = {
+type ProductCardProps = {
+  name: string;
+  price: string;
+  image: ImageSourcePropType | string;
+  width?: number;
+  onViewMore?: () => void;
+};
+
+function ProductCard({
+  name,
+  price,
+  image,
+  width,
+  onViewMore,
+}: ProductCardProps) {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const imageSource =
+    typeof image === "string" ? { uri: image } : image;
+
+  return (
+    <View style={[cardStyles.card, width ? { width } : null]}>
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        style={cardStyles.imageContainer}
+      >
+        <Image source={imageSource} style={cardStyles.image} />
+      </TouchableOpacity>
+
+      <View style={cardStyles.infoContainer}>
+        <Text style={cardStyles.name} numberOfLines={2}>
+          {name}
+        </Text>
+        <Text style={cardStyles.price}>{price}</Text>
+      </View>
+
+      <TouchableOpacity style={cardStyles.button} onPress={onViewMore}>
+        <Text style={cardStyles.buttonText}>Ver más</Text>
+      </TouchableOpacity>
+
+      <Modal visible={modalVisible} transparent animationType="fade">
+        <Pressable
+          style={cardStyles.modalOverlay}
+          onPress={() => setModalVisible(false)}
+        >
+          <View style={cardStyles.modalContent}>
+            <Image source={imageSource} style={cardStyles.fullImage} />
+            <Text style={cardStyles.modalTitle}>{name}</Text>
+            <TouchableOpacity
+              style={cardStyles.closeBtnCard}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={cardStyles.closeBtnCardText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+    </View>
+  );
+}
+
+const SUBCATEGORIAS: Record<
+  Exclude<CategoriaPrincipal, "TODOS">,
+  { codigo: string; nombre: string }[]
+> = {
   CORTE: [
     { codigo: "01.05", nombre: "01.05 Discos de corte y desbaste" },
     { codigo: "01.06", nombre: "01.06 Sierras" },
@@ -284,16 +349,6 @@ export default function CatalogoCorteTaladroDesbaste() {
             <Text style={styles.subtitulo}>Corte, Taladro y Desbaste</Text>
           </View>
 
-          <View style={styles.busquedaContainer}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Buscar producto, código, material..."
-              placeholderTextColor="#8C8C8C"
-              value={busqueda}
-              onChangeText={setBusqueda}
-            />
-          </View>
-
           <View style={styles.categoriasSection}>
             <ScrollView
               horizontal
@@ -361,20 +416,14 @@ export default function CatalogoCorteTaladroDesbaste() {
           <View style={styles.productosGrid}>
             {productosFiltrados.length > 0 ? (
               productosFiltrados.map((item) => (
-                <View key={item.id} style={styles.card}>
-                  <Image source={item.img} style={styles.img} />
-
-                  <Text style={styles.nombre}>{item.nombre}</Text>
-                  <Text style={styles.sub}>{item.sub}</Text>
-                  <Text style={styles.desc}>{item.descripcion}</Text>
-
-                  <TouchableOpacity
-                    style={styles.btn}
-                    onPress={() => abrir(item)}
-                  >
-                    <Text style={styles.btnText}>Ver detalle</Text>
-                  </TouchableOpacity>
-                </View>
+                <ProductCard
+                  key={item.id}
+                  name={item.nombre}
+                  price={item.precio}
+                  image={item.img}
+                  width={(width - 44) / 2}
+                  onViewMore={() => abrir(item)}
+                />
               ))
             ) : (
               <View style={styles.emptyContainer}>
@@ -434,8 +483,8 @@ export default function CatalogoCorteTaladroDesbaste() {
 
                 <Text style={styles.precio}>{productoSeleccionado.precio}</Text>
 
-                <TouchableOpacity style={styles.btn}>
-                  <Text style={styles.btnText}>Solicitar</Text>
+                <TouchableOpacity style={styles.btnSolicitar}>
+                  <Text style={styles.btnSolicitarText}>Solicitar</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -445,6 +494,119 @@ export default function CatalogoCorteTaladroDesbaste() {
     </View>
   );
 }
+
+const cardStyles = StyleSheet.create({
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 15,
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 280,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    marginBottom: 12,
+  },
+
+  imageContainer: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  image: {
+    width: "90%",
+    height: "100%",
+    resizeMode: "contain",
+  },
+
+  infoContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+
+  name: {
+    fontSize: 14,
+    fontWeight: "700",
+    textAlign: "center",
+    color: "#333",
+    height: 40,
+  },
+
+  price: {
+    color: "#d32f2f",
+    fontSize: 15,
+    fontWeight: "bold",
+    marginTop: 4,
+  },
+
+  button: {
+    backgroundColor: "#d32f2f",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignSelf: "center",
+    minWidth: 100,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  buttonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+
+  modalContent: {
+    width: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+  },
+
+  fullImage: {
+    width: "100%",
+    height: 300,
+    resizeMode: "contain",
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 15,
+    textAlign: "center",
+    color: "#111",
+  },
+
+  closeBtnCard: {
+    backgroundColor: "#333",
+    padding: 12,
+    borderRadius: 8,
+    width: "100%",
+    alignItems: "center",
+  },
+
+  closeBtnCardText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+});
 
 const styles = StyleSheet.create({
   screen: {
@@ -481,22 +643,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: "#666",
     fontSize: 14,
-  },
-
-  busquedaContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 14,
-  },
-
-  searchInput: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#D8D8D8",
-    paddingHorizontal: 14,
-    height: 46,
-    fontSize: 14,
-    color: "#222",
   },
 
   categoriasSection: {
@@ -606,63 +752,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  card: {
-    backgroundColor: "#FFF",
-    width: (width - 34) / 2,
-    marginBottom: 14,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: "center",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-  },
-
-  img: {
-    width: 90,
-    height: 90,
-    resizeMode: "contain",
-    marginBottom: 8,
-  },
-
-  nombre: {
-    fontWeight: "700",
-    textAlign: "center",
-    fontSize: 15,
-    color: "#1F1F1F",
-  },
-
-  sub: {
-    color: "#D32F2F",
-    fontSize: 12,
-    textAlign: "center",
-    marginTop: 4,
-  },
-
-  desc: {
-    fontSize: 12,
-    color: "#7A7A7A",
-    textAlign: "center",
-    marginTop: 4,
-    minHeight: 32,
-  },
-
-  btn: {
-    backgroundColor: "#D32F2F",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    marginTop: 10,
-  },
-
-  btnText: {
-    color: "#FFF",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-
   emptyContainer: {
     width: "100%",
     justifyContent: "center",
@@ -743,5 +832,19 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 18,
     marginTop: 10,
+  },
+
+  btnSolicitar: {
+    backgroundColor: "#D32F2F",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    marginTop: 10,
+  },
+
+  btnSolicitarText: {
+    color: "#FFF",
+    fontSize: 12,
+    fontWeight: "700",
   },
 });
