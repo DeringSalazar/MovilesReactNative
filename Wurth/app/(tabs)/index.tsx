@@ -19,17 +19,17 @@ export default function Home() {
   const [showAll, setShowAll] = useState(false);
 
   const categories: Category[] = [
-    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.png') },
-    { title: 'Químicos', image: require('../../assets/quimicos.png') },
+    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
+    { title: 'Químicos', image: require('../../assets/quimicos.jpeg') },
     { title: 'Tornillería', image: require('../../assets/tornilleria.png') },
-    { title: 'Auto y Cargo', image: require('../../assets/auto.png') },
-    { title: 'Anclajes', image: require('../../assets/anclajes.png') },
-    { title: 'Electricidad', image: require('../../assets/electricidad.png') },
-    { title: 'Herramientas', image: require('../../assets/herramientas.png') },
-    { title: 'Maquinas', image: require('../../assets/maquinas.png') },
-    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.png') },
-    { title: 'Orsy', image: require('../../assets/orsy.png') },
-    { title: 'Agro', image: require('../../assets/agro.png') },
+    { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg') },
+    { title: 'Anclajes', image: require('../../assets/anclaje.png') },
+    { title: 'Electricidad', image: require('../../assets/electrecidad.png') },
+    { title: 'Herramientas', image: require('../../assets/herramientas.jpeg') },
+    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg') },
+    { title: 'Orsy', image: require('../../assets/orsy.jpeg') },
+    { title: 'Agro', image: require('../../assets/agronomia.png') },
   ];
 
   const { width } = Dimensions.get('window');
