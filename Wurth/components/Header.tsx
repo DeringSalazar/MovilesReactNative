@@ -4,7 +4,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'react-native';
 import { SearchBar } from './SearchBar';
 
-export default function Header() {
+interface HeaderProps {
+  onSearch?: (text: string) => void;
+  showBackButton?: boolean;
+}
+
+export default function Header({ onSearch, showBackButton = false }: HeaderProps) {
   return (
     <LinearGradient
       colors={['#000000', '#eaeaea']}
@@ -14,6 +19,11 @@ export default function Header() {
     >
       <View style={styles.container}>
         <View style={styles.row}>
+          {showBackButton && (
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <Text style={styles.backText}>←</Text>
+            </TouchableOpacity>
+          )}
           
           {/* Logo */}
           <View style={styles.logoGroup}>
@@ -45,6 +55,7 @@ export default function Header() {
             showButton={false}
             containerStyle={styles.searchContainer}
             inputStyle={styles.input}
+            onSearch={onSearch}
           />
         </View>
 
@@ -68,6 +79,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  
+  backButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  
+  backText: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
   },
   
   logoGroup: {

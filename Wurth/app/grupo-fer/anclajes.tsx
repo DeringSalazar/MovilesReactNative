@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
 import {
   Animated,
   Image as RNImage,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useNavigation } from 'expo-router';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { ImageModal } from '../../components/ImageModal';
@@ -28,6 +29,13 @@ const FILTER_CATEGORIES = [
 const DRAWER_WIDTH = 220;
 
 export default function Anclajes() {
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
   const allProducts = useMemo(
     () =>
       categories.map((category) => ({
@@ -119,9 +127,9 @@ export default function Anclajes() {
     <View style={anclajesStyles.container}>
       {/* Main content */}
       <ScrollView contentContainerStyle={anclajesStyles.scrollContent}>
+        <Header onSearch={setSearchText} showBackButton={true}/>
         {filteredProducts.map((category) => (
           <View key={category.name}>
-            <Header/>
             <View
               style={{
                 flexDirection: 'row',
@@ -153,6 +161,12 @@ export default function Anclajes() {
             </View>
           </View>
         ))}
+
+        {filteredProducts.length === 0 && (
+          <View style={{ alignItems: 'center', padding: 20 }}>
+            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
+          </View>
+        )}
 
         <Footer />
       </ScrollView>
