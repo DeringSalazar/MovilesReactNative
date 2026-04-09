@@ -9,7 +9,8 @@ import ProductCard from '../../components/ProductCard';
 
 interface Category {
   title: string;
-  image: any; 
+  image: any;
+  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes';
 }
 
 export default function Home() {
@@ -20,8 +21,8 @@ export default function Home() {
     { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
     { title: 'Químicos', image: require('../../assets/quimicos.jpeg') },
     { title: 'Tornillería', image: require('../../assets/tornilleria.png') },
-    { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg') },
-    { title: 'Anclajes', image: require('../../assets/anclaje.png') },
+    { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), href: '/grupo-fer/auto' },
+    { title: 'Anclajes', image: require('../../assets/anclaje.png'), href: '/grupo-fer/anclajes' },
     { title: 'Electricidad', image: require('../../assets/electrecidad.png') },
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg') },
     { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
@@ -67,6 +68,8 @@ export default function Home() {
               onPress={() => {
                 if (item.title === 'Corte, Taladro y Desbaste') {
                   router.push('/catalogo-corte-taladro-desbaste');
+                } else if (item.href) {
+                  router.push(item.href);
                 }
               }}
               activeOpacity={0.8}
@@ -134,6 +137,7 @@ export default function Home() {
 
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 60) / 3;
+
 const styles = StyleSheet.create({
   section: {
     padding: 15,
@@ -209,11 +213,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
   },
+
   subtitleDestacados: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
   },
+
   verMasText: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -224,10 +230,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     backgroundColor: '#7A7A7A',
   },
+
   carouselContainer: {
     position: 'relative',
     paddingHorizontal: 10,
   },
+
   arrowBtn: {
     position: 'absolute',
     zIndex: 10,
@@ -239,11 +247,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   leftArrow: { left: 5 },
   rightArrow: { right: 5 },
+
   arrowText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000'
+    color: '#000',
   },
 });

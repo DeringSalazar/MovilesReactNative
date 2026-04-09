@@ -1,23 +1,33 @@
-import { Image, ImageSourcePropType, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Href, router } from 'expo-router';
+import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 type Props = {
   title: string;
   image: ImageSourcePropType;
+  href?: Href;
 };
 
-export default function CategoryCard({ title, image }: Props) {
+export default function CategoryCard({ title, image, href }: Props) {
   const { width } = useWindowDimensions();
   const cardWidth = width / 4; 
   const imageSize = cardWidth * 0.55;
 
+  const handlePress = () => {
+    if (href) router.push(href);
+  };
+
   return (
-    <View style={[styles.card, { width: cardWidth }]}>
+    <Pressable
+      style={[styles.card, { width: cardWidth }]}
+      onPress={handlePress}
+      disabled={!href}
+    >
       <Image
         source={image}
         style={{ width: imageSize, height: imageSize, resizeMode: 'cover' }}
       />
       <Text style={styles.text}>{title}</Text>
-    </View>
+    </Pressable>
   );
 }
 
