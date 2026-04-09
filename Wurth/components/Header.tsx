@@ -6,9 +6,9 @@ import { Image } from 'react-native';
 export default function Header() {
   return (
     <LinearGradient
-      colors={['#000000', '#eaeaea']} // negro → gris
+      colors={['#000000', '#eaeaea']}
       start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }} // horizontal (como CSS: to right)
+      end={{ x: 1, y: 0 }}
       style={styles.wrapper}
     >
       <View style={styles.container}>
@@ -65,25 +65,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  
+  logoGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 
   logo: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
-    marginRight: 10,
+    marginLeft: 4,
+  },
+
+  logoImage: {
+    width: 35,
+    height: 35,
+    resizeMode: 'contain',
   },
 
   nav: {
     flexDirection: 'row',
-    gap: 10,
     flex: 1,
     justifyContent: 'center',
+    gap: 15,
   },
 
   link: {
     color: '#fff',
     fontSize: 13,
-    paddingVertical: 15,
     paddingHorizontal: 50,
   },
 
@@ -92,14 +102,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 8,
     height: 35,
-    width: 140,
+    width: 300,
   },
-
-  logoImage: {
-    width: 80,
-    height: 30,
-    resizeMode: 'contain',
-    marginRight: 10,
-},
-
 });

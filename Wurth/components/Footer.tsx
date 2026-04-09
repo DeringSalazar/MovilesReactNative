@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 type FooterLink = {
   label: string;
@@ -38,9 +38,10 @@ export default function Footer({ columns = defaultColumns }: Props) {
       
       {/* LOGO */}
       <View style={styles.logoRow}>
-        <View style={styles.shield}>
-          <Text style={styles.shieldText}>W</Text>
-        </View>
+          <Image 
+                      source={require('../assets/Logo.png')}
+                      style={styles.logoImage}
+                  />
         <Text style={styles.logoText}>WÜRTH</Text>
       </View>
 
@@ -94,39 +95,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
 
-  // LOGO
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    gap: 0, 
   },
 
-  shield: {
-    width: 28,
-    height: 32,
-    backgroundColor: '#d32f2f',
-    borderRadius: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-
-  shieldText: {
-    color: '#fff',
-    fontWeight: '900',
+  logoImage: {
+    width: 35,
+    height: 35,
+    resizeMode: 'contain',
+    marginRight: 5, 
   },
 
   logoText: {
     color: '#fff',
     fontWeight: '800',
-    fontSize: 16,
-    letterSpacing: 2,
+    fontSize: 20,
+    letterSpacing: 0.5,
   },
 
-  // COLUMNAS
   columns: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 25,
   },
 
   column: {
@@ -136,20 +128,19 @@ const styles = StyleSheet.create({
   colTitle: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 13,
-    marginBottom: 8,
+    fontSize: 14,
+    marginBottom: 10,
   },
 
   link: {
     color: '#aaa',
-    fontSize: 12,
-    marginBottom: 5,
+    fontSize: 13,
+    marginBottom: 8,
   },
 
-  // REDES
   socials: {
     flexDirection: 'row',
-    marginBottom: 15,
+    marginBottom: 20,
   },
 
   socialBtn: {
@@ -160,7 +151,7 @@ const styles = StyleSheet.create({
     borderColor: '#444',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 12,
   },
 
   socialText: {
@@ -168,9 +159,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  // COPY
   copy: {
     color: '#777',
     fontSize: 11,
+    marginTop: 10,
   },
 });
