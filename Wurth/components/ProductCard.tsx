@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 15,
-    marginHorizontal: 8, // Un poco más de aire entre cartas
+    marginHorizontal: 8,
     alignItems: 'center',
-    justifyContent: 'space-between', // Separa imagen de texto y botón
+    justifyContent: 'space-between',
     height: 280, 
     elevation: 4,
     shadowColor: '#000',
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center', // Centrado vertical de la imagen
-    alignItems: 'center',     // Centrado horizontal de la imagen
+    justifyContent: 'center',
+    alignItems: 'center',  
   },
   image: {
     width: '90%',
@@ -74,13 +74,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
-  // ... resto de estilos (name, price)
+
   name: {
     fontSize: 14,
     fontWeight: '700',
     textAlign: 'center',
     color: '#333',
-    height: 40, // Espacio para dos líneas
+    height: 40, 
   },
   price: {
     color: '#d32f2f',
@@ -90,14 +90,13 @@ const styles = StyleSheet.create({
   },
  button: {
     backgroundColor: '#d32f2f',
-    paddingVertical: 10,      // Aumentamos un poco para que no sea tan delgado
-    paddingHorizontal: 15,    // Lo equilibramos con el vertical
+    paddingVertical: 10,     
+    paddingHorizontal: 15,    
     alignSelf: 'center',      
     width: 'auto',            
-    minWidth: 100,            // Le damos una base sólida para que se vea cuadrado
+    minWidth: 100,         
     
-    // CAMBIO CLAVE: Bordes redondeados pero manteniendo forma cuadrada
-    borderRadius: 8,          // Un valor entre 4 y 10 da ese look "cuadrado moderno"
+    borderRadius: 8,    
     
     marginTop: 10,          
     alignItems: 'center',

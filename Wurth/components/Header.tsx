@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
 
   nav: {
     flexDirection: 'row',
-    flex: 2, // Toma el espacio del medio proporcionalmente
-    justifyContent: 'space-evenly', // Reparte los links sin usar paddings fijos
+    flex: 2,
+    justifyContent: 'space-evenly',
     marginHorizontal: 10,
   },
 
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 13,
     fontWeight: 'bold',
-    // Eliminamos el paddingHorizontal: 50 porque empujaba los elementos fuera de la pantalla
   },
 
   input: {
@@ -108,8 +107,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 8,
     height: 35,
-    flex: 1, // El input ahora crece o encoge según el espacio restante
-    minWidth: 100, // No se hará más pequeño que esto
-    maxWidth: 300, // No se hará más grande que tu diseño original
+    flex: 1,
+    minWidth: 100,
+    maxWidth: 300, 
   },
 });
