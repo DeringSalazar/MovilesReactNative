@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
@@ -5,7 +6,28 @@ import Header from '../../components/Header';
 import ProductCard from '../../components/ProductCard';
 import Footer from '../../components/Footer';
 
+interface Category {
+  title: string;
+  image: any; // Se usa any para los recursos de require()
+}
+
 export default function Home() {
+  const [showAll, setShowAll] = useState(false);
+
+  const categories: Category[] = [
+    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.png') },
+    { title: 'Químicos', image: require('../../assets/quimicos.png') },
+    { title: 'Tornillería', image: require('../../assets/tornilleria.png') },
+    { title: 'Auto y Cargo', image: require('../../assets/auto.png') },
+    { title: 'Anclajes', image: require('../../assets/anclajes.png') },
+    { title: 'Electricidad', image: require('../../assets/electricidad.png') },
+    { title: 'Herramientas', image: require('../../assets/herramientas.png') },
+    { title: 'Maquinas', image: require('../../assets/maquinas.png') },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.png') },
+    { title: 'Orsy', image: require('../../assets/orsy.png') },
+    { title: 'Agro', image: require('../../assets/agro.png') },
+  ];
+
   return (
     <ScrollView>
       <Header />
@@ -16,25 +38,22 @@ export default function Home() {
       {/* CATEGORÍAS */}
       <View style={styles.section}>
         <View style={styles.grid}>
-          {[
-            'Corte, Taladro y Desbaste',
-            'Químicos',
-            'Tornillería',
-            'Auto y Cargo',
-            'Anclajes',
-            'Electricidad',
-            'Herramientas',
-            'Maquinas',
-            'Seguridad e Higiene',
-            'Orsy',
-            'Agro',
-          ].map((item) => (
-            <CategoryCard key={item} title={item} />
+          {(showAll ? categories : categories.slice(0, 6)).map((item) => (
+            <CategoryCard 
+              key={item.title} 
+              title={item.title} 
+              image={item.image} // Pasamos la propiedad image
+            />
           ))}
         </View>
 
-        <TouchableOpacity style={styles.redBtn}>
-          <Text style={styles.btnText}>Ver más</Text>
+        <TouchableOpacity
+          style={styles.redBtn}
+          onPress={() => setShowAll(!showAll)}
+        >
+          <Text style={styles.btnText}>
+            {showAll ? 'Ver menos' : 'Ver más'}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -79,11 +98,15 @@ const styles = StyleSheet.create({
   section: {
     padding: 15,
   },
+
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    gap: 10,   
+    paddingVertical: 10,
   },
+
   redBtn: {
     backgroundColor: '#d32f2f',
     padding: 10,
@@ -92,34 +115,42 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingHorizontal: 30,
   },
+
   btnText: {
     color: '#fff',
     fontWeight: '600',
   },
+
   subtitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
+
   offer: {
     backgroundColor: '#fbc02d',
     padding: 20,
     alignItems: 'center',
   },
+
   offerText: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
+
   blackBtn: {
     backgroundColor: '#000',
     padding: 10,
     borderRadius: 5,
     paddingHorizontal: 25,
   },
-  footer: {
-    backgroundColor: '#222',
-    padding: 20,
-    alignItems: 'center',
+
+  card: {
+  width: '30%', // Para que quepan 3 por fila con el gap
+  aspectRatio: 1, // Para que sean cuadradas (opcional)
+  alignItems: 'center',
+  justifyContent: 'center',
   },
+
 });
