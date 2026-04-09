@@ -1,83 +1,164 @@
-import { ScrollView, View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Dimensions,
+  Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 type Slide = {
-  image: string;
-  title: string;
+  image: any; 
+  title: string; 
+  buttonLabel?: string;
 };
 
 const slides: Slide[] = [
   {
-    image: 'https://images.unsplash.com/photo-1581092919537-7c2c6d4f0b6c',
+    image: require('../assets/carrusel1.png'),
     title: 'Catálogo de Herramientas Profesionales',
+    buttonLabel: 'Ver catálogo',
   },
   {
-    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e',
-    title: 'Equipos de alta calidad',
+    image: require('../assets/carrusel2.png'),
+    title: 'Equipos de Alta Calidad',
+    buttonLabel: 'Ver más',
   },
   {
-    image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
-    title: 'Soluciones para tu trabajo',
+    image: require('../assets/carrusel3.jpg'),
+    title: 'Soluciones para tu Trabajo',
+    buttonLabel: 'Ver más',
   },
 ];
 
 export default function Carrusel() {
+  const scrollRef = useRef<ScrollView>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Auto-scroll cada 3 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const next = (activeIndex + 1) % slides.length;
+      scrollRef.current?.scrollTo({ x: next * width, animated: true });
+      setActiveIndex(next);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [activeIndex]);
+
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / width);
+    setActiveIndex(index);
+  };
+
+  const goToSlide = (index: number) => {
+    scrollRef.current?.scrollTo({ x: index * width, animated: true });
+    setActiveIndex(index);
+  };
+
   return (
-    <View>
+    <View style={styles.wrapper}>
       <ScrollView
+        ref={scrollRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScroll}
+        scrollEventThrottle={16}
       >
         {slides.map((item, index) => (
-          <View key={index} style={{ width }}>
-            
-            <Image source={{ uri: item.image }} style={styles.image} />
+          <View key={index} style={styles.slide}>
+            <Image source={item.image} style={styles.image} />
 
-            <View style={styles.overlay}>
+            {/* Overlay oscuro */}
+            <View style={styles.overlay} />
+
+            {/* Contenido */}
+            <View style={styles.content}>
               <Text style={styles.title}>{item.title}</Text>
-
               <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Ver catálogo</Text>
+                <Text style={styles.buttonText}>{item.buttonLabel ?? 'Ver más'}</Text>
               </TouchableOpacity>
             </View>
-
           </View>
         ))}
       </ScrollView>
+
+      {/* Dots */}
+      <View style={styles.dots}>
+        {slides.map((_, i) => (
+          <TouchableOpacity key={i} onPress={() => goToSlide(i)}>
+            <View style={[styles.dot, i === activeIndex && styles.dotActive]} />
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  image: {
-    width: '100%',
+  wrapper: {
+    position: 'relative',
+  },
+  slide: {
+    width,
     height: 220,
   },
-
-  overlay: {
+  image: {
+    width: '100%',
+    height: '100%',
     position: 'absolute',
-    top: 20,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  content: {
+    position: 'absolute',
+    bottom: 40,
     left: 20,
     right: 20,
   },
-
   title: {
     color: '#fff',
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 12,
+    lineHeight: 28,
   },
-
   button: {
     backgroundColor: '#d32f2f',
-    padding: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 5,
     alignSelf: 'flex-start',
   },
-
   buttonText: {
     color: '#fff',
+    fontWeight: '600',
+  },
+  dots: {
+    position: 'absolute',
+    bottom: 12,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    width: '100%',
+    justifyContent: 'center',
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  dotActive: {
+    width: 22,
+    backgroundColor: '#fff',
   },
 });

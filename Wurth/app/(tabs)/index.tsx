@@ -1,8 +1,8 @@
-import { ScrollView, View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import Header from '../../components/Header';
-import CategoryCard from '../../components/CategoryCard';
-import ProductCard from '../../components/ProductCard';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carrusel from '../../components/Carrusel';
+import CategoryCard from '../../components/CategoryCard';
+import Header from '../../components/Header';
+import ProductCard from '../../components/ProductCard';
 
 export default function Home() {
   return (
@@ -10,19 +10,7 @@ export default function Home() {
       <Header />
 
       {/* HERO */}
-      <View style={styles.hero}>
-        {/*<Carrusel />*/}
-        <Image
-          source={{ uri: 'https://images.unsplash.com/photo-1581092919537-7c2c6d4f0b6c' }}
-          style={styles.heroImage}
-        />
-        <View style={styles.overlay}>
-          <Text style={styles.title}>Catálogo de Herramientas Profesionales</Text>
-          <TouchableOpacity style={styles.redBtn}>
-            <Text style={styles.btnText}>Ver catálogo</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <Carrusel />
 
       {/* CATEGORÍAS */}
       <View style={styles.section}>
@@ -84,32 +72,25 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  hero: { position: 'relative' },
-  heroImage: { width: '100%', height: 200 },
-  overlay: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
+  section: {
+    padding: 15,
   },
-  title: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   redBtn: {
     backgroundColor: '#d32f2f',
     padding: 10,
     borderRadius: 5,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     marginTop: 10,
+    paddingHorizontal: 30,
   },
-  btnText: { color: '#fff' },
-  section: { padding: 15 },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  btnText: {
+    color: '#fff',
+    fontWeight: '600',
   },
   subtitle: {
     fontSize: 18,
@@ -130,6 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     padding: 10,
     borderRadius: 5,
+    paddingHorizontal: 25,
   },
   footer: {
     backgroundColor: '#222',
