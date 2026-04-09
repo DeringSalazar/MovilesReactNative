@@ -10,6 +10,7 @@ import ProductCard from '../../components/ProductCard';
 interface Category {
   title: string;
   image: any; 
+  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes';
 }
 
 export default function Home() {
@@ -19,8 +20,8 @@ export default function Home() {
     { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
     { title: 'Químicos', image: require('../../assets/quimicos.jpeg') },
     { title: 'Tornillería', image: require('../../assets/tornilleria.png') },
-    { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg') },
-    { title: 'Anclajes', image: require('../../assets/anclaje.png') },
+    { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), href: '/grupo-fer/auto' },
+    { title: 'Anclajes', image: require('../../assets/anclaje.png'), href: '/grupo-fer/anclajes' },
     { title: 'Electricidad', image: require('../../assets/electrecidad.png') },
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg') },
     { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
@@ -66,6 +67,7 @@ const scrollRight = () => {
               key={item.title} 
               title={item.title} 
               image={item.image} 
+              href={item.href}
             />
           ))}
         </View>

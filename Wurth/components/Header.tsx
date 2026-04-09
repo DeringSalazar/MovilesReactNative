@@ -1,8 +1,8 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'react-native';
-import { findFocusedRoute } from '@react-navigation/native';
+import { SearchBar } from './SearchBar';
 
 export default function Header() {
   return (
@@ -40,10 +40,11 @@ export default function Header() {
           </View>
 
           {/* BUSCADOR */}
-          <TextInput
+          <SearchBar
             placeholder="Buscar"
-            placeholderTextColor="#aaa"
-            style={styles.input}
+            showButton={false}
+            containerStyle={styles.searchContainer}
+            inputStyle={styles.input}
           />
         </View>
 
@@ -110,5 +111,14 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 100,
     maxWidth: 300, 
+  },
+
+  searchContainer: {
+    flex: 1,
+    minWidth: 100,
+    maxWidth: 300,
+    marginHorizontal: 0,
+    paddingVertical: 0,
+    gap: 0,
   },
 });

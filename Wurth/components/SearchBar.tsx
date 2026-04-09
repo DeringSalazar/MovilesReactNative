@@ -1,33 +1,62 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type StyleProp,
+  type TextStyle,
+  type ViewStyle,
+} from 'react-native';
 
 interface SearchBarProps {
   onSearch?: (text: string) => void;
   placeholder?: string;
+  showButton?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
+  buttonStyle?: StyleProp<ViewStyle>;
+  buttonTextStyle?: StyleProp<TextStyle>;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ 
   onSearch, 
-  placeholder = 'Buscar...' 
+  placeholder = 'Buscar...',
+  showButton = true,
+  containerStyle,
+  inputStyle,
+  buttonStyle,
+  buttonTextStyle,
 }) => {
   const [searchText, setSearchText] = useState('');
+
+  const handleChangeText = (text: string) => {
+    setSearchText(text);
+    onSearch?.(text);
+  };
 
   const handleSearch = () => {
     onSearch?.(searchText);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, inputStyle]}
         placeholder={placeholder}
         placeholderTextColor="#999999"
         value={searchText}
-        onChangeText={setSearchText}
+        onChangeText={handleChangeText}
+        onSubmitEditing={handleSearch}
+        returnKeyType="search"
+        blurOnSubmit
       />
-      <Pressable style={styles.button} onPress={handleSearch}>
-        <Text style={styles.buttonText}>Buscar</Text>
-      </Pressable>
+      {showButton && (
+        <Pressable style={[styles.button, buttonStyle]} onPress={handleSearch}>
+          <Text style={[styles.buttonText, buttonTextStyle]}>Buscar</Text>
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -50,9 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     fontSize: 13,
     fontFamily: 'Open Sans',
-    color: '#000000',
-    borderWidth: 1,
-    borderColor: '#D32F2F',
+    color: '#000000',    
   },
   button: {
     paddingVertical: 8,

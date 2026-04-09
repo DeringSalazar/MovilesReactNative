@@ -132,21 +132,6 @@ export default function Anclajes() {
               }}
             >
              
-              <SearchBar placeholder="Producto..." onSearch={setSearchText} />
-
-              {/* Filter toggle button */}
-              <TouchableOpacity
-                style={filterStyles.filterButton}
-                onPress={drawerOpen ? closeDrawer : openDrawer}
-                activeOpacity={0.75}
-              >
-                <Text style={filterStyles.filterButtonIcon}>Filtrar</Text>
-                {selectedFilters.length > 0 && (
-                  <View style={filterStyles.badge}>
-                    <Text style={filterStyles.badgeText}>{selectedFilters.length}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
             </View>
 
             <View style={anclajesStyles.productsContainer}>

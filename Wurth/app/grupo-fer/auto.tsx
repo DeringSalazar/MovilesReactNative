@@ -120,7 +120,7 @@ export default function Auto() {
             <ScrollView contentContainerStyle={autoStyles.scrollContent}>
                 {filteredProducts.map((category) => (
                     <View key={category.name}>
-                        <Header/>
+                        <Header />
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -130,22 +130,7 @@ export default function Auto() {
                                 gap: 0,
                             }}
                         >
-                        
-                            <SearchBar placeholder="Producto..." onSearch={setSearchText} />
 
-                            {/* Botón para abrir/cerrar el drawer */}
-                            <TouchableOpacity
-                                style={filterStyles.filterButton}
-                                onPress={drawerOpen ? closeDrawer : openDrawer}
-                                activeOpacity={0.75}
-                            >
-                                <Text style={filterStyles.filterButtonIcon}>Filtrar</Text>
-                                {selectedFilters.length > 0 && (
-                                    <View style={filterStyles.badge}>
-                                        <Text style={filterStyles.badgeText}>{selectedFilters.length}</Text>
-                                    </View>
-                                )}
-                            </TouchableOpacity>
                         </View>
 
                         <View style={autoStyles.productsContainer}>
