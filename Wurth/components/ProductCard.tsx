@@ -88,19 +88,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 4,
   },
-  button: {
+ button: {
     backgroundColor: '#d32f2f',
-    paddingVertical: 10,
-    width: '100%',
-    borderRadius: 6,
+    paddingVertical: 10,      // Aumentamos un poco para que no sea tan delgado
+    paddingHorizontal: 15,    // Lo equilibramos con el vertical
+    alignSelf: 'center',      
+    width: 'auto',            
+    minWidth: 100,            // Le damos una base sólida para que se vea cuadrado
+    
+    // CAMBIO CLAVE: Bordes redondeados pero manteniendo forma cuadrada
+    borderRadius: 8,          // Un valor entre 4 y 10 da ese look "cuadrado moderno"
+    
+    marginTop: 10,          
     alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
     fontSize: 13,
+    fontWeight: '700',
+    textAlign: 'center',
   },
-  // Estilos del Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.8)',
