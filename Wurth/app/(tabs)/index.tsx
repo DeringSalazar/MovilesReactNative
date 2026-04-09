@@ -1,98 +1,139 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import Header from '../../components/Header';
+import CategoryCard from '../../components/CategoryCard';
+import ProductCard from '../../components/ProductCard';
+import Carrusel from '../../components/Carrusel';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
-
-export default function HomeScreen() {
+export default function Home() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <ScrollView>
+      <Header />
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {/* HERO */}
+      <View style={styles.hero}>
+        {/*<Carrusel />*/}
+        <Image
+          source={{ uri: 'https://images.unsplash.com/photo-1581092919537-7c2c6d4f0b6c' }}
+          style={styles.heroImage}
+        />
+        <View style={styles.overlay}>
+          <Text style={styles.title}>Catálogo de Herramientas Profesionales</Text>
+          <TouchableOpacity style={styles.redBtn}>
+            <Text style={styles.btnText}>Ver catálogo</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* CATEGORÍAS */}
+      <View style={styles.section}>
+        <View style={styles.grid}>
+          {[
+            'Herramientas',
+            'Anclajes',
+            'Tornillería',
+            'Corte y Desbaste',
+            'Químicos',
+            'Agronomía',
+          ].map((item) => (
+            <CategoryCard key={item} title={item} />
+          ))}
+        </View>
+
+        <TouchableOpacity style={styles.redBtn}>
+          <Text style={styles.btnText}>Ver más</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* PRODUCTOS */}
+      <View style={styles.section}>
+        <Text style={styles.subtitle}>Productos Destacados</Text>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ProductCard
+            name="Broca HSS-Co"
+            price={12.99}
+            image="https://cdn-icons-png.flaticon.com/512/809/809957.png"
+          />
+          <ProductCard
+            name="Taladro TEENO"
+            price={299.99}
+            image="https://cdn-icons-png.flaticon.com/512/1040/1040230.png"
+          />
+          <ProductCard
+            name="Ponchadora RJ45"
+            price={20.99}
+            image="https://cdn-icons-png.flaticon.com/512/4149/4149675.png"
+          />
+        </ScrollView>
+      </View>
+
+      {/* OFERTAS */}
+      <View style={styles.offer}>
+        <Text style={styles.offerText}>Ofertas especiales</Text>
+        <TouchableOpacity style={styles.blackBtn}>
+          <Text style={styles.btnText}>Ver ofertas</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* FOOTER */}
+      <View style={styles.footer}>
+        <Text style={{ color: '#fff' }}>WÜRTH</Text>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  hero: { position: 'relative' },
+  heroImage: { width: '100%', height: 200 },
+  overlay: {
     position: 'absolute',
+    top: 20,
+    left: 20,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  redBtn: {
+    backgroundColor: '#d32f2f',
+    padding: 10,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+    marginTop: 10,
+  },
+  btnText: { color: '#fff' },
+  section: { padding: 15 },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  offer: {
+    backgroundColor: '#fbc02d',
+    padding: 20,
+    alignItems: 'center',
+  },
+  offerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  blackBtn: {
+    backgroundColor: '#000',
+    padding: 10,
+    borderRadius: 5,
+  },
+  footer: {
+    backgroundColor: '#222',
+    padding: 20,
+    alignItems: 'center',
   },
 });
