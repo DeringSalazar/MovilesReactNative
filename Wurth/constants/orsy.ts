@@ -52,7 +52,7 @@ export const categories = [
               'Fijación y retención mediante pasadores elásticos en aplicaciones mecánicas generales.',
             ],
             images: [
-               require('../assets/images/10.00/10.02.png'),
+              
             ],
           },
           {
