@@ -10,7 +10,7 @@ import ProductCard from '../../components/ProductCard';
 interface Category {
   title: string;
   image: any; 
-  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes';
+  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas';
 }
 
 export default function Home() {
@@ -22,8 +22,8 @@ export default function Home() {
     { title: 'Tornillería', image: require('../../assets/tornilleria.png') },
     { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), href: '/grupo-fer/auto' },
     { title: 'Anclajes', image: require('../../assets/anclaje.png'), href: '/grupo-fer/anclajes' },
-    { title: 'Electricidad', image: require('../../assets/electrecidad.png') },
-    { title: 'Herramientas', image: require('../../assets/herramientas.jpeg') },
+    { title: 'Electricidad', image: require('../../assets/electrecidad.png'), href: '/grupo-iby/electricidad' },
+    { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), href: '/grupo-iby/herramientas' },
     { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
     { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg') },
     { title: 'Orsy', image: require('../../assets/orsy.jpeg') },
