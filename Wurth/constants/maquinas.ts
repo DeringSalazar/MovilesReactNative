@@ -25,6 +25,7 @@ export const categories = [
             id: 'pistola-dss-34h',
             name: 'Pistola de Impacto Neumática DSS ¾" H',
             subtitle: 'Art. Nº 0703 773 0',
+            description: 'Pistola de impacto compacta y ligera para trabajos generales. Ideal para cambio de ruedas en vehículos comerciales.',
             features: [
               'Mecánica robusta y equilibrada con carcasa de aluminio.',
               'Empuñadura ergonómica revestida de goma, cambio de sentido izquierda y derecha, y gatillo regulable.',
@@ -57,6 +58,7 @@ export const categories = [
             id: 'pistola-dss-1p',
             name: 'Pistola de Impacto Neumática DSS 1" P',
             subtitle: 'Art. Nº 0703 775 0',
+            description: 'Pistola robusta de mayor potencia para cambio de ruedas en camiones y mantenimiento industrial de alto rendimiento.',
             features: [
               'Mecánica robusta y equilibrada con carcasa de aluminio.',
               'Empuñadura ergonómica revestida de goma con mano adicional ajustable 360°.',
@@ -91,6 +93,7 @@ export const categories = [
             id: 'pistola-dss-1l',
             name: 'Pistola de Impacto Neumática DSS 1" L',
             subtitle: 'Art. Nº 0703 780 0',
+            description: 'Pistola de eje largo con alcance extendido para aplicaciones en camiones, autobuses y maquinaria agrícola.',
             features: [
               'Mecánica robusta y equilibrada con carcasa de aluminio, eje largo.',
               'Mango adicional con posición ajustable de 360°, cambio de sentido con regulador de velocidad.',
@@ -124,6 +127,7 @@ export const categories = [
             id: 'engrasadora-50kg',
             name: 'Engrasadora Neumática Würth 50 Kg',
             subtitle: 'Art. Nº 1986 600',
+            description: 'Equipo móvil de engrase neumático para bidones de 50 kg con presión y caudal máximo optimizado.',
             features: [
               'Bomba neumática que aumenta la presión de entrada hasta 55 veces.',
               'Tapa para bidones de 50 kg de Ø 405 mm con fijación mediante tornillos.',
@@ -154,6 +158,7 @@ export const categories = [
             id: 'llave-dss-12h',
             name: 'Llave de Impacto Neumática DSS ½" H',
             subtitle: 'Art. No. 90703 736 0',
+            description: 'Atornilladora de impacto compacta y potente con torque regulable en 4 niveles para precisión en trabajos.',
             features: [
               'Robusta y bien balanceada, con carcasa de aleación de aluminio.',
               'Mango recubierto en goma, ergonómico, con fácil acceso a cambios de dirección y velocidad.',
@@ -182,6 +187,7 @@ export const categories = [
             id: 'manguera-carrete',
             name: 'Manguera Híbrida con Carrete Retráctil',
             subtitle: 'Para línea de aire comprimido',
+            description: 'Manguera de polímero híbrido flexible con carrete retráctil automático para aire comprimido de 15 metros.',
             features: [
               'Fabricada en polímero híbrido Premium. Combina las mejores características del PVC y del caucho.',
               'Gran flexibilidad, incluso a bajas temperaturas. Liviana y fácil de manejar.',
@@ -211,6 +217,7 @@ export const categories = [
             id: 'amoladora-plus-412',
             name: 'Amoladora Neumática Plus A 4 1/2"',
             subtitle: 'Código 20703 000 840',
+            description: 'Amoladora de alta velocidad (22.000 RPM) ideal para corte, desbaste y acabado de superficies metálicas.',
             features: [
               'RPM: 22.000',
               'Largo: 177 mm | Peso: 1,5 lbs',
@@ -228,6 +235,7 @@ export const categories = [
             id: 'fresadora-plus-14',
             name: 'Fresadora Neumática Plus de 1/4"',
             subtitle: 'Código 20703 237 0',
+            description: 'Fresadora versátil de 1/4" para desbastar, pulir y rebabar con manejo ligero y agarre seguro.',
             features: [
               'Adecuada para desbastar, pulir y rebabar.',
               'Construida sobre rulemanes que otorgan larga vida a la herramienta.',
@@ -252,6 +260,7 @@ export const categories = [
             id: 'ratchet-plus-12',
             name: 'Ratchet Neumático Plus 1/2"',
             subtitle: 'Código 20703 812 002',
+            description: 'Ratchet de impacto compacto de 1/2" con 160 RPM y torque máximo de 50 ft-lb para ensamble rápido.',
             features: [
               'RPM: 160 | Torque máximo: 50 ft-lb',
               'Presión de aire: 6,2 kg/cm³ (90 PSI)',

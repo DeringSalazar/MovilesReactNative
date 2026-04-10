@@ -16,15 +16,15 @@ interface Category {
 export default function Home() {
   const [showAll, setShowAll] = useState(false);
   const categories: Category[] = [
-    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
     { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), href: '/grupo-erik/quimicos' },
     { title: 'Tornillería', image: require('../../assets/tornilleria.png'), href: '/grupo-erik/tornilleria' },
     { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), href: '/grupo-fer/auto' },
     { title: 'Anclajes', image: require('../../assets/anclaje.png'), href: '/grupo-fer/anclajes' },
-    { title: 'Electricidad', image: require('../../assets/electrecidad.png'), href: '/grupo-iby/electricidad' },
-    { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), href: '/grupo-iby/herramientas' },
     { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), href: '/grupo-alvaro/maquinas' },
     { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), href: '/grupo-alvaro/seguridad' },
+    { title: 'Electricidad', image: require('../../assets/electrecidad.png'), href: '/grupo-iby/electricidad' },
+    { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), href: '/grupo-iby/herramientas' },
+    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
     { title: 'Orsy', image: require('../../assets/orsy.jpeg') },
     { title: 'Agro', image: require('../../assets/agronomia.png') },
   ];
