@@ -15,11 +15,10 @@ interface Category {
 
 export default function Home() {
   const [showAll, setShowAll] = useState(false);
-
   const categories: Category[] = [
     { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
-    { title: 'Químicos', image: require('../../assets/quimicos.jpeg') },
-    { title: 'Tornillería', image: require('../../assets/tornilleria.png') },
+    { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), href: '/grupo-erik/quimicos' },
+    { title: 'Tornillería', image: require('../../assets/tornilleria.png'), href: '/grupo-erik/tornilleria' },
     { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), href: '/grupo-fer/auto' },
     { title: 'Anclajes', image: require('../../assets/anclaje.png'), href: '/grupo-fer/anclajes' },
     { title: 'Electricidad', image: require('../../assets/electrecidad.png'), href: '/grupo-iby/electricidad' },
