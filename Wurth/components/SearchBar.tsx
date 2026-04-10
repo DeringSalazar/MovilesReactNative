@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 6,
     fontSize: 13,
-    fontFamily: 'Open Sans',
     color: '#000000',    
   },
   button: {
@@ -92,7 +91,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '600',
-    fontFamily: 'Open Sans',
+    fontWeight: '700',
   },
 });
