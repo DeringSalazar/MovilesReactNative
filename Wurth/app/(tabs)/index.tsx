@@ -10,7 +10,7 @@ import ProductCard from '../../components/ProductCard';
 interface Category {
   title: string;
   image: any; 
-  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes';
+  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/orsy-Agro/orsy';
 }
 
 export default function Home() {
@@ -26,7 +26,7 @@ export default function Home() {
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg') },
     { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
     { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg') },
-    { title: 'Orsy', image: require('../../assets/orsy.jpeg') },
+    { title: 'Orsy', image: require('../../assets/orsy.jpeg'), href: '/orsy-Agro/orsy' },
     { title: 'Agro', image: require('../../assets/agronomia.png') },
   ];
 
