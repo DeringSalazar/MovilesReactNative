@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
   },
   carouselDotActive: { backgroundColor: '#D32F2F' },
   productName: {
-    fontFamily: 'Open Sans',
     fontSize: 14,
     marginBottom: 4,
     color: '#000000',
@@ -186,22 +185,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   productCode: {
-    fontFamily: 'Open Sans',
     fontSize: 12,
     color: '#D32F2F',
     textAlign: 'center',
-    fontWeight: '700',
+    fontWeight: 'bold',
     marginTop: 2,
   },
   productSubtitle: {
-    fontFamily: 'Open Sans',
     fontSize: 12,
     color: '#555',
     textAlign: 'center',
     marginBottom: 4,
   },
   description: {
-    fontFamily: 'Open Sans',
     fontSize: 12,
     textAlign: 'left',
     color: '#7A7A7A',
@@ -225,14 +221,12 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   measureHeader: {
-    fontFamily: 'Open Sans',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: 'bold',
     marginBottom: 4,
     color: '#333333',
   },
   measureRow: {
-    fontFamily: 'Open Sans',
     fontSize: 12,
     color: '#333333',
     marginBottom: 2,
