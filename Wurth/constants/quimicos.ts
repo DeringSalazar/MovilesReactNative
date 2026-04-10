@@ -1,4 +1,4 @@
-/*interface Product {
+interface Product {
   id: string;
   name: string;
   subtitle?: string;
@@ -51,7 +51,7 @@ export const categories = [
           measuresImages: [
             require('../assets/images/02.00/02.01p1m1.jpeg'),
             require('../assets/images/02.00/02.01p1m2.jpeg'),
-            require('../assets/images/02.00/02.01p1m3.jpeg'),
+            
 
 
 
@@ -251,7 +251,7 @@ export const categories = [
       subtitle: 'Desoxidante de alta efectividad con partículas de molibdeno',
 
       images: [
-        require('../assets/images/02.00/02.04p1.png'),
+        require('../assets/images/02.00/02.04p1.jpeg'),
       ],
 
       features: [
@@ -275,7 +275,7 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.04p1m1.png'),
+        require('../assets/images/02.00/02.04p1m1.jpeg'),
       ]
     },
 
@@ -286,7 +286,7 @@ export const categories = [
       subtitle: 'Grasa lítica de excelente estabilidad mecánica',
 
       images: [
-        require('../assets/images/02.00/02.04p2.png'),
+        require('../assets/images/02.00/02.04p2.jpeg'),
       ],
 
       features: [
@@ -312,7 +312,7 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.04p2m1.png'),
+        require('../assets/images/02.00/02.04p2m1.jpeg'),
       ]
     }
   ]
@@ -329,7 +329,7 @@ export const categories = [
       subtitle: 'Spray protector para procesos de soldadura',
 
       images: [
-        require('../assets/images/02.00/02.05p1.png'),
+        require('../assets/images/02.00/02.05p1.jpeg'),
       ],
 
       features: [
@@ -349,7 +349,7 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.05p1m1.png'),
+        require('../assets/images/02.00/02.05p1m1.jpeg'),
       ]
     },
 
@@ -360,7 +360,7 @@ export const categories = [
       subtitle: 'Convertidor ecológico para neutralizar la corrosión',
 
       images: [
-        require('../assets/images/02.00/02.05p2.png'),
+        require('../assets/images/02.00/02.05p2.jpeg'),
       ],
 
       features: [
@@ -382,11 +382,11 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.05p2m1.png'),
+        require('../assets/images/02.00/02.05p2m1.jpeg'),
       ]
     }
   ]
 }
 ],
 }
-];*/
+];

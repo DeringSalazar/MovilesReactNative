@@ -13,15 +13,16 @@ import Footer from '../../components/Footer';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
-import { categories } from '../../constants/anclaje';
+import { categories } from '../../constants/quimicos';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { anclajesStyles } from '../../styles/anclajes.styles';
 
 const FILTER_CATEGORIES = [
-  { id: '05.01', label: '05.01 Anclaje metálico' },
-  { id: '05.02', label: '05.02 Anclaje directo' },
-  { id: '05.03', label: '05.03 Anclajes químicos' },
-  { id: '05.04', label: '05.04 Tacos' },
+  { id: '02.01', label: '02.01 Selladores y juntas químicas' },
+  { id: '02.02', label: '02.02 Adhesivos y pegamento' },
+  { id: '02.03', label: '02.03 Limpiadores y disolventes' },
+  { id: '02.04', label: '02.04 Lubricantes y penetrantes' },
+  { id: '02.05', label: '02.05 Imprimaciones y lacas' },
 ];
 
 const DRAWER_WIDTH = 220;
