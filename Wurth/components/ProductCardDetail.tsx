@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#D32F2F',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginTop: 2,
   },
   productSubtitle: {
@@ -204,9 +204,11 @@ const styles = StyleSheet.create({
   },
   measureToggle: {
     marginTop: 10,
-    paddingVertical: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 6,
     backgroundColor: '#D32F2F',
+    alignSelf: 'center',
   },
   measureToggleText: {
     color: '#FFF',
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
   },
   measureHeader: {
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 4,
     color: '#333333',
   },
