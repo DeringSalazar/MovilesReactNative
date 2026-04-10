@@ -26,9 +26,7 @@ export const categories = [
             'Adhesivo sellante monocomponente de alto rendimiento mecánico que permite pegar y sellar materiales de distinta naturaleza con gran resistencia y elasticidad.',
 
           images: [
-            require('../assets/images/02.00/02.01p1.png'),
-            require('../assets/images/02.00/02.01p1.2.png'),
-            require('../assets/images/02.00/02.01p1.3.png'),
+            require('../assets/images/02.00/02.01p1.jpeg')
           ],
 
           features: [
@@ -51,7 +49,12 @@ export const categories = [
           ],
 
           measuresImages: [
-            require('../assets/images/02.00/02.01p1m1.png'),
+            require('../assets/images/02.00/02.01p1m1.jpeg'),
+            require('../assets/images/02.00/02.01p1m2.jpeg'),
+            require('../assets/images/02.00/02.01p1m3.jpeg'),
+
+
+
           ]
         },
 
@@ -62,7 +65,7 @@ export const categories = [
           subtitle: 'Adhesivo de contacto en spray',
 
           images: [
-            require('../assets/images/02.00/02.01p2.png'),
+            require('../assets/images/02.00/02.01p2.jpeg')
           ],
 
           features: [
@@ -84,7 +87,7 @@ export const categories = [
           ],
 
           measuresImages: [
-            require('../assets/images/02.00/02.01p2m1.png'),
+            require('../assets/images/02.00/02.01p2m1.jpeg')
           ]
         }
       ],
@@ -100,7 +103,7 @@ export const categories = [
       subtitle: 'Pasta de estanqueidad resistente a altas temperaturas',
 
       images: [
-        require('../assets/images/02.00/02.02p1.png'),
+            require('../assets/images/02.00/02.02p1.jpeg')
       ],
 
       features: [
@@ -124,7 +127,9 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.02p1m1.png'),
+            require('../assets/images/02.00/02.02p1m1.jpeg'),
+            require('../assets/images/02.00/02.02p1m2.jpeg')
+
       ]
     },
 
@@ -134,7 +139,7 @@ export const categories = [
       name: 'SILICÓN RTV PRESURIZADO',
 
       images: [
-        require('../assets/images/02.00/02.02p2.png'),
+            require('../assets/images/02.00/02.02p2.jpeg')
       ],
 
       features: [
@@ -156,7 +161,9 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.02p2m1.png'),
+            require('../assets/images/02.00/02.02p2m1.jpeg'),
+             require('../assets/images/02.00/02.02p2m2.jpeg')
+
       ]
     }
   ]
@@ -172,7 +179,7 @@ export const categories = [
       subtitle: 'Con base de disolvente',
 
       images: [
-        require('../assets/images/02.00/02.03p1.png'),
+            require('../assets/images/02.00/02.03p1.jpeg')
       ],
 
       features: [
@@ -191,7 +198,7 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.03p1m1.png'),
+        require('../assets/images/02.00/02.03p1m1.jpeg'),
       ]
     },
 
@@ -201,7 +208,7 @@ export const categories = [
       name: 'LIMPIACRISTALES ACTIVO',
 
       images: [
-        require('../assets/images/02.00/02.03p2.png'),
+        require('../assets/images/02.00/02.03p2.jpeg'),
       ],
 
       features: [
@@ -226,7 +233,8 @@ export const categories = [
       ],
 
       measuresImages: [
-        require('../assets/images/02.00/02.03p2m1.png'),
+        require('../assets/images/02.00/02.03p2m1.jpeg'),
+        require('../assets/images/02.00/02.03p2m2.jpeg'),
       ]
     }
   ]
