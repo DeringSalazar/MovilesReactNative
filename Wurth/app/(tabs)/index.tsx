@@ -10,7 +10,11 @@ import ProductCard from '../../components/ProductCard';
 interface Category {
   title: string;
   image: any; 
+<<<<<<< HEAD
   href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-alvaro/seguridad' | '/grupo-alvaro/maquinas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria';
+=======
+  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria'| '/orsy-Agro/agro';
+>>>>>>> Desarrollo
 }
 
 export default function Home() {
@@ -24,9 +28,16 @@ export default function Home() {
     { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), href: '/grupo-alvaro/seguridad' },
     { title: 'Electricidad', image: require('../../assets/electrecidad.png'), href: '/grupo-iby/electricidad' },
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), href: '/grupo-iby/herramientas' },
+<<<<<<< HEAD
     { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg') },
     { title: 'Orsy', image: require('../../assets/orsy.jpeg') },
     { title: 'Agro', image: require('../../assets/agronomia.png') },
+=======
+    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg') },
+    { title: 'Orsy', image: require('../../assets/orsy.jpeg'), href: '/orsy-Agro/orsy' },
+    { title: 'Agro', image: require('../../assets/agronomia.png'), href: '/orsy-Agro/agro' },
+>>>>>>> Desarrollo
   ];
 
   const { width } = Dimensions.get('window');
