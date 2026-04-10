@@ -9,11 +9,10 @@ import {
   Pressable,
   Dimensions,
   ScrollView,
-  TextInput,
   ImageSourcePropType,
 } from "react-native";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../../components/Header";
+import Footer from "../../../components/Footer";
 
 const { width } = Dimensions.get("window");
 
@@ -28,7 +27,7 @@ type Producto = {
   uso: string;
   stock: string;
   precio: string;
-  img: any;
+  img: string;
 };
 
 type CategoriaPrincipal = "TODOS" | "CORTE" | "TALADRO" | "DESBASTE";
@@ -134,7 +133,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Para perforar acero inoxidable",
       stock: "30",
       precio: "₡4500",
-      img: require("../assets/Broca Helicoidal.png"),
+      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
     },
     {
       id: "2",
@@ -147,7 +146,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Corte de acero y metal",
       stock: "50",
       precio: "₡3200",
-      img: require("../assets/DiscoCorte.jpg"),
+      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
     },
     {
       id: "3",
@@ -160,7 +159,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Corte de madera y metal",
       stock: "10",
       precio: "₡8500",
-      img: require("../assets/Sierra.png"),
+      img: "https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp",
     },
     {
       id: "4",
@@ -173,7 +172,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Avellanado y fresado en metal",
       stock: "18",
       precio: "₡6900",
-      img: require("../assets/Broca Helicoidal.png"),
+      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
     },
     {
       id: "5",
@@ -186,7 +185,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Roscado de precisión",
       stock: "14",
       precio: "₡9800",
-      img: require("../assets/Broca Helicoidal.png"),
+      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
     },
     {
       id: "6",
@@ -199,7 +198,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Perforación en metal y madera",
       stock: "22",
       precio: "₡7600",
-      img: require("../assets/Broca Helicoidal.png"),
+      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
     },
     {
       id: "7",
@@ -212,7 +211,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Lijado de superficies metálicas",
       stock: "40",
       precio: "₡2700",
-      img: require("../assets/DiscoCorte.jpg"),
+      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
     },
     {
       id: "8",
@@ -225,7 +224,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Lijado manual e industrial",
       stock: "60",
       precio: "₡1900",
-      img: require("../assets/DiscoCorte.jpg"),
+      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
     },
     {
       id: "9",
@@ -238,7 +237,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       uso: "Desbaste y rectificado",
       stock: "12",
       precio: "₡8300",
-      img: require("../assets/DiscoCorte.jpg"),
+      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
     },
   ];
 
@@ -249,7 +248,6 @@ export default function CatalogoCorteTaladroDesbaste() {
   const [categoriaActiva, setCategoriaActiva] =
     useState<CategoriaPrincipal>("TODOS");
   const [subcategoriaActiva, setSubcategoriaActiva] = useState<string | null>(null);
-  const [busqueda, setBusqueda] = useState("");
 
   const abrir = (producto: Producto) => {
     setProductoSeleccionado(producto);
@@ -294,22 +292,8 @@ export default function CatalogoCorteTaladroDesbaste() {
       );
     }
 
-    if (busqueda.trim()) {
-      const texto = busqueda.toLowerCase().trim();
-
-      resultado = resultado.filter(
-        (producto) =>
-          producto.nombre.toLowerCase().includes(texto) ||
-          producto.sub.toLowerCase().includes(texto) ||
-          producto.descripcion.toLowerCase().includes(texto) ||
-          producto.codigo.toLowerCase().includes(texto) ||
-          producto.material.toLowerCase().includes(texto) ||
-          producto.uso.toLowerCase().includes(texto)
-      );
-    }
-
     return resultado;
-  }, [categoriaActiva, subcategoriaActiva, busqueda]);
+  }, [categoriaActiva, subcategoriaActiva]);
 
   const renderCategoriaPrincipal = (
     key: CategoriaPrincipal,
@@ -345,8 +329,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       >
         <View style={styles.content}>
           <View style={styles.headerInfo}>
-            <Text style={styles.titulo}>Catálogo Würth</Text>
-            <Text style={styles.subtitulo}>Corte, Taladro y Desbaste</Text>
           </View>
 
           <View style={styles.categoriasSection}>
@@ -448,7 +430,7 @@ export default function CatalogoCorteTaladroDesbaste() {
             {productoSeleccionado && (
               <>
                 <Image
-                  source={productoSeleccionado.img}
+                  source={{ uri: productoSeleccionado.img }}
                   style={styles.modalImg}
                 />
 
