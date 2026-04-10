@@ -10,7 +10,7 @@ import ProductCard from '../../components/ProductCard';
 interface Category {
   title: string;
   image: any; 
-  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas';
+  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-alvaro/seguridad';
 }
 
 export default function Home() {
@@ -25,7 +25,7 @@ export default function Home() {
     { title: 'Electricidad', image: require('../../assets/electrecidad.png'), href: '/grupo-iby/electricidad' },
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), href: '/grupo-iby/herramientas' },
     { title: 'Maquinas', image: require('../../assets/maquinas.jpeg') },
-    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg') },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), href: '/grupo-alvaro/seguridad' },
     { title: 'Orsy', image: require('../../assets/orsy.jpeg') },
     { title: 'Agro', image: require('../../assets/agronomia.png') },
   ];
