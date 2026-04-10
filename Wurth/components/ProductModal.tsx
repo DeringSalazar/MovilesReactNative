@@ -171,14 +171,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalTitle: {
-    fontFamily: 'Open Sans',
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: 'bold',
     color: '#111111',
     lineHeight: 24,
   },
   modalSubtitle: {
-    fontFamily: 'Open Sans',
     fontSize: 12,
     fontWeight: '600',
     color: '#666666',
@@ -193,10 +191,9 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   refText: {
-    fontFamily: 'Open Sans',
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: 'bold',
     letterSpacing: 0.8,
   },
   closeIconButton: {
@@ -274,9 +271,8 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   modalSectionTitle: {
-    fontFamily: 'Open Sans',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: 'bold',
     color: '#111111',
     letterSpacing: 0.8,
     textTransform: 'uppercase',
@@ -304,7 +300,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   modalItem: {
-    fontFamily: 'Open Sans',
     fontSize: 13,
     color: '#333333',
     lineHeight: 19,
@@ -324,9 +319,8 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
   },
   closeButtonText: {
-    fontFamily: 'Open Sans',
     color: '#FFFFFF',
-    fontWeight: '700',
+    fontWeight: 'bold',
     fontSize: 13,
     letterSpacing: 0.5,
   },
