@@ -1,30 +1,35 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
+import {
+  Animated,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useNavigation } from 'expo-router';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
-import { categories } from '../../constants/seguridad';
+import { categories } from '../../constants/maquinas';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
-import { seguridadStyles } from '../../styles/seguridad.styles';
-
+import { maquinasStyles } from '../../styles/maquinas.styles';
+ 
 const FILTER_CATEGORIES = [
-  { id: '09.01', label: '09.01 Gafas de protección' },
-  { id: '09.02', label: '09.02 Guantes de seguridad' },
-  { id: '09.05', label: '09.05 Cintas de seguridad' },
+  { id: '08.01', label: '08.01 Herramientas neumáticas' },
 ];
-
+ 
 const DRAWER_WIDTH = 220;
-
-export default function Seguridad() {
+ 
+export default function Maquinas() {
   const navigation = useNavigation();
-
+ 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
-
+ 
   const allProducts = useMemo(
     () =>
       categories.map((category) => ({
@@ -40,17 +45,18 @@ export default function Seguridad() {
       })),
     []
   );
-
+ 
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
   const [searchText, setSearchText] = useState<string>('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
+ 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
+ 
   const drawerAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
-
+ 
   const openDrawer = () => {
     setDrawerOpen(true);
     Animated.timing(drawerAnim, {
@@ -59,7 +65,7 @@ export default function Seguridad() {
       useNativeDriver: true,
     }).start();
   };
-
+ 
   const closeDrawer = () => {
     Animated.timing(drawerAnim, {
       toValue: DRAWER_WIDTH,
@@ -67,15 +73,15 @@ export default function Seguridad() {
       useNativeDriver: true,
     }).start(() => setDrawerOpen(false));
   };
-
+ 
   const toggleFilter = (id: string) => {
     setSelectedFilters((prev) =>
       prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
     );
   };
-
+ 
   const clearFilters = () => setSelectedFilters([]);
-
+ 
   const selectedProduct = useMemo(() => {
     for (const category of allProducts) {
       const found = category.products.find((p) => p.id === selectedProductId);
@@ -83,9 +89,10 @@ export default function Seguridad() {
     }
     return null;
   }, [allProducts, selectedProductId]);
-
+ 
   const filteredProducts = useMemo(() => {
     const lowerSearch = searchText.toLowerCase().trim();
+ 
     return allProducts
       .map((category) => ({
         ...category,
@@ -94,29 +101,29 @@ export default function Seguridad() {
             !lowerSearch ||
             product.name.toLowerCase().includes(lowerSearch) ||
             product.code?.toLowerCase().includes(lowerSearch);
-
+ 
           const matchesFilter =
             selectedFilters.length === 0 ||
             selectedFilters.some((f) => product.code?.startsWith(f));
-
+ 
           return matchesSearch && matchesFilter;
         }),
       }))
       .filter((category) => category.products.length > 0);
   }, [allProducts, searchText, selectedFilters]);
-
+ 
   const handleToggleMeasures = (productId: string) => {
     setExpandedId(expandedId === productId ? null : productId);
   };
-
+ 
   return (
-    <View style={seguridadStyles.container}>
-      <ScrollView contentContainerStyle={seguridadStyles.scrollContent}>
+    <View style={maquinasStyles.container}>
+      <ScrollView contentContainerStyle={maquinasStyles.scrollContent}>
         <Header onSearch={setSearchText} showBackButton={true} />
-
+ 
         {filteredProducts.map((category) => (
           <View key={category.name}>
-            <View style={seguridadStyles.productsContainer}>
+            <View style={maquinasStyles.productsContainer}>
               {category.products.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -133,18 +140,16 @@ export default function Seguridad() {
             </View>
           </View>
         ))}
-
+ 
         {filteredProducts.length === 0 && (
           <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>
-              No se encontraron productos.
-            </Text>
+            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
           </View>
         )}
-
+ 
         <Footer />
       </ScrollView>
-
+ 
       {drawerOpen && (
         <TouchableOpacity
           style={filterStyles.overlay}
@@ -152,7 +157,7 @@ export default function Seguridad() {
           onPress={closeDrawer}
         />
       )}
-
+ 
       <Animated.View
         style={[filterStyles.drawer, { transform: [{ translateX: drawerAnim }] }]}
       >
@@ -162,7 +167,7 @@ export default function Seguridad() {
             <Text style={filterStyles.closeBtn}>✕</Text>
           </TouchableOpacity>
         </View>
-
+ 
         {FILTER_CATEGORIES.map((item) => {
           const active = selectedFilters.includes(item.id);
           return (
@@ -175,32 +180,26 @@ export default function Seguridad() {
               <View style={[filterStyles.checkbox, active && filterStyles.checkboxActive]}>
                 {active && <Text style={filterStyles.checkmark}>✓</Text>}
               </View>
-              <Text
-                style={[
-                  filterStyles.filterLabel,
-                  active && filterStyles.filterLabelActive,
-                ]}
-              >
+              <Text style={[filterStyles.filterLabel, active && filterStyles.filterLabelActive]}>
                 {item.label}
               </Text>
             </TouchableOpacity>
           );
         })}
-
+ 
         {selectedFilters.length > 0 && (
           <TouchableOpacity style={filterStyles.clearBtn} onPress={clearFilters}>
             <Text style={filterStyles.clearBtnText}>Limpiar filtros</Text>
           </TouchableOpacity>
         )}
       </Animated.View>
-
+ 
       <ProductModal
         visible={Boolean(selectedProduct)}
         product={selectedProduct}
         carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
         onClose={() => setSelectedProductId(null)}
       />
-
       <ImageModal
         visible={Boolean(selectedMeasureImage)}
         imageSource={selectedMeasureImage}
@@ -209,8 +208,41 @@ export default function Seguridad() {
     </View>
   );
 }
-
+ 
 const filterStyles = StyleSheet.create({
+  filterButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    backgroundColor: '#D32F2F',
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    marginRight: 10,
+  },
+  filterButtonIcon: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: 'Open Sans',
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#222',
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.35)',
@@ -241,8 +273,16 @@ const filterStyles = StyleSheet.create({
     borderBottomColor: '#eee',
     paddingBottom: 12,
   },
-  drawerTitle: { fontSize: 16, fontWeight: '700', color: '#222' },
-  closeBtn: { fontSize: 18, color: '#888', paddingHorizontal: 4 },
+  drawerTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#222',
+  },
+  closeBtn: {
+    fontSize: 18,
+    color: '#888',
+    paddingHorizontal: 4,
+  },
   filterItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -252,7 +292,9 @@ const filterStyles = StyleSheet.create({
     marginBottom: 6,
     backgroundColor: '#f5f5f5',
   },
-  filterItemActive: { backgroundColor: '#fff0f0' },
+  filterItemActive: {
+    backgroundColor: '#fff0f0',
+  },
   checkbox: {
     width: 20,
     height: 20,
@@ -263,10 +305,25 @@ const filterStyles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 10,
   },
-  checkboxActive: { borderColor: '#CC0000', backgroundColor: '#CC0000' },
-  checkmark: { color: '#fff', fontSize: 13, fontWeight: 'bold', lineHeight: 15 },
-  filterLabel: { fontSize: 13, color: '#444', flexShrink: 1 },
-  filterLabelActive: { color: '#CC0000', fontWeight: '600' },
+  checkboxActive: {
+    borderColor: '#CC0000',
+    backgroundColor: '#CC0000',
+  },
+  checkmark: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 'bold',
+    lineHeight: 15,
+  },
+  filterLabel: {
+    fontSize: 13,
+    color: '#444',
+    flexShrink: 1,
+  },
+  filterLabelActive: {
+    color: '#CC0000',
+    fontWeight: '600',
+  },
   clearBtn: {
     marginTop: 20,
     paddingVertical: 10,
@@ -274,5 +331,9 @@ const filterStyles = StyleSheet.create({
     backgroundColor: '#CC0000',
     alignItems: 'center',
   },
-  clearBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+  clearBtnText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13,
+  },
 });
