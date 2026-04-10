@@ -97,7 +97,7 @@ export const tornilleria = [
       subtitle: 'DIN 71412C / DIN 71412B',
 
       images: [
-        require('../assets/images/03.00/03.02p1.png'),
+        require('../assets/images/03.00/03.02p1.jpg'),
         require('../assets/images/03.00/03.02p1.1.jpg')
       ],
 
@@ -149,7 +149,7 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.02p2m1.jpg'),
+        require('../assets/images/03.00/03.02p2m1.jpg'),//meter el segundo mensaje
       ]
     }
 

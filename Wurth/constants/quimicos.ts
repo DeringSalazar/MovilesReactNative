@@ -1,4 +1,4 @@
-interface Product {
+/*interface Product {
   id: string;
   name: string;
   subtitle?: string;
@@ -381,4 +381,4 @@ export const categories = [
 }
 ],
 }
-];
+];*/
