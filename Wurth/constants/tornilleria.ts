@@ -27,7 +27,7 @@ export const tornilleria = [
           subtitle: 'Según DIN 522',
 
           images: [
-            require('../assets/images/03.00/03.01p1.png'),
+            require('../assets/images/03.00/03.01p1.jpg'),
           ],
 
           features: [
@@ -47,7 +47,8 @@ export const tornilleria = [
           ],
 
           measuresImages: [
-            require('../assets/images/03.00/03.01p1m1.png'),
+            require('../assets/images/03.00/03.01p1m1.jpg'),
+            require('../assets/images/03.00/03.01p1m2.jpg')
           ]
         },
 
@@ -58,7 +59,7 @@ export const tornilleria = [
           subtitle: 'DIN 6798 - Dentado exterior',
 
           images: [
-            require('../assets/images/03.00/03.01p2.png'),
+            require('../assets/images/03.00/03.01p2.jpg'),
           ],
 
           features: [
@@ -76,7 +77,7 @@ export const tornilleria = [
           ],
 
           measuresImages: [
-            require('../assets/images/03.00/03.01p2m1.png'),
+            require('../assets/images/03.00/03.01p2m1.jpg'),
           ]
         }
 
@@ -97,6 +98,7 @@ export const tornilleria = [
 
       images: [
         require('../assets/images/03.00/03.02p1.png'),
+        require('../assets/images/03.00/03.02p1.1.jpg')
       ],
 
       features: [
@@ -116,7 +118,7 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.02p1m1.png'),
+        require('../assets/images/03.00/03.02p1m1.jpg'),
       ]
     },
 
@@ -127,7 +129,7 @@ export const tornilleria = [
       subtitle: 'DIN 71412A',
 
       images: [
-        require('../assets/images/03.00/03.02p2.png'),
+        require('../assets/images/03.00/03.02p2.jpg'),
       ],
 
       features: [
@@ -147,7 +149,7 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.02p2m1.png'),
+        require('../assets/images/03.00/03.02p2m1.jpg'),
       ]
     }
 
@@ -166,7 +168,7 @@ export const tornilleria = [
       subtitle: 'DIN 913 con filo angular',
 
       images: [
-        require('../assets/images/03.00/03.03p1.png'),
+        require('../assets/images/03.00/03.03p1.jpg'),
       ],
 
       features: [
@@ -186,7 +188,8 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.03p1m1.png'),
+        require('../assets/images/03.00/03.03p1m1.jpg'),
+        require('../assets/images/03.00/03.03p1m2.jpg')
       ]
     },
 
@@ -197,7 +200,7 @@ export const tornilleria = [
       subtitle: 'DIN 582 galvanizado',
 
       images: [
-        require('../assets/images/03.00/03.03p2.png'),
+        require('../assets/images/03.00/03.03p2.jpg'),
       ],
 
       features: [
@@ -216,7 +219,8 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.03p2m1.png'),
+        require('../assets/images/03.00/03.03p2m1.jpg'),
+        require('../assets/images/03.00/03.03p2m2.jpg')
       ]
     }
 
@@ -234,7 +238,7 @@ export const tornilleria = [
       name: 'PIAS AW ZEBRA AVELLANADO',
 
       images: [
-        require('../assets/images/03.00/03.04p1.png'),
+        require('../assets/images/03.00/03.04p1.jpg'),
       ],
 
       features: [
@@ -256,7 +260,10 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.04p1m1.png'),
+        require('../assets/images/03.00/03.04p1m1.jpg'),
+        require('../assets/images/03.00/03.04p1m2.jpg'),
+        require('../assets/images/03.00/03.04p1m3.jpg')
+
       ]
     },
 
@@ -266,7 +273,7 @@ export const tornilleria = [
       name: 'PIAS AW ZEBRA',
 
       images: [
-        require('../assets/images/03.00/03.04p2.png'),
+        require('../assets/images/03.00/03.04p2.jpg'),
       ],
 
       features: [
@@ -287,7 +294,9 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.04p2m1.png'),
+        require('../assets/images/03.00/03.04p2m1.jpg'),
+        require('../assets/images/03.00/03.04p2m2.jpg'),
+        require('../assets/images/03.00/03.04p2m3.jpg')
       ]
     }
 
@@ -305,7 +314,7 @@ export const tornilleria = [
       subtitle: 'Reborde avellanado – acero cincado',
 
       images: [
-        require('../assets/images/03.00/03.05p1.png'),
+        require('../assets/images/03.00/03.05p1.jpg'),
       ],
 
       features: [
@@ -326,7 +335,8 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.05p1m1.png'),
+        require('../assets/images/03.00/03.05p1m1.jpg'),
+        require('../assets/images/03.00/03.05p1m2.jpg')
       ]
     },
 
@@ -337,7 +347,7 @@ export const tornilleria = [
       subtitle: 'Cabeza plana',
 
       images: [
-        require('../assets/images/03.00/03.05p2.png'),
+        require('../assets/images/03.00/03.05p2.jpg'),
       ],
 
       features: [
@@ -357,7 +367,8 @@ export const tornilleria = [
       ],
 
       measuresImages: [
-        require('../assets/images/03.00/03.05p2m1.png'),
+        require('../assets/images/03.00/03.05p2m1.jpg'),
+        require('../assets/images/03.00/03.05p2m2.jpg'),
       ]
     }
 
