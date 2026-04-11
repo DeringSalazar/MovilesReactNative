@@ -10,6 +10,8 @@ import {
   Dimensions,
   ScrollView,
   ImageSourcePropType,
+  Linking,
+  Alert,
 } from "react-native";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
@@ -28,6 +30,7 @@ type Producto = {
   stock: string;
   precio: string;
   img: string;
+  pdf: string;
 };
 
 type CategoriaPrincipal = "TODOS" | "CORTE" | "TALADRO" | "DESBASTE";
@@ -37,7 +40,7 @@ type ProductCardProps = {
   price: string;
   image: ImageSourcePropType | string;
   width?: number;
-  onViewMore?: () => void;
+  onOpenPdf?: () => void;
 };
 
 function ProductCard({
@@ -45,12 +48,11 @@ function ProductCard({
   price,
   image,
   width,
-  onViewMore,
+  onOpenPdf,
 }: ProductCardProps) {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const imageSource =
-    typeof image === "string" ? { uri: image } : image;
+  const imageSource = typeof image === "string" ? { uri: image } : image;
 
   return (
     <View style={[cardStyles.card, width ? { width } : null]}>
@@ -68,8 +70,8 @@ function ProductCard({
         <Text style={cardStyles.price}>{price}</Text>
       </View>
 
-      <TouchableOpacity style={cardStyles.button} onPress={onViewMore}>
-        <Text style={cardStyles.buttonText}>Ver más</Text>
+      <TouchableOpacity style={cardStyles.button} onPress={onOpenPdf}>
+        <Text style={cardStyles.buttonText}>Ver ficha PDF</Text>
       </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent animationType="fade">
@@ -134,6 +136,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "30",
       precio: "₡4500",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "2",
@@ -147,6 +150,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "50",
       precio: "₡3200",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "3",
@@ -160,6 +164,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "10",
       precio: "₡8500",
       img: "https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "4",
@@ -173,6 +178,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "18",
       precio: "₡6900",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "5",
@@ -186,6 +192,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "14",
       precio: "₡9800",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "6",
@@ -199,6 +206,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "22",
       precio: "₡7600",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "7",
@@ -212,6 +220,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "40",
       precio: "₡2700",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "8",
@@ -225,6 +234,7 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "60",
       precio: "₡1900",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "9",
@@ -238,25 +248,27 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "12",
       precio: "₡8300",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
+      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
   ];
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [productoSeleccionado, setProductoSeleccionado] =
-    useState<Producto | null>(null);
 
   const [categoriaActiva, setCategoriaActiva] =
     useState<CategoriaPrincipal>("TODOS");
   const [subcategoriaActiva, setSubcategoriaActiva] = useState<string | null>(null);
 
-  const abrir = (producto: Producto) => {
-    setProductoSeleccionado(producto);
-    setModalVisible(true);
-  };
+  const abrirPDF = async (url: string) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
 
-  const cerrarModal = () => {
-    setModalVisible(false);
-    setProductoSeleccionado(null);
+      if (!supported) {
+        Alert.alert("Error", "No se pudo abrir el PDF.");
+        return;
+      }
+
+      await Linking.openURL(url);
+    } catch (error) {
+      Alert.alert("Error", "Ocurrió un problema al abrir el PDF.");
+    }
   };
 
   const cambiarCategoria = (categoria: CategoriaPrincipal) => {
@@ -328,8 +340,7 @@ export default function CatalogoCorteTaladroDesbaste() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          <View style={styles.headerInfo}>
-          </View>
+          <View style={styles.headerInfo}></View>
 
           <View style={styles.categoriasSection}>
             <ScrollView
@@ -404,7 +415,7 @@ export default function CatalogoCorteTaladroDesbaste() {
                   price={item.precio}
                   image={item.img}
                   width={(width - 44) / 2}
-                  onViewMore={() => abrir(item)}
+                  onOpenPdf={() => abrirPDF(item.pdf)}
                 />
               ))
             ) : (
@@ -419,60 +430,6 @@ export default function CatalogoCorteTaladroDesbaste() {
 
         <Footer />
       </ScrollView>
-
-      <Modal visible={modalVisible} transparent animationType="fade">
-        <View style={styles.modal}>
-          <View style={styles.modalContent}>
-            <Pressable style={styles.closeBtn} onPress={cerrarModal}>
-              <Text style={styles.closeText}>✖</Text>
-            </Pressable>
-
-            {productoSeleccionado && (
-              <>
-                <Image
-                  source={{ uri: productoSeleccionado.img }}
-                  style={styles.modalImg}
-                />
-
-                <Text style={styles.modalNombre}>
-                  {productoSeleccionado.nombre}
-                </Text>
-
-                <Text style={styles.modalText}>
-                  <Text style={styles.modalLabel}>Subcategoría: </Text>
-                  {productoSeleccionado.sub}
-                </Text>
-
-                <Text style={styles.modalText}>
-                  <Text style={styles.modalLabel}>Código: </Text>
-                  {productoSeleccionado.codigo}
-                </Text>
-
-                <Text style={styles.modalText}>
-                  <Text style={styles.modalLabel}>Material: </Text>
-                  {productoSeleccionado.material}
-                </Text>
-
-                <Text style={styles.modalText}>
-                  <Text style={styles.modalLabel}>Uso: </Text>
-                  {productoSeleccionado.uso}
-                </Text>
-
-                <Text style={styles.modalText}>
-                  <Text style={styles.modalLabel}>Stock: </Text>
-                  {productoSeleccionado.stock}
-                </Text>
-
-                <Text style={styles.precio}>{productoSeleccionado.precio}</Text>
-
-                <TouchableOpacity style={styles.btnSolicitar}>
-                  <Text style={styles.btnSolicitarText}>Solicitar</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -615,18 +572,6 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
 
-  titulo: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1A1A1A",
-  },
-
-  subtitulo: {
-    marginTop: 4,
-    color: "#666",
-    fontSize: 14,
-  },
-
   categoriasSection: {
     paddingLeft: 16,
     marginBottom: 14,
@@ -747,86 +692,5 @@ const styles = StyleSheet.create({
     color: "#555",
     fontSize: 15,
     marginBottom: 14,
-  },
-
-  modal: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.60)",
-  },
-
-  modalContent: {
-    backgroundColor: "#FFF",
-    padding: 22,
-    borderRadius: 14,
-    width: 320,
-    alignItems: "center",
-    position: "relative",
-  },
-
-  modalImg: {
-    width: 150,
-    height: 150,
-    resizeMode: "contain",
-    marginBottom: 8,
-  },
-
-  modalNombre: {
-    fontSize: 19,
-    fontWeight: "700",
-    color: "#111",
-    textAlign: "center",
-    marginBottom: 10,
-  },
-
-  modalText: {
-    fontSize: 14,
-    color: "#333",
-    marginTop: 4,
-    textAlign: "center",
-  },
-
-  modalLabel: {
-    fontWeight: "700",
-    color: "#111",
-  },
-
-  closeBtn: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    backgroundColor: "#D32F2F",
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    zIndex: 5,
-  },
-
-  closeText: {
-    color: "#FFF",
-    fontWeight: "700",
-    fontSize: 14,
-  },
-
-  precio: {
-    color: "#D32F2F",
-    fontWeight: "700",
-    fontSize: 18,
-    marginTop: 10,
-  },
-
-  btnSolicitar: {
-    backgroundColor: "#D32F2F",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    marginTop: 10,
-  },
-
-  btnSolicitarText: {
-    color: "#FFF",
-    fontSize: 12,
-    fontWeight: "700",
   },
 });
