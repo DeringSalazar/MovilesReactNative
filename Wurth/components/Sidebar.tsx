@@ -51,12 +51,12 @@ export default function Sidebar({ visible, onClose, categories }: SidebarProps) 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 80, // Ajusta según la altura de tu Header
+    top: 80,
     left: 0,
     width: 280,
-    backgroundColor: '#121212',
+    backgroundColor: '#000000',
     zIndex: 999,
-    borderRadius: 15,
+    borderRadius: 0,
     overflow: 'hidden',
     elevation: 10,
     shadowColor: '#000',
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   header: {
-    backgroundColor: '#e30613',
+    backgroundColor: '#d32f2f',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     marginLeft: 10,
-    fontSize: 14,
+    fontSize: 16,
   },
   item: {
     flexDirection: 'row',
@@ -91,6 +91,6 @@ const styles = StyleSheet.create({
   itemText: {
     color: '#fff',
     marginLeft: 15,
-    fontSize: 13,
+    fontSize: 15,
   },
 });
