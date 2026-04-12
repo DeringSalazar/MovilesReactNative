@@ -2,13 +2,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SearchBar } from './SearchBar';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface HeaderProps {
   onSearch?: (text: string) => void;
   showBackButton?: boolean;
+  onMenuHover?: () => void;
 }
 
-export default function Header({ onSearch, showBackButton = false }: HeaderProps) {
+export default function Header({ onSearch, showBackButton = false, onMenuHover }: HeaderProps){
   return (
     <LinearGradient
           colors={['#000000', '#242424', '#000000']}
@@ -18,11 +20,13 @@ export default function Header({ onSearch, showBackButton = false }: HeaderProps
     >
       <View style={styles.container}>
         <View style={styles.row}>
-          {showBackButton && (
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <Text style={styles.backText}>←</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity 
+            // @ts-ignore - Soporte Web
+            onMouseEnter={onMenuHover} 
+            style={{ padding: 5 }}
+          >
+            <MaterialCommunityIcons name="menu" size={30} color="#fff" />
+          </TouchableOpacity>
           
           {/* Logo */}
           <View style={styles.logoGroup}>
@@ -39,9 +43,6 @@ export default function Header({ onSearch, showBackButton = false }: HeaderProps
               <Text style={styles.link}>Productos</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/explore')}>
-              <Text style={styles.link}>Categorías</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push('/modal')}>
               <Text style={styles.link}>Contacto</Text>
