@@ -18,11 +18,11 @@ interface Category {
 export default function Home() {
   const [showAll, setShowAll] = useState(false);
   const categories: Category[] = [
-    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'power-drill'},
+    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc'},
     { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
     { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
     { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
-    { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'anchor', href: '/grupo-fer/anclajes' },
+    { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
     { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
     { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog' },
