@@ -12,7 +12,7 @@ interface Category {
   title: string;
   image: any; 
   icon: string;
-  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria'| '/orsy-Agro/agro';
+  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria'| '/orsy-Agro/orsy' | '/orsy-Agro/agro';
 }
 
 export default function Home() {

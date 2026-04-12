@@ -51,7 +51,7 @@ export default function Sidebar({ visible, onClose, categories }: SidebarProps) 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 80,
+    top: 84,
     left: 0,
     width: 280,
     backgroundColor: '#000000',
@@ -63,6 +63,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
+    //borderTopRightRadius: 15, // arriba derecha
+    borderBottomRightRadius: 15, // abajo derecha
   },
   header: {
     backgroundColor: '#d32f2f',
