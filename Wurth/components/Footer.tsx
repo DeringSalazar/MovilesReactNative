@@ -16,9 +16,8 @@ type Props = {
   columns?: FooterColumn[];
 };
 
-// Solo dejamos "Sobre Würth" según tu cambio de planes
 const defaultColumns: FooterColumn[] = [
-  {
+{
     title: 'SOBRE WÜRTH',
     links: [
       { label: 'Empresa', url: 'https://www.wurth.es/empresa' },
@@ -29,8 +28,13 @@ const defaultColumns: FooterColumn[] = [
       { label: 'Sostenibilidad', url: 'https://www.wurth.es/sostenibilidad' },
     ],
   },
+  {
+    title: 'Contáctanos',
+    links: [
+      { label: '+506 4404 5000', url: 'tel:+50644045000' }, 
+    ],
+  },
 ];
-
 export default function Footer({ columns = defaultColumns }: Props) {
   
   const handlePress = (url: string) => {
@@ -139,13 +143,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     letterSpacing: 1,
   },
+
   columnsGrid: {
-    flexDirection: 'row',
-    marginBottom: 10,
+    flexDirection: 'row', 
+    flexWrap: 'wrap',    
+    justifyContent: 'space-between', 
+    marginBottom: 20,
   },
   column: {
-    width: '100%', // Al ser una sola ahora, ocupa el ancho completo para centrar mejor
-    marginBottom: 25,
+    minWidth: '45%', 
+    marginBottom: 20,
   },
   colTitle: {
     color: '#fff',
