@@ -29,13 +29,17 @@ export default function Header({ onSearch, showBackButton = false, onMenuHover }
           </TouchableOpacity>
           
           {/* Logo */}
-          <View style={styles.logoGroup}>
+          <TouchableOpacity 
+            activeOpacity={0.7} 
+            onPress={() => router.push('/(tabs)')} 
+            style={styles.logoGroup}
+          >
             <Image 
                 source={require('../assets/Logo.png')}
                 style={styles.logoImage}
             />
             <Text style={styles.logo}>WÜRTH</Text>
-          </View>
+          </TouchableOpacity>
 
           {/* NAV */}
           <View style={styles.nav}>
@@ -96,6 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexShrink: 0,
+    paddingRight: 10, 
   },
 
   logo: {
