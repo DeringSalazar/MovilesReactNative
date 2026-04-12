@@ -1,7 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'react-native';
+import { router } from 'expo-router';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SearchBar } from './SearchBar';
 
 interface HeaderProps {
@@ -12,7 +11,7 @@ interface HeaderProps {
 export default function Header({ onSearch, showBackButton = false }: HeaderProps) {
   return (
     <LinearGradient
-      colors={['#000000', '#eaeaea']}
+          colors={['#000000', '#242424', '#000000']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={styles.wrapper}
