@@ -10,11 +10,10 @@ import {
   Dimensions,
   ScrollView,
   ImageSourcePropType,
-  Linking,
-  Alert,
 } from "react-native";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
+import FilterSidebar from "../../../components/Filter";
 
 const { width } = Dimensions.get("window");
 
@@ -30,26 +29,16 @@ type Producto = {
   stock: string;
   precio: string;
   img: string;
-  pdf: string;
 };
-
-type CategoriaPrincipal = "TODOS" | "CORTE" | "TALADRO" | "DESBASTE";
 
 type ProductCardProps = {
   name: string;
   price: string;
   image: ImageSourcePropType | string;
   width?: number;
-  onOpenPdf?: () => void;
 };
 
-function ProductCard({
-  name,
-  price,
-  image,
-  width,
-  onOpenPdf,
-}: ProductCardProps) {
+function ProductCard({ name, price, image, width }: ProductCardProps) {
   const [modalVisible, setModalVisible] = useState(false);
 
   const imageSource = typeof image === "string" ? { uri: image } : image;
@@ -69,10 +58,6 @@ function ProductCard({
         </Text>
         <Text style={cardStyles.price}>{price}</Text>
       </View>
-
-      <TouchableOpacity style={cardStyles.button} onPress={onOpenPdf}>
-        <Text style={cardStyles.buttonText}>Ver ficha PDF</Text>
-      </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent animationType="fade">
         <Pressable
@@ -95,32 +80,17 @@ function ProductCard({
   );
 }
 
-const SUBCATEGORIAS: Record<
-  Exclude<CategoriaPrincipal, "TODOS">,
-  { codigo: string; nombre: string }[]
-> = {
-  CORTE: [
-    { codigo: "01.05", nombre: "01.05 Discos de corte y desbaste" },
-    { codigo: "01.06", nombre: "01.06 Sierras" },
-  ],
-  TALADRO: [
-    { codigo: "01.01", nombre: "01.01 Brocas" },
-    { codigo: "01.02", nombre: "01.02 Avellanadoras y fresas" },
-    { codigo: "01.03", nombre: "01.03 Machos y terrajas" },
-    { codigo: "01.04", nombre: "01.04 Coronas" },
-  ],
-  DESBASTE: [
-    { codigo: "01.07", nombre: "01.07 Discos de lija" },
-    { codigo: "01.08", nombre: "01.08 Lijas" },
-    { codigo: "01.09", nombre: "01.09 Muelas abrasivas" },
-  ],
-};
-
-const MAPA_CATEGORIAS: Record<Exclude<CategoriaPrincipal, "TODOS">, string[]> = {
-  CORTE: ["01.05", "01.06"],
-  TALADRO: ["01.01", "01.02", "01.03", "01.04"],
-  DESBASTE: ["01.07", "01.08", "01.09"],
-};
+const SUBCATEGORIAS = [
+  { id: "01.01", label: "01.01 Brocas" },
+  { id: "01.02", label: "01.02 Avellanadoras y fresas" },
+  { id: "01.03", label: "01.03 Machos y terrajas" },
+  { id: "01.04", label: "01.04 Coronas" },
+  { id: "01.05", label: "01.05 Discos de corte y desbaste" },
+  { id: "01.06", label: "01.06 Sierras" },
+  { id: "01.07", label: "01.07 Discos de lija" },
+  { id: "01.08", label: "01.08 Lijas" },
+  { id: "01.09", label: "01.09 Muelas abrasivas" },
+];
 
 export default function CatalogoCorteTaladroDesbaste() {
   const productosData: Producto[] = [
@@ -136,7 +106,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "30",
       precio: "₡4500",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "2",
@@ -150,7 +119,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "50",
       precio: "₡3200",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "3",
@@ -164,7 +132,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "10",
       precio: "₡8500",
       img: "https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "4",
@@ -178,7 +145,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "18",
       precio: "₡6900",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "5",
@@ -192,7 +158,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "14",
       precio: "₡9800",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "6",
@@ -206,7 +171,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "22",
       precio: "₡7600",
       img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "7",
@@ -220,7 +184,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "40",
       precio: "₡2700",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "8",
@@ -234,7 +197,6 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "60",
       precio: "₡1900",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
     {
       id: "9",
@@ -248,87 +210,20 @@ export default function CatalogoCorteTaladroDesbaste() {
       stock: "12",
       precio: "₡8300",
       img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-      pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     },
   ];
 
-  const [categoriaActiva, setCategoriaActiva] =
-    useState<CategoriaPrincipal>("TODOS");
-  const [subcategoriaActiva, setSubcategoriaActiva] = useState<string | null>(null);
-
-  const abrirPDF = async (url: string) => {
-    try {
-      const supported = await Linking.canOpenURL(url);
-
-      if (!supported) {
-        Alert.alert("Error", "No se pudo abrir el PDF.");
-        return;
-      }
-
-      await Linking.openURL(url);
-    } catch (error) {
-      Alert.alert("Error", "Ocurrió un problema al abrir el PDF.");
-    }
-  };
-
-  const cambiarCategoria = (categoria: CategoriaPrincipal) => {
-    if (categoria === "TODOS") {
-      setCategoriaActiva("TODOS");
-      setSubcategoriaActiva(null);
-      return;
-    }
-
-    if (categoriaActiva === categoria) {
-      setCategoriaActiva("TODOS");
-      setSubcategoriaActiva(null);
-      return;
-    }
-
-    setCategoriaActiva(categoria);
-    setSubcategoriaActiva(null);
-  };
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const productosFiltrados = useMemo(() => {
-    let resultado = [...productosData];
+    if (selectedFilters.length === 0) return productosData;
 
-    if (categoriaActiva !== "TODOS") {
-      const categoriasPermitidas = MAPA_CATEGORIAS[categoriaActiva];
-      resultado = resultado.filter((producto) =>
-        categoriasPermitidas.includes(producto.cat)
-      );
-    }
+    return productosData.filter((producto) =>
+      selectedFilters.some((filterId) => producto.cat.startsWith(filterId))
+    );
+  }, [productosData, selectedFilters]);
 
-    if (subcategoriaActiva) {
-      resultado = resultado.filter(
-        (producto) => producto.cat === subcategoriaActiva
-      );
-    }
-
-    return resultado;
-  }, [categoriaActiva, subcategoriaActiva]);
-
-  const renderCategoriaPrincipal = (
-    key: CategoriaPrincipal,
-    label: string
-  ) => (
-    <TouchableOpacity
-      key={key}
-      style={[
-        styles.categoriaBtn,
-        categoriaActiva === key && styles.categoriaBtnActiva,
-      ]}
-      onPress={() => cambiarCategoria(key)}
-    >
-      <Text
-        style={[
-          styles.categoriaBtnText,
-          categoriaActiva === key && styles.categoriaBtnTextActiva,
-        ]}
-      >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
+  const cardWidth = width > 900 ? (width - 340) / 3 : (width - 310) / 2;
 
   return (
     <View style={styles.screen}>
@@ -339,92 +234,45 @@ export default function CatalogoCorteTaladroDesbaste() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
-          <View style={styles.headerInfo}></View>
-
-          <View style={styles.categoriasSection}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.categoriasRow}
-            >
-              {renderCategoriaPrincipal("TODOS", "Todos")}
-              {renderCategoriaPrincipal("CORTE", "Corte")}
-              {renderCategoriaPrincipal("TALADRO", "Taladro")}
-              {renderCategoriaPrincipal("DESBASTE", "Desbaste")}
-            </ScrollView>
+        <View style={styles.contentRow}>
+          <View style={styles.sidebar}>
+            <FilterSidebar
+              title="Corte, Taladro y Desbaste"
+              subcategories={SUBCATEGORIAS}
+              onFilterChange={(filters: { subcategories: string[] }) =>
+                setSelectedFilters(filters.subcategories)
+              }
+            />
           </View>
 
-          {categoriaActiva !== "TODOS" && (
-            <View style={styles.subcategoriasContainer}>
-              <Text style={styles.subcategoriaTitulo}>{categoriaActiva}</Text>
-
-              {SUBCATEGORIAS[categoriaActiva].map((item) => (
-                <TouchableOpacity
-                  key={item.codigo}
-                  style={[
-                    styles.subcategoriaItem,
-                    subcategoriaActiva === item.codigo &&
-                      styles.subcategoriaItemActiva,
-                  ]}
-                  onPress={() =>
-                    setSubcategoriaActiva(
-                      subcategoriaActiva === item.codigo ? null : item.codigo
-                    )
-                  }
-                >
-                  <Text
-                    style={[
-                      styles.subcategoriaTexto,
-                      subcategoriaActiva === item.codigo &&
-                        styles.subcategoriaTextoActivo,
-                    ]}
-                  >
-                    {item.nombre}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-
-              <TouchableOpacity
-                style={styles.mostrarTodosBtn}
-                onPress={() => setSubcategoriaActiva(null)}
-              >
-                <Text style={styles.mostrarTodosText}>
-                  Ver todos los de {categoriaActiva.toLowerCase()}
-                </Text>
-              </TouchableOpacity>
+          <View style={styles.mainContent}>
+            <View style={styles.estadoBox}>
+              <Text style={styles.estadoFiltro}>
+                {selectedFilters.length === 0
+                  ? "Mostrando todos los productos"
+                  : `Filtrando por: ${selectedFilters.join(", ")}`}
+              </Text>
             </View>
-          )}
 
-          <View style={styles.estadoBox}>
-            <Text style={styles.estadoFiltro}>
-              {categoriaActiva === "TODOS"
-                ? "Mostrando todos los productos"
-                : subcategoriaActiva
-                ? `Filtrando por subcategoría ${subcategoriaActiva}`
-                : `Mostrando productos de ${categoriaActiva.toLowerCase()}`}
-            </Text>
-          </View>
-
-          <View style={styles.productosGrid}>
-            {productosFiltrados.length > 0 ? (
-              productosFiltrados.map((item) => (
-                <ProductCard
-                  key={item.id}
-                  name={item.nombre}
-                  price={item.precio}
-                  image={item.img}
-                  width={(width - 44) / 2}
-                  onOpenPdf={() => abrirPDF(item.pdf)}
-                />
-              ))
-            ) : (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>
-                  No se encontraron productos con ese filtro o búsqueda.
-                </Text>
-              </View>
-            )}
+            <View style={styles.productosGrid}>
+              {productosFiltrados.length > 0 ? (
+                productosFiltrados.map((item) => (
+                  <ProductCard
+                    key={item.id}
+                    name={item.nombre}
+                    price={item.precio}
+                    image={item.img}
+                    width={cardWidth}
+                  />
+                ))
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>
+                    No se encontraron productos con ese filtro.
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
         </View>
 
@@ -441,13 +289,13 @@ const cardStyles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
     justifyContent: "space-between",
-    height: 280,
+    height: 240,
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    marginBottom: 12,
+    marginBottom: 16,
   },
 
   imageContainer: {
@@ -466,7 +314,7 @@ const cardStyles = StyleSheet.create({
   infoContainer: {
     width: "100%",
     alignItems: "center",
-    marginVertical: 10,
+    marginTop: 10,
   },
 
   name: {
@@ -482,25 +330,6 @@ const cardStyles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     marginTop: 4,
-  },
-
-  button: {
-    backgroundColor: "#d32f2f",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    alignSelf: "center",
-    minWidth: 100,
-    borderRadius: 8,
-    marginTop: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  buttonText: {
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: "700",
-    textAlign: "center",
   },
 
   modalOverlay: {
@@ -562,107 +391,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  content: {
-    paddingBottom: 20,
-  },
-
-  headerInfo: {
-    paddingHorizontal: 16,
+  contentRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     paddingTop: 16,
-    paddingBottom: 12,
+    paddingHorizontal: 12,
   },
 
-  categoriasSection: {
-    paddingLeft: 16,
-    marginBottom: 14,
+  sidebar: {
+    width: 260,
+    marginRight: 16,
   },
 
-  categoriasRow: {
-    paddingRight: 16,
-    gap: 10,
-  },
-
-  categoriaBtn: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#DADADA",
-    borderRadius: 22,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-
-  categoriaBtnActiva: {
-    backgroundColor: "#D32F2F",
-    borderColor: "#D32F2F",
-  },
-
-  categoriaBtnText: {
-    color: "#333",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-
-  categoriaBtnTextActiva: {
-    color: "#FFF",
-  },
-
-  subcategoriasContainer: {
-    marginHorizontal: 16,
-    backgroundColor: "#F7F7F7",
-    borderRadius: 10,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#E3E3E3",
-  },
-
-  subcategoriaTitulo: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: "#C62828",
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 8,
-  },
-
-  subcategoriaItem: {
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
-    backgroundColor: "#F7F7F7",
-  },
-
-  subcategoriaItemActiva: {
-    backgroundColor: "#FFECEC",
-  },
-
-  subcategoriaTexto: {
-    fontSize: 14,
-    color: "#333",
-  },
-
-  subcategoriaTextoActivo: {
-    color: "#C62828",
-    fontWeight: "700",
-  },
-
-  mostrarTodosBtn: {
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
-    backgroundColor: "#FFF5F5",
-  },
-
-  mostrarTodosText: {
-    color: "#C62828",
-    fontSize: 14,
-    fontWeight: "700",
+  mainContent: {
+    flex: 1,
   },
 
   estadoBox: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingBottom: 12,
+    paddingHorizontal: 4,
   },
 
   estadoFiltro: {
@@ -671,12 +418,10 @@ const styles = StyleSheet.create({
   },
 
   productosGrid: {
-    paddingHorizontal: 10,
-    paddingTop: 14,
-    paddingBottom: 20,
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    gap: 16,
   },
 
   emptyContainer: {
