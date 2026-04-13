@@ -21,7 +21,7 @@ interface Category {
     | '/grupo-erik/tornilleria'
     | '/orsy-Agro/orsy'
     | '/orsy-Agro/agro'
-    | '/grupo-fabi/catalogo-corte-taladro-desbaste';
+    | '/grupo-fabi/corteTaladroDesbaste';
 }
 
 export default function Home() {
@@ -33,7 +33,7 @@ export default function Home() {
     title: 'Corte, Taladro y Desbaste',
     image: require('../../assets/corte.jpeg'),
     icon: 'disc',
-    href: '/grupo-fabi/catalogo-corte-taladro-desbaste',
+    href: '/grupo-fabi/corteTaladroDesbaste',
   },
   {
     title: 'Químicos',

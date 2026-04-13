@@ -14,26 +14,13 @@ import {
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import FilterSidebar from "../../../components/Filter";
+import { corteTaladroDesbaste } from "../../../constants/corteTaladroDesbaste";
 
 const { width } = Dimensions.get("window");
 
-type Producto = {
-  id: string;
-  nombre: string;
-  cat: string;
-  sub: string;
-  descripcion: string;
-  codigo: string;
-  material: string;
-  uso: string;
-  stock: string;
-  precio: string;
-  img: string;
-};
-
 type ProductCardProps = {
   name: string;
-  price: string;
+  price?: string;
   image: ImageSourcePropType | string;
   width?: number;
 };
@@ -56,8 +43,15 @@ function ProductCard({ name, price, image, width }: ProductCardProps) {
         <Text style={cardStyles.name} numberOfLines={2}>
           {name}
         </Text>
-        <Text style={cardStyles.price}>{price}</Text>
+        <Text style={cardStyles.price}>{price ?? "Sin precio"}</Text>
       </View>
+
+      <TouchableOpacity
+        style={cardStyles.button}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={cardStyles.buttonText}>Ver medidas</Text>
+      </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent animationType="fade">
         <Pressable
@@ -93,127 +87,29 @@ const SUBCATEGORIAS = [
 ];
 
 export default function CatalogoCorteTaladroDesbaste() {
-  const productosData: Producto[] = [
-    {
-      id: "1",
-      nombre: "Broca Helicoidal",
-      cat: "01.01",
-      sub: "01.01 Brocas",
-      descripcion: "Perforación de acero",
-      codigo: "00618 000 116",
-      material: "Acero M35",
-      uso: "Para perforar acero inoxidable",
-      stock: "30",
-      precio: "₡4500",
-      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-    },
-    {
-      id: "2",
-      nombre: "Disco de Corte",
-      cat: "01.05",
-      sub: "01.05 Discos de corte y desbaste",
-      descripcion: "Corte profesional de metal",
-      codigo: "55412",
-      material: "Abrasivo",
-      uso: "Corte de acero y metal",
-      stock: "50",
-      precio: "₡3200",
-      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-    },
-    {
-      id: "3",
-      nombre: "Sierra Circular",
-      cat: "01.06",
-      sub: "01.06 Sierras",
-      descripcion: "Corte de precisión",
-      codigo: "66221",
-      material: "Acero",
-      uso: "Corte de madera y metal",
-      stock: "10",
-      precio: "₡8500",
-      img: "https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp",
-    },
-    {
-      id: "4",
-      nombre: "Avellanadora Industrial",
-      cat: "01.02",
-      sub: "01.02 Avellanadoras y fresas",
-      descripcion: "Acabado preciso en perforaciones",
-      codigo: "77410",
-      material: "Acero endurecido",
-      uso: "Avellanado y fresado en metal",
-      stock: "18",
-      precio: "₡6900",
-      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-    },
-    {
-      id: "5",
-      nombre: "Juego de Machos",
-      cat: "01.03",
-      sub: "01.03 Machos y terrajas",
-      descripcion: "Roscas internas profesionales",
-      codigo: "88921",
-      material: "Acero rápido",
-      uso: "Roscado de precisión",
-      stock: "14",
-      precio: "₡9800",
-      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-    },
-    {
-      id: "6",
-      nombre: "Corona Bimetálica",
-      cat: "01.04",
-      sub: "01.04 Coronas",
-      descripcion: "Cortes circulares limpios",
-      codigo: "55489",
-      material: "Bimetal",
-      uso: "Perforación en metal y madera",
-      stock: "22",
-      precio: "₡7600",
-      img: "https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777",
-    },
-    {
-      id: "7",
-      nombre: "Disco de Lija Premium",
-      cat: "01.07",
-      sub: "01.07 Discos de lija",
-      descripcion: "Desbaste fino y uniforme",
-      codigo: "33120",
-      material: "Óxido de aluminio",
-      uso: "Lijado de superficies metálicas",
-      stock: "40",
-      precio: "₡2700",
-      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-    },
-    {
-      id: "8",
-      nombre: "Lija de Banda",
-      cat: "01.08",
-      sub: "01.08 Lijas",
-      descripcion: "Acabado y pulido de superficies",
-      codigo: "44117",
-      material: "Abrasivo flexible",
-      uso: "Lijado manual e industrial",
-      stock: "60",
-      precio: "₡1900",
-      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-    },
-    {
-      id: "9",
-      nombre: "Muela Abrasiva",
-      cat: "01.09",
-      sub: "01.09 Muelas abrasivas",
-      descripcion: "Rectificado y acabado de precisión",
-      codigo: "99802",
-      material: "Abrasivo vitrificado",
-      uso: "Desbaste y rectificado",
-      stock: "12",
-      precio: "₡8300",
-      img: "https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg",
-    },
-  ];
-
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+  const productosData = useMemo(
+    () =>
+      corteTaladroDesbaste.flatMap((category) =>
+        category.subcategories.flatMap((sub) =>
+          sub.products.map((product) => ({
+            id: product.id,
+            nombre: product.name,
+            precio: product.price ?? "Sin precio",
+            img: product.images?.[0],
+            cat: sub.code,
+            sub: sub.name,
+            measuresImages: product.measuresImages ?? [],
+            descripcion: product.description,
+            subtitle: product.subtitle,
+            features: product.features ?? [],
+            applications: product.applications ?? [],
+          }))
+        )
+      ),
+    []
+  );
 
   const productosFiltrados = useMemo(() => {
     if (selectedFilters.length === 0) return productosData;
@@ -289,7 +185,7 @@ const cardStyles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
     justifyContent: "space-between",
-    height: 240,
+    height: 280,
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -297,26 +193,22 @@ const cardStyles = StyleSheet.create({
     shadowRadius: 4,
     marginBottom: 16,
   },
-
   imageContainer: {
     flex: 1,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
-
   image: {
     width: "90%",
     height: "100%",
     resizeMode: "contain",
   },
-
   infoContainer: {
     width: "100%",
     alignItems: "center",
     marginTop: 10,
   },
-
   name: {
     fontSize: 14,
     fontWeight: "700",
@@ -324,14 +216,29 @@ const cardStyles = StyleSheet.create({
     color: "#333",
     height: 40,
   },
-
   price: {
     color: "#d32f2f",
     fontSize: 15,
     fontWeight: "bold",
     marginTop: 4,
   },
-
+  button: {
+    backgroundColor: "#d32f2f",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignSelf: "center",
+    minWidth: 100,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "700",
+    textAlign: "center",
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.8)",
@@ -339,7 +246,6 @@ const cardStyles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
   },
-
   modalContent: {
     width: "90%",
     backgroundColor: "#fff",
@@ -347,13 +253,11 @@ const cardStyles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
-
   fullImage: {
     width: "100%",
     height: 300,
     resizeMode: "contain",
   },
-
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
@@ -361,7 +265,6 @@ const cardStyles = StyleSheet.create({
     textAlign: "center",
     color: "#111",
   },
-
   closeBtnCard: {
     backgroundColor: "#333",
     padding: 12,
@@ -369,7 +272,6 @@ const cardStyles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-
   closeBtnCardText: {
     color: "#fff",
     fontWeight: "bold",
@@ -381,49 +283,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ECECEC",
   },
-
   scroll: {
     flex: 1,
   },
-
   scrollContent: {
     flexGrow: 1,
     justifyContent: "space-between",
   },
-
   contentRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     paddingTop: 16,
     paddingHorizontal: 12,
   },
-
   sidebar: {
     width: 260,
     marginRight: 16,
   },
-
   mainContent: {
     flex: 1,
   },
-
   estadoBox: {
     paddingBottom: 12,
     paddingHorizontal: 4,
   },
-
   estadoFiltro: {
     color: "#666",
     fontSize: 13,
   },
-
   productosGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "flex-start",
     gap: 16,
   },
-
   emptyContainer: {
     width: "100%",
     justifyContent: "center",
@@ -431,7 +324,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingVertical: 40,
   },
-
   emptyText: {
     textAlign: "center",
     color: "#555",
