@@ -6,10 +6,12 @@ import CategoryCard from '../../components/CategoryCard';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import ProductCard from '../../components/ProductCard';
+import Sidebar from '../../components/Sidebar';
 
 interface Category {
   title: string;
   image: any;
+  icon: string;
   href?:
     | '/grupo-fer/auto'
     | '/grupo-fer/anclajes'
@@ -17,6 +19,7 @@ interface Category {
     | '/grupo-iby/herramientas'
     | '/grupo-erik/quimicos'
     | '/grupo-erik/tornilleria'
+    | '/orsy-Agro/orsy'
     | '/orsy-Agro/agro'
     | '/grupo-fabi/catalogo-corte-taladro-desbaste';
 }
@@ -26,59 +29,71 @@ export default function Home() {
   const [showAll, setShowAll] = useState(false);
 
   const categories: Category[] = [
-    {
-      title: 'Corte, Taladro y Desbaste',
-      image: require('../../assets/corte.jpeg'),
-      href: '/grupo-fabi/catalogo-corte-taladro-desbaste',
-    },
-    {
-      title: 'Químicos',
-      image: require('../../assets/quimicos.jpeg'),
-      href: '/grupo-erik/quimicos',
-    },
-    {
-      title: 'Tornillería',
-      image: require('../../assets/tornilleria.png'),
-      href: '/grupo-erik/tornilleria',
-    },
-    {
-      title: 'Auto y Cargo',
-      image: require('../../assets/autoYcargo.jpeg'),
-      href: '/grupo-fer/auto',
-    },
-    {
-      title: 'Anclajes',
-      image: require('../../assets/anclaje.png'),
-      href: '/grupo-fer/anclajes',
-    },
-    {
-      title: 'Electricidad',
-      image: require('../../assets/electrecidad.png'),
-      href: '/grupo-iby/electricidad',
-    },
-    {
-      title: 'Herramientas',
-      image: require('../../assets/herramientas.jpeg'),
-      href: '/grupo-iby/herramientas',
-    },
-    {
-      title: 'Maquinas',
-      image: require('../../assets/maquinas.jpeg'),
-    },
-    {
-      title: 'Seguridad e Higiene',
-      image: require('../../assets/seguridad.jpeg'),
-    },
-    {
-      title: 'Orsy',
-      image: require('../../assets/orsy.jpeg'),
-    },
-    {
-      title: 'Agro',
-      image: require('../../assets/agronomia.png'),
-      href: '/orsy-Agro/agro',
-    },
-  ];
+  {
+    title: 'Corte, Taladro y Desbaste',
+    image: require('../../assets/corte.jpeg'),
+    icon: 'disc',
+    href: '/grupo-fabi/catalogo-corte-taladro-desbaste',
+  },
+  {
+    title: 'Químicos',
+    image: require('../../assets/quimicos.jpeg'),
+    icon: 'flask',
+    href: '/grupo-erik/quimicos',
+  },
+  {
+    title: 'Tornillería',
+    image: require('../../assets/tornilleria.png'),
+    icon: 'screwdriver',
+    href: '/grupo-erik/tornilleria',
+  },
+  {
+    title: 'Auto y Cargo',
+    image: require('../../assets/autoYcargo.jpeg'),
+    icon: 'car',
+    href: '/grupo-fer/auto',
+  },
+  {
+    title: 'Anclajes',
+    image: require('../../assets/anclaje.png'),
+    icon: 'screw-machine-flat-top',
+    href: '/grupo-fer/anclajes',
+  },
+  {
+    title: 'Electricidad',
+    image: require('../../assets/electrecidad.png'),
+    icon: 'flash',
+    href: '/grupo-iby/electricidad',
+  },
+  {
+    title: 'Herramientas',
+    image: require('../../assets/herramientas.jpeg'),
+    icon: 'tools',
+    href: '/grupo-iby/herramientas',
+  },
+  {
+    title: 'Maquinas',
+    image: require('../../assets/maquinas.jpeg'),
+    icon: 'cog',
+  },
+  {
+    title: 'Seguridad e Higiene',
+    image: require('../../assets/seguridad.jpeg'),
+    icon: 'shield-check',
+  },
+  {
+    title: 'Orsy',
+    image: require('../../assets/orsy.jpeg'),
+    icon: 'archive',
+    href: '/orsy-Agro/orsy',
+  },
+  {
+    title: 'Agro',
+    image: require('../../assets/agronomia.png'),
+    icon: 'sprout',
+    href: '/orsy-Agro/agro',
+  },
+];
 
   const { width } = Dimensions.get('window');
   const cardWidth = (width - 40) / 3;
@@ -103,9 +118,17 @@ export default function Home() {
     flatListRef.current?.scrollToIndex({ index, animated: true });
   };
 
-  return (
-    <ScrollView>
-      <Header />
+const [sidebarVisible, setSidebarVisible] = useState(false);
+
+return (
+  <ScrollView>
+    <Header onMenuHover={() => setSidebarVisible(true)} />
+
+    <Sidebar 
+      visible={sidebarVisible}
+      onClose={() => setSidebarVisible(false)}
+      categories={categories}
+    />
 
       <Carrusel />
 

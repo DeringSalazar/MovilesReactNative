@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 12,
-    textAlign: 'left',
+    textAlign: 'center',
     color: '#7A7A7A',
   },
   measureToggle: {
