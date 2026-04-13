@@ -1,5 +1,14 @@
 import { Href, router } from 'expo-router';
-import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { useRef } from 'react';
+import {
+  Animated,
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions
+} from 'react-native';
 
 type Props = {
   title: string;
@@ -9,8 +18,28 @@ type Props = {
 
 export default function CategoryCard({ title, image, href }: Props) {
   const { width } = useWindowDimensions();
-  const cardWidth = width / 4; 
+  const cardWidth = width / 4;
   const imageSize = cardWidth * 0.55;
+
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.92,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10, // rebote al soltar
+    }).start();
+  };
 
   const handlePress = () => {
     if (href) router.push(href);
@@ -18,15 +47,24 @@ export default function CategoryCard({ title, image, href }: Props) {
 
   return (
     <Pressable
-      style={[styles.card, { width: cardWidth }]}
       onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       disabled={!href}
     >
-      <Image
-        source={image}
-        style={{ width: imageSize, height: imageSize, resizeMode: 'cover' }}
-      />
-      <Text style={styles.text}>{title}</Text>
+      <Animated.View
+        style={[
+          styles.card,
+          { width: cardWidth },
+          { transform: [{ scale }] },
+        ]}
+      >
+        <Image
+          source={image}
+          style={{ width: imageSize, height: imageSize, resizeMode: 'cover' }}
+        />
+        <Text style={styles.text}>{title}</Text>
+      </Animated.View>
     </Pressable>
   );
 }
