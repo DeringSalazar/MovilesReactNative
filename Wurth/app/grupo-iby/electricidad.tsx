@@ -1,24 +1,39 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from 'expo-router';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import CategoryLayout from '../../components/CategoryLayout';
+import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
+import Sidebar from '../../components/Sidebar';
 import { categories } from '../../constants/electricidad';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { electricidadStyles } from '../../styles/electricidad.styles';
 
-const FILTER_CATEGORIES = [
-  { id: '08.01', label: '08.01 Cables y conductores' },
-  { id: '08.02', label: '08.02 Interruptores y tomacorrientes' },
-  { id: '08.03', label: '08.03 Iluminación' },
-  { id: '08.04', label: '08.04 Canalización y bandejas' },
-  { id: '08.05', label: '08.05 Herramientas eléctricas' },
+const SUBCATEGORIES = [
+  { id: '06.01', label: '06.01 Terminales Y aislamiento' },
+  { id: '06.02', label: '06.02 Conexiones y bornes' },
+  { id: '06.03', label: '06.03 Complementos de electricidad' },
+  { id: '06.04', label: '06.04 Fusibles' },
+  { id: '06.05', label: '06.05 Bridas Y sujeción de cables' },
 ];
 
-const DRAWER_WIDTH = 220;
+const SIDEBAR_CATEGORIES = [
+  { title: 'Corte, Taladro y Desbaste', icon: 'disc' },
+  { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
+  { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas', icon: 'cog' },
+  { title: 'Seguridad e Higiene', icon: 'shield-check' },
+  { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
+  { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
+];
 
 export default function Electricidad() {
   const navigation = useNavigation();
@@ -48,35 +63,9 @@ export default function Electricidad() {
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
   const [searchText, setSearchText] = useState<string>('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
-  const drawerAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
-
-  const openDrawer = () => {
-    setDrawerOpen(true);
-    Animated.timing(drawerAnim, {
-      toValue: 0,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const closeDrawer = () => {
-    Animated.timing(drawerAnim, {
-      toValue: DRAWER_WIDTH,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => setDrawerOpen(false));
-  };
-
-  const toggleFilter = (id: string) => {
-    setSelectedFilters((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-  };
-
-  const clearFilters = () => setSelectedFilters([]);
 
   const selectedProduct = useMemo(() => {
     for (const category of allProducts) {
@@ -110,10 +99,36 @@ export default function Electricidad() {
   };
 
   return (
-    <View style={electricidadStyles.container}>
-      <ScrollView contentContainerStyle={electricidadStyles.scrollContent}>
-        <Header onSearch={setSearchText} showBackButton={true} />
-
+    <>
+      <CategoryLayout
+        header={
+          <View style={{ position: 'relative' }}>
+            <Header
+              onSearch={setSearchText}
+              showBackButton={true}
+              onMenuHover={() => setSidebarVisible(true)}
+            />
+            {/* Capa invisible sobre el ícono hamburguesa */}
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: 60,
+                height: '100%',
+              }}
+              onPress={() => setSidebarVisible((prev) => !prev)}
+            />
+          </View>
+        }
+        sidebar={
+          <FilterSidebar
+            title="Electricidad"
+            subcategories={SUBCATEGORIES}
+            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+          />
+        }
+      >
         {filteredProducts.map((category) => (
           <View key={category.name}>
             <View style={electricidadStyles.productsContainer}>
@@ -136,56 +151,20 @@ export default function Electricidad() {
 
         {filteredProducts.length === 0 && (
           <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
+            <Text style={{ fontSize: 16, color: '#666' }}>
+              No se encontraron productos.
+            </Text>
           </View>
         )}
 
         <Footer />
-      </ScrollView>
+      </CategoryLayout>
 
-      {drawerOpen && (
-        <TouchableOpacity
-          style={filterStyles.overlay}
-          activeOpacity={1}
-          onPress={closeDrawer}
-        />
-      )}
-
-      <Animated.View
-        style={[filterStyles.drawer, { transform: [{ translateX: drawerAnim }] }]}
-      >
-        <View style={filterStyles.drawerHeader}>
-          <Text style={filterStyles.drawerTitle}>Filtrar por</Text>
-          <TouchableOpacity onPress={closeDrawer}>
-            <Text style={filterStyles.closeBtn}>✕</Text>
-          </TouchableOpacity>
-        </View>
-
-        {FILTER_CATEGORIES.map((item) => {
-          const active = selectedFilters.includes(item.id);
-          return (
-            <TouchableOpacity
-              key={item.id}
-              style={[filterStyles.filterItem, active && filterStyles.filterItemActive]}
-              onPress={() => toggleFilter(item.id)}
-              activeOpacity={0.7}
-            >
-              <View style={[filterStyles.checkbox, active && filterStyles.checkboxActive]}>
-                {active && <Text style={filterStyles.checkmark}>✓</Text>}
-              </View>
-              <Text style={[filterStyles.filterLabel, active && filterStyles.filterLabelActive]}>
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-
-        {selectedFilters.length > 0 && (
-          <TouchableOpacity style={filterStyles.clearBtn} onPress={clearFilters}>
-            <Text style={filterStyles.clearBtnText}>Limpiar filtros</Text>
-          </TouchableOpacity>
-        )}
-      </Animated.View>
+      <Sidebar
+        visible={sidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+        categories={SIDEBAR_CATEGORIES}
+      />
 
       <ProductModal
         visible={Boolean(selectedProduct)}
@@ -193,78 +172,12 @@ export default function Electricidad() {
         carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
         onClose={() => setSelectedProductId(null)}
       />
+
       <ImageModal
         visible={Boolean(selectedMeasureImage)}
         imageSource={selectedMeasureImage}
         onClose={() => setSelectedMeasureImage(null)}
       />
-    </View>
+    </>
   );
 }
-
-const filterStyles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    zIndex: 10,
-  },
-  drawer: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: DRAWER_WIDTH,
-    backgroundColor: '#fff',
-    zIndex: 20,
-    paddingTop: 20,
-    paddingHorizontal: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: -3, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 10,
-  },
-  drawerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingBottom: 12,
-  },
-  drawerTitle: { fontSize: 16, fontWeight: '700', color: '#222' },
-  closeBtn: { fontSize: 18, color: '#888', paddingHorizontal: 4 },
-  filterItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    marginBottom: 6,
-    backgroundColor: '#f5f5f5',
-  },
-  filterItemActive: { backgroundColor: '#fff0f0' },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  checkboxActive: { borderColor: '#CC0000', backgroundColor: '#CC0000' },
-  checkmark: { color: '#fff', fontSize: 13, fontWeight: 'bold', lineHeight: 15 },
-  filterLabel: { fontSize: 13, color: '#444', flexShrink: 1 },
-  filterLabelActive: { color: '#CC0000', fontWeight: '600' },
-  clearBtn: {
-    marginTop: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#CC0000',
-    alignItems: 'center',
-  },
-  clearBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
-});
