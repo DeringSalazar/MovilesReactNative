@@ -23,6 +23,7 @@ interface Category {
   image: any;
   icon: string;
   href?:
+    | "/grupo-fabi/corteTaladroDesbaste"
     | "/grupo-fer/auto"
     | "/grupo-fer/anclajes"
     | "/grupo-iby/electricidad"
@@ -38,6 +39,7 @@ const mainCategories: Category[] = [
     title: "Corte, Taladro y Desbaste",
     image: require("../../../assets/corte.jpeg"),
     icon: "disc",
+    href: "/grupo-fabi/corteTaladroDesbaste",
   },
   {
     title: "Químicos",
