@@ -27,80 +27,46 @@ interface Category {
 export default function Home() {
   const router = useRouter();
   const [showAll, setShowAll] = useState(false);
+  const extraAnim = useRef(new Animated.Value(0)).current;
 
   const categories: Category[] = [
-  {
-    title: 'Corte, Taladro y Desbaste',
-    image: require('../../assets/corte.jpeg'),
-    icon: 'disc',
-    href: '/grupo-fabi/corteTaladroDesbaste',
-  },
-  {
-    title: 'Químicos',
-    image: require('../../assets/quimicos.jpeg'),
-    icon: 'flask',
-    href: '/grupo-erik/quimicos',
-  },
-  {
-    title: 'Tornillería',
-    image: require('../../assets/tornilleria.png'),
-    icon: 'screwdriver',
-    href: '/grupo-erik/tornilleria',
-  },
-  {
-    title: 'Auto y Cargo',
-    image: require('../../assets/autoYcargo.jpeg'),
-    icon: 'car',
-    href: '/grupo-fer/auto',
-  },
-  {
-    title: 'Anclajes',
-    image: require('../../assets/anclaje.png'),
-    icon: 'screw-machine-flat-top',
-    href: '/grupo-fer/anclajes',
-  },
-  {
-    title: 'Electricidad',
-    image: require('../../assets/electrecidad.png'),
-    icon: 'flash',
-    href: '/grupo-iby/electricidad',
-  },
-  {
-    title: 'Herramientas',
-    image: require('../../assets/herramientas.jpeg'),
-    icon: 'tools',
-    href: '/grupo-iby/herramientas',
-  },
-  {
-    title: 'Maquinas',
-    image: require('../../assets/maquinas.jpeg'),
-    icon: 'cog',
-  },
-  {
-    title: 'Seguridad e Higiene',
-    image: require('../../assets/seguridad.jpeg'),
-    icon: 'shield-check',
-  },
-  {
-    title: 'Orsy',
-    image: require('../../assets/orsy.jpeg'),
-    icon: 'archive',
-    href: '/orsy-Agro/orsy',
-  },
-  {
-    title: 'Agro',
-    image: require('../../assets/agronomia.png'),
-    icon: 'sprout',
-    href: '/orsy-Agro/agro',
-  },
-];
+    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc' },
+    { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
+    { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+    { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
+    { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+    { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
+    { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
+    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog' },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check' },
+    { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
+    { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
+  ];
 
   const { width } = Dimensions.get('window');
   const cardWidth = (width - 40) / 3;
-  const flatListRef = useRef<FlatList>(null);
   const scrollRef = useRef<ScrollView>(null);
-
   const [scrollOffset, setScrollOffset] = useState(0);
+ 
+
+
+  const handleToggle = () => {
+    if (!showAll) {
+      setShowAll(true);
+      Animated.spring(extraAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 12,
+        bounciness: 6,
+      }).start();
+    } else {
+      Animated.timing(extraAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => setShowAll(false));
+    }
+  };
 
   const scrollLeft = () => {
     const newOffset = Math.max(0, scrollOffset - (cardWidth + 10));
@@ -150,12 +116,37 @@ return (
               />
             </TouchableOpacity>
           ))}
+
+          {/* Extra con animación fade + slide */}
+          {showAll && (
+            <Animated.View style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: 10,
+              width: '100%',
+              opacity: extraAnim,
+              transform: [{
+                translateY: extraAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [20, 0],
+                }),
+              }],
+            }}>
+              {categories.slice(6).map((item) => (
+                <CategoryCard
+                  key={item.title}
+                  title={item.title}
+                  image={item.image}
+                  href={item.href}
+                />
+              ))}
+            </Animated.View>
+          )}
+
         </View>
 
-        <TouchableOpacity
-          style={styles.redBtn}
-          onPress={() => setShowAll(!showAll)}
-        >
+        <TouchableOpacity style={styles.redBtn} onPress={handleToggle}>
           <Text style={styles.btnText}>
             {showAll ? 'Ver menos' : 'Ver más'}
           </Text>
@@ -169,7 +160,7 @@ return (
 
         <View style={styles.carouselContainer}>
           <TouchableOpacity style={[styles.arrowBtn, styles.leftArrow]} onPress={scrollLeft}>
-            <Text style={styles.arrowText}>{"<"}</Text>
+            <Text style={styles.arrowText}>{'<'}</Text>
           </TouchableOpacity>
 
           <ScrollView
@@ -188,7 +179,7 @@ return (
           </ScrollView>
 
           <TouchableOpacity style={[styles.arrowBtn, styles.rightArrow]} onPress={scrollRight}>
-            <Text style={styles.arrowText}>{">"}</Text>
+            <Text style={styles.arrowText}>{'>'}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -212,7 +203,6 @@ const styles = StyleSheet.create({
   section: {
     padding: 15,
   },
-
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -220,7 +210,6 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 10,
   },
-
   redBtn: {
     backgroundColor: '#d32f2f',
     padding: 10,
@@ -229,32 +218,22 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingHorizontal: 30,
   },
-
   btnText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 14,
     textAlign: 'center',
   },
-
-  subtitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-
   offer: {
     backgroundColor: '#fbc02d',
     padding: 20,
     alignItems: 'center',
   },
-
   offerText: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-
   blackBtn: {
     backgroundColor: '#000',
     padding: 10,
