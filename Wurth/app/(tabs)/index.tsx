@@ -102,7 +102,7 @@ return (
 
       <View style={styles.section}>
         <View style={styles.grid}>
-          {(showAll ? categories : categories.slice(0, 6)).map((item) => (
+          {categories.slice(0, 6).map((item) => (
             <TouchableOpacity
               key={item.title}
               onPress={() => {
