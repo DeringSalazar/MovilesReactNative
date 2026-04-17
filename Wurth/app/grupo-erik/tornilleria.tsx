@@ -1,17 +1,12 @@
-import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
-import {
-  Animated,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
 
 import { useNavigation } from 'expo-router';
 
+import CategoryLayout from '../../components/CategoryLayout';
+import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
@@ -20,7 +15,7 @@ import { tornilleria } from '../../constants/tornilleria';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { anclajesStyles } from '../../styles/anclajes.styles';
 
-const FILTER_CATEGORIES = [
+const SUBCATEGORIES = [
   { id: '03.01', label: '03.01 Arandelas' },
   { id: '03.02', label: '03.02 Graseras' },
   { id: '03.03', label: '03.03 Normalizado DIN' },
@@ -28,16 +23,12 @@ const FILTER_CATEGORIES = [
   { id: '03.05', label: '03.05 Remaches y tuercas remachables' },
 ];
 
-const DRAWER_WIDTH = 220;
-
 export default function Tornilleria() {
 
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
+    navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
   const allProducts = useMemo(
@@ -61,54 +52,20 @@ export default function Tornilleria() {
   const [selectedMeasureImage, setSelectedMeasureImage] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [selectedFilters, setSelectedFilters] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
-  const drawerAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
-
-  const openDrawer = () => {
-    setDrawerOpen(true);
-    Animated.timing(drawerAnim, {
-      toValue: 0,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const closeDrawer = () => {
-    Animated.timing(drawerAnim, {
-      toValue: DRAWER_WIDTH,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => setDrawerOpen(false));
-  };
-
-  const toggleFilter = (id) => {
-    setSelectedFilters((prev) =>
-      prev.includes(id)
-        ? prev.filter((f) => f !== id)
-        : [...prev, id]
-    );
-  };
-
-  const clearFilters = () => setSelectedFilters([]);
-
   const selectedProduct = useMemo(() => {
-
     for (const category of allProducts) {
       const found = category.products.find(
         (p) => p.id === selectedProductId
       );
       if (found) return found;
     }
-
     return null;
-
   }, [allProducts, selectedProductId]);
 
   const filteredProducts = useMemo(() => {
-
     const lowerSearch = searchText.toLowerCase().trim();
 
     return allProducts
@@ -124,7 +81,7 @@ export default function Tornilleria() {
           const matchesFilter =
             selectedFilters.length === 0 ||
             selectedFilters.some((f) =>
-              product.code?.includes(f)
+              product.code?.startsWith(f)
             );
 
           return matchesSearch && matchesFilter;
@@ -140,62 +97,32 @@ export default function Tornilleria() {
   };
 
   return (
-
-    <View style={anclajesStyles.container}>
-
-      <ScrollView contentContainerStyle={anclajesStyles.scrollContent}>
-
-        <Header
-          onSearch={setSearchText}
-          showBackButton={true}
-        />
-
-        {/* BOTON FILTRO */}
-
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-          paddingHorizontal: 16,
-          marginTop: 10
-        }}>
-
-          <TouchableOpacity
-            style={filterStyles.filterButton}
-            onPress={openDrawer}
-          >
-
-            <Text style={filterStyles.filterButtonIcon}>
-              Filtros
-            </Text>
-
-            {selectedFilters.length > 0 && (
-              <View style={filterStyles.badge}>
-                <Text style={filterStyles.badgeText}>
-                  {selectedFilters.length}
-                </Text>
-              </View>
-            )}
-
-          </TouchableOpacity>
-
-        </View>
+    <>
+      <CategoryLayout
+        header={
+          <Header onSearch={setSearchText} showBackButton={true} />
+        }
+        sidebar={
+          <FilterSidebar
+            title="Tornillería"
+            subcategories={SUBCATEGORIES}
+            onFilterChange={(filters) =>
+              setSelectedFilters(filters.subcategories)
+            }
+          />
+        }
+      >
 
         {filteredProducts.map((category) => (
-
           <View key={category.name}>
-
             <View style={anclajesStyles.productsContainer}>
-
               {category.products.map((product) => (
-
                 <ProductCard
                   key={product.id}
                   product={product}
                   carouselIndex={carouselIndexes[product.id] ?? 0}
                   expandedId={expandedId}
-                  onPress={() =>
-                    setSelectedProductId(product.id)
-                  }
+                  onPress={() => setSelectedProductId(product.id)}
                   onToggleMeasures={() =>
                     handleToggleMeasures(product.id)
                   }
@@ -207,119 +134,20 @@ export default function Tornilleria() {
                     goToPrevious(product.id, product.images?.length || 0)
                   }
                 />
-
               ))}
-
             </View>
-
           </View>
-
         ))}
 
         {filteredProducts.length === 0 && (
-
-          <View style={{
-            alignItems: 'center',
-            padding: 20
-          }}>
-            <Text style={{
-              fontSize: 16,
-              color: '#666'
-            }}>
+          <View style={{ alignItems: 'center', padding: 20 }}>
+            <Text style={{ fontSize: 16, color: '#666' }}>
               No se encontraron productos.
             </Text>
           </View>
-
         )}
 
-        <Footer />
-
-      </ScrollView>
-
-      {drawerOpen && (
-        <TouchableOpacity
-          style={filterStyles.overlay}
-          activeOpacity={1}
-          onPress={closeDrawer}
-        />
-      )}
-
-      <Animated.View
-        style={[
-          filterStyles.drawer,
-          { transform: [{ translateX: drawerAnim }] },
-        ]}
-      >
-
-        <View style={filterStyles.drawerHeader}>
-
-          <Text style={filterStyles.drawerTitle}>
-            Filtrar por
-          </Text>
-
-          <TouchableOpacity onPress={closeDrawer}>
-            <Text style={filterStyles.closeBtn}>✕</Text>
-          </TouchableOpacity>
-
-        </View>
-
-        {FILTER_CATEGORIES.map((item) => {
-
-          const active = selectedFilters.includes(item.id);
-
-          return (
-
-            <TouchableOpacity
-              key={item.id}
-              style={[
-                filterStyles.filterItem,
-                active && filterStyles.filterItemActive
-              ]}
-              onPress={() => toggleFilter(item.id)}
-            >
-
-              <View style={[
-                filterStyles.checkbox,
-                active && filterStyles.checkboxActive
-              ]}>
-
-                {active && (
-                  <Text style={filterStyles.checkmark}>
-                    ✓
-                  </Text>
-                )}
-
-              </View>
-
-              <Text style={[
-                filterStyles.filterLabel,
-                active && filterStyles.filterLabelActive
-              ]}>
-                {item.label}
-              </Text>
-
-            </TouchableOpacity>
-
-          );
-
-        })}
-
-        {selectedFilters.length > 0 && (
-
-          <TouchableOpacity
-            style={filterStyles.clearBtn}
-            onPress={clearFilters}
-          >
-
-            <Text style={filterStyles.clearBtnText}>
-              Limpiar filtros
-            </Text>
-
-          </TouchableOpacity>
-
-        )}
-
-      </Animated.View>
+      </CategoryLayout>
 
       <ProductModal
         visible={Boolean(selectedProduct)}
@@ -335,139 +163,6 @@ export default function Tornilleria() {
         imageSource={selectedMeasureImage}
         onClose={() => setSelectedMeasureImage(null)}
       />
-
-    </View>
-
+    </>
   );
-
 }
-
-const filterStyles = StyleSheet.create({
-  filterButton:{
-    paddingVertical:8,
-    paddingHorizontal:14,
-    backgroundColor:'#D32F2F',
-    borderRadius:6,
-    alignItems:'center',
-    position:'relative'
-  },
-
-  filterButtonIcon:{
-    color:'#fff',
-    fontSize:12,
-    fontWeight:'600'
-  },
-
-  badge:{
-    position:'absolute',
-    top:-4,
-    right:-4,
-    backgroundColor:'#222',
-    borderRadius:8,
-    minWidth:16,
-    height:16,
-    alignItems:'center',
-    justifyContent:'center'
-  },
-
-  badgeText:{
-    color:'#fff',
-    fontSize:10,
-    fontWeight:'bold'
-  },
-
-  overlay:{
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor:'rgba(0,0,0,0.35)',
-    zIndex:10
-  },
-
-  drawer:{
-    position:'absolute',
-    right:0,
-    top:0,
-    bottom:0,
-    width:DRAWER_WIDTH,
-    backgroundColor:'#fff',
-    zIndex:20,
-    paddingTop:20,
-    paddingHorizontal:16
-  },
-
-  drawerHeader:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    marginBottom:20
-  },
-
-  drawerTitle:{
-    fontSize:16,
-    fontWeight:'700'
-  },
-
-  closeBtn:{
-    fontSize:18
-  },
-
-  filterItem:{
-    flexDirection:'row',
-    alignItems:'center',
-    paddingVertical:12,
-    paddingHorizontal:8,
-    borderRadius:8,
-    marginBottom:6,
-    backgroundColor:'#f5f5f5'
-  },
-
-  filterItemActive:{
-    backgroundColor:'#fff0f0'
-  },
-
-  checkbox:{
-    width:20,
-    height:20,
-    borderRadius:4,
-    borderWidth:2,
-    borderColor:'#ccc',
-    marginRight:10,
-    alignItems:'center',
-    justifyContent:'center'
-  },
-
-  checkboxActive:{
-    borderColor:'#CC0000',
-    backgroundColor:'#CC0000'
-  },
-
-  checkmark:{
-    color:'#fff',
-    fontSize:13,
-    fontWeight:'bold'
-  },
-
-  filterLabel:{
-    fontSize:13,
-    color:'#444'
-  },
-
-  filterLabelActive:{
-    color:'#CC0000',
-    fontWeight:'600'
-  },
-
-  clearBtn:{
-    marginTop:20,
-    paddingVertical:10,
-    borderRadius:8,
-    backgroundColor:'#CC0000',
-    alignItems:'center'
-  },
-
-  clearBtnText:{
-    color:'#fff',
-    fontWeight:'700',
-    fontSize:13
-  }
-
-});

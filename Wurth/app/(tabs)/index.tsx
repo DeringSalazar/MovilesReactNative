@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated,Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
 import Footer from '../../components/Footer';
@@ -11,23 +12,35 @@ interface Category {
   title: string;
   image: any;
   icon: string;
-  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria' | '/orsy-Agro/orsy' | '/orsy-Agro/agro';
+  href?:
+    | '/grupo-fer/auto'
+    | '/grupo-fer/anclajes'
+    | '/grupo-iby/electricidad'
+    | '/grupo-iby/herramientas'
+    | '/grupo-erik/quimicos'
+    | '/grupo-erik/tornilleria'
+    | '/orsy-Agro/orsy'
+    | '/orsy-Agro/agro'
+    |'/grupo-alvaro/seguridad'
+    |'/grupo-alvaro/maquinas'
+    | '/grupo-fabi/corteTaladroDesbaste';
 }
 
 export default function Home() {
+  const router = useRouter();
   const [showAll, setShowAll] = useState(false);
   const extraAnim = useRef(new Animated.Value(0)).current;
 
   const categories: Category[] = [
-    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc' },
+    { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc',  href: '/grupo-fabi/corteTaladroDesbaste' },
     { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
     { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
     { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
     { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
     { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
-    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog' },
-    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check' },
+    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
     { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
     { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
   ];
@@ -36,7 +49,8 @@ export default function Home() {
   const cardWidth = (width - 40) / 3;
   const scrollRef = useRef<ScrollView>(null);
   const [scrollOffset, setScrollOffset] = useState(0);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
+ 
+
 
   const handleToggle = () => {
     if (!showAll) {
@@ -68,30 +82,41 @@ export default function Home() {
     setScrollOffset(newOffset);
   };
 
-  return (
-    <ScrollView>
-      <Header onMenuHover={() => setSidebarVisible(true)} />
-      <Sidebar
-        visible={sidebarVisible}
-        onClose={() => setSidebarVisible(false)}
-        categories={categories}
-      />
+  const scrollToIndex = (index: number) => {
+    flatListRef.current?.scrollToIndex({ index, animated: true });
+  };
 
-      {/* HERO */}
+const [sidebarVisible, setSidebarVisible] = useState(false);
+
+return (
+  <ScrollView>
+    <Header onMenuHover={() => setSidebarVisible(true)} />
+
+    <Sidebar 
+      visible={sidebarVisible}
+      onClose={() => setSidebarVisible(false)}
+      categories={categories}
+    />
+
       <Carrusel />
 
-      {/* CATEGORÍAS */}
       <View style={styles.section}>
         <View style={styles.grid}>
-
-          {/* Primeras 6 siempre visibles */}
           {categories.slice(0, 6).map((item) => (
-            <CategoryCard
+            <TouchableOpacity
               key={item.title}
-              title={item.title}
-              image={item.image}
-              href={item.href}
-            />
+              onPress={() => {
+                if (item.href) {
+                  router.push(item.href);
+                }
+              }}
+              activeOpacity={0.8}
+            >
+              <CategoryCard
+                title={item.title}
+                image={item.image}
+              />
+            </TouchableOpacity>
           ))}
 
           {/* Extra con animación fade + slide */}
@@ -130,7 +155,6 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-      {/* PRODUCTOS DESTACADOS */}
       <View style={styles.sectionDestacados}>
         <View style={styles.headerRow}>
           <Text style={styles.subtitleDestacados}>Productos Destacados</Text>
@@ -162,7 +186,6 @@ export default function Home() {
         </View>
       </View>
 
-      {/* OFERTAS */}
       <View style={styles.offer}>
         <Text style={styles.offerText}>Ofertas especiales</Text>
         <TouchableOpacity style={styles.blackBtn}>
@@ -170,7 +193,6 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-      {/* FOOTER */}
       <Footer />
     </ScrollView>
   );
@@ -220,10 +242,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 25,
   },
-  sectionDestacados: {
-    paddingVertical: 20,
-    backgroundColor: '#7A7A7A',
+
+  card: {
+    width: '30%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+
+  gridDestacados: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    width: '100%',
+  },
+
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -231,15 +264,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
   },
+
   subtitleDestacados: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
   },
+
+  verMasText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+
+  sectionDestacados: {
+    paddingVertical: 20,
+    backgroundColor: '#7A7A7A',
+  },
+
   carouselContainer: {
     position: 'relative',
     paddingHorizontal: 10,
   },
+
   arrowBtn: {
     position: 'absolute',
     zIndex: 10,
@@ -251,8 +298,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   leftArrow: { left: 5 },
   rightArrow: { right: 5 },
+
   arrowText: {
     fontSize: 18,
     fontWeight: 'bold',
