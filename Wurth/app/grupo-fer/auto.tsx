@@ -16,7 +16,7 @@ interface Category {
     title: string;
     image: any;
     icon: string;
-    href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria' | '/orsy-Agro/orsy' | '/orsy-Agro/agro';
+    href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria' | '/orsy-Agro/orsy' | '/orsy-Agro/agro' | '/grupo-alvaro/maquinas' | '/grupo-alvaro/seguridad';
 }
 
 const mainCategories: Category[] = [
@@ -27,8 +27,8 @@ const mainCategories: Category[] = [
     { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
     { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
     { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
-    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog' },
-    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check' },
+    { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
+    { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
     { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
     { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
 ];

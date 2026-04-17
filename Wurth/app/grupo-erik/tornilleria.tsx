@@ -6,6 +6,7 @@ import { useNavigation } from 'expo-router';
 import CategoryLayout from '../../components/CategoryLayout';
 import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
+import Sidebar from '../../components/Sidebar';
 
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
@@ -14,6 +15,20 @@ import { ProductModal } from '../../components/ProductModal';
 import { tornilleria } from '../../constants/tornilleria';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { anclajesStyles } from '../../styles/anclajes.styles';
+
+const mainCategories = [
+  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
+  { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
+  { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
+  { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
+  { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
+];
 
 const SUBCATEGORIES = [
   { id: '03.01', label: '03.01 Arandelas' },
@@ -52,6 +67,7 @@ export default function Tornilleria() {
   const [selectedMeasureImage, setSelectedMeasureImage] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
@@ -100,7 +116,11 @@ export default function Tornilleria() {
     <>
       <CategoryLayout
         header={
-          <Header onSearch={setSearchText} showBackButton={true} />
+          <Header
+            onSearch={setSearchText}
+            showBackButton={true}
+            onMenuHover={() => setSidebarVisible(true)}
+          />
         }
         sidebar={
           <FilterSidebar
@@ -148,6 +168,12 @@ export default function Tornilleria() {
         )}
 
       </CategoryLayout>
+
+      <Sidebar
+        visible={sidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+        categories={mainCategories}
+      />
 
       <ProductModal
         visible={Boolean(selectedProduct)}

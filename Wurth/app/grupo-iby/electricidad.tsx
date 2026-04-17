@@ -29,8 +29,8 @@ const SIDEBAR_CATEGORIES = [
   { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
   { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
   { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
-  { title: 'Maquinas', icon: 'cog' },
-  { title: 'Seguridad e Higiene', icon: 'shield-check' },
+  { title: 'Maquinas', icon: 'cog', href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene', icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
   { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
   { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
