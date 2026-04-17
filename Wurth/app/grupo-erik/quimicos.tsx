@@ -7,9 +7,26 @@ import Header from '../../components/Header';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
+import Sidebar from '../../components/Sidebar';
+
 import { categories } from '../../constants/quimicos';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { anclajesStyles } from '../../styles/anclajes.styles';
+
+
+const mainCategories = [
+  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc' },
+  { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
+  { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check' , href: '/grupo-alvaro/seguridad'},
+  { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
+  { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
+];
 
 const SUBCATEGORIES = [
   { id: '02.01', label: '02.01 Selladores y juntas químicas' },
@@ -21,7 +38,6 @@ const SUBCATEGORIES = [
 
 export default function Quimicos() {
   const navigation = useNavigation();
-  
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -48,6 +64,7 @@ export default function Quimicos() {
   const [selectedMeasureImage, setSelectedMeasureImage] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const [sidebarVisible, setSidebarVisible] = useState(false); 
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
@@ -85,12 +102,20 @@ export default function Quimicos() {
   return (
     <>
       <CategoryLayout
-        header={<Header onSearch={setSearchText} showBackButton={true} />}
+        header={
+          <Header
+            onSearch={setSearchText}
+            showBackButton={true}
+            onMenuHover={() => setSidebarVisible(true)} 
+          />
+        }
         sidebar={
           <FilterSidebar
             title="Químicos"
             subcategories={SUBCATEGORIES}
-            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+            onFilterChange={(filters) =>
+              setSelectedFilters(filters.subcategories)
+            }
           />
         }
       >
@@ -104,10 +129,16 @@ export default function Quimicos() {
                   carouselIndex={carouselIndexes[product.id] ?? 0}
                   expandedId={expandedId}
                   onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() => handleToggleMeasures(product.id)}
+                  onToggleMeasures={() =>
+                    handleToggleMeasures(product.id)
+                  }
                   onImagePress={setSelectedMeasureImage}
-                  onNextImage={() => goToNext(product.id, product.images?.length || 0)}
-                  onPreviousImage={() => goToPrevious(product.id, product.images?.length || 0)}
+                  onNextImage={() =>
+                    goToNext(product.id, product.images?.length || 0)
+                  }
+                  onPreviousImage={() =>
+                    goToPrevious(product.id, product.images?.length || 0)
+                  }
                 />
               ))}
             </View>
@@ -121,10 +152,14 @@ export default function Quimicos() {
             </Text>
           </View>
         )}
-
       </CategoryLayout>
 
-      {/* MODALES fuera del layout para que funcionen como overlays */}
+      <Sidebar
+        visible={sidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+        categories={mainCategories}
+      />
+
       <ProductModal
         visible={Boolean(selectedProduct)}
         product={selectedProduct}
