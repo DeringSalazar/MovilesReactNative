@@ -1,8 +1,10 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
 import { useNavigation } from 'expo-router';
 import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import CategoryLayout from '../../components/CategoryLayout';
+import FilterSidebar from '../../components/Filter';
+import Sidebar from '../../components/Sidebar';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
@@ -10,13 +12,32 @@ import { categories } from '../../constants/seguridad';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { seguridadStyles } from '../../styles/seguridad.styles';
 
+interface Category {
+  title: string;
+  image: any;
+  icon: string;
+  href?: string;
+}
+
 const FILTER_CATEGORIES = [
   { id: '09.01', label: '09.01 Gafas de protección' },
   { id: '09.02', label: '09.02 Guantes de seguridad' },
   { id: '09.05', label: '09.05 Cintas de seguridad' },
 ];
 
-const DRAWER_WIDTH = 220;
+const mainCategories: Category[] = [
+  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc' },
+  { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
+  { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
+  { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
+  { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
+];
 
 export default function Seguridad() {
   const navigation = useNavigation();
@@ -46,35 +67,9 @@ export default function Seguridad() {
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
   const [searchText, setSearchText] = useState<string>('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
-  const drawerAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
-
-  const openDrawer = () => {
-    setDrawerOpen(true);
-    Animated.timing(drawerAnim, {
-      toValue: 0,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const closeDrawer = () => {
-    Animated.timing(drawerAnim, {
-      toValue: DRAWER_WIDTH,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => setDrawerOpen(false));
-  };
-
-  const toggleFilter = (id: string) => {
-    setSelectedFilters((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-  };
-
-  const clearFilters = () => setSelectedFilters([]);
 
   const selectedProduct = useMemo(() => {
     for (const category of allProducts) {
@@ -110,10 +105,23 @@ export default function Seguridad() {
   };
 
   return (
-    <View style={seguridadStyles.container}>
-      <ScrollView contentContainerStyle={seguridadStyles.scrollContent}>
-        <Header onSearch={setSearchText} showBackButton={true} />
-
+    <>
+      <CategoryLayout
+        header={
+          <Header
+            onSearch={setSearchText}
+            showBackButton={true}
+            onMenuHover={() => setSidebarVisible(true)}
+          />
+        }
+        sidebar={
+          <FilterSidebar
+            title="Seguridad e Higiene"
+            subcategories={FILTER_CATEGORIES}
+            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+          />
+        }
+      >
         {filteredProducts.map((category) => (
           <View key={category.name}>
             <View style={seguridadStyles.productsContainer}>
@@ -141,58 +149,13 @@ export default function Seguridad() {
             </Text>
           </View>
         )}
+      </CategoryLayout>
 
-        <Footer />
-      </ScrollView>
-
-      {drawerOpen && (
-        <TouchableOpacity
-          style={filterStyles.overlay}
-          activeOpacity={1}
-          onPress={closeDrawer}
-        />
-      )}
-
-      <Animated.View
-        style={[filterStyles.drawer, { transform: [{ translateX: drawerAnim }] }]}
-      >
-        <View style={filterStyles.drawerHeader}>
-          <Text style={filterStyles.drawerTitle}>Filtrar por</Text>
-          <TouchableOpacity onPress={closeDrawer}>
-            <Text style={filterStyles.closeBtn}>✕</Text>
-          </TouchableOpacity>
-        </View>
-
-        {FILTER_CATEGORIES.map((item) => {
-          const active = selectedFilters.includes(item.id);
-          return (
-            <TouchableOpacity
-              key={item.id}
-              style={[filterStyles.filterItem, active && filterStyles.filterItemActive]}
-              onPress={() => toggleFilter(item.id)}
-              activeOpacity={0.7}
-            >
-              <View style={[filterStyles.checkbox, active && filterStyles.checkboxActive]}>
-                {active && <Text style={filterStyles.checkmark}>✓</Text>}
-              </View>
-              <Text
-                style={[
-                  filterStyles.filterLabel,
-                  active && filterStyles.filterLabelActive,
-                ]}
-              >
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-
-        {selectedFilters.length > 0 && (
-          <TouchableOpacity style={filterStyles.clearBtn} onPress={clearFilters}>
-            <Text style={filterStyles.clearBtnText}>Limpiar filtros</Text>
-          </TouchableOpacity>
-        )}
-      </Animated.View>
+      <Sidebar
+        visible={sidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+        categories={mainCategories}
+      />
 
       <ProductModal
         visible={Boolean(selectedProduct)}
@@ -206,73 +169,6 @@ export default function Seguridad() {
         imageSource={selectedMeasureImage}
         onClose={() => setSelectedMeasureImage(null)}
       />
-    </View>
+    </>
   );
 }
-
-const filterStyles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    zIndex: 10,
-  },
-  drawer: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: DRAWER_WIDTH,
-    backgroundColor: '#fff',
-    zIndex: 20,
-    paddingTop: 20,
-    paddingHorizontal: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: -3, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 10,
-  },
-  drawerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingBottom: 12,
-  },
-  drawerTitle: { fontSize: 16, fontWeight: '700', color: '#222' },
-  closeBtn: { fontSize: 18, color: '#888', paddingHorizontal: 4 },
-  filterItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    marginBottom: 6,
-    backgroundColor: '#f5f5f5',
-  },
-  filterItemActive: { backgroundColor: '#fff0f0' },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  checkboxActive: { borderColor: '#CC0000', backgroundColor: '#CC0000' },
-  checkmark: { color: '#fff', fontSize: 13, fontWeight: 'bold', lineHeight: 15 },
-  filterLabel: { fontSize: 13, color: '#444', flexShrink: 1 },
-  filterLabelActive: { color: '#CC0000', fontWeight: '600' },
-  clearBtn: {
-    marginTop: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#CC0000',
-    alignItems: 'center',
-  },
-  clearBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
-});
