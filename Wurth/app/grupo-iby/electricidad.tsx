@@ -1,28 +1,22 @@
-import { useNavigation } from 'expo-router';
-import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import CategoryLayout from '../../components/CategoryLayout';
-import FilterSidebar from '../../components/Filter';
+import React, { useLayoutEffect, useState, useMemo } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { useNavigation, useRouter } from 'expo-router';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
 import Sidebar from '../../components/Sidebar';
-import { categories } from '../../constants/electricidad';
+import FilterSidebar from '../../components/Filter';
+import CategoryLayout from '../../components/CategoryLayout'; 
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { electricidadStyles } from '../../styles/electricidad.styles';
+import { useProducts } from '../../hooks/useProducts';
+import type { ProductSummary } from '../../types/products';
 
-const SUBCATEGORIES = [
-  { id: '06.01', label: '06.01 Terminales Y aislamiento' },
-  { id: '06.02', label: '06.02 Conexiones y bornes' },
-  { id: '06.03', label: '06.03 Complementos de electricidad' },
-  { id: '06.04', label: '06.04 Fusibles' },
-  { id: '06.05', label: '06.05 Bridas Y sujeción de cables' },
-];
 
 const SIDEBAR_CATEGORIES = [
-  { title: 'Corte, Taladro y Desbaste', icon: 'disc' },
+  { title: 'Corte, Taladro y Desbaste', icon: 'disc',href: '/grupo-fabi/corteTaladroDesbaste' },
   { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
   { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
   { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
@@ -37,29 +31,23 @@ const SIDEBAR_CATEGORIES = [
 
 export default function Electricidad() {
   const navigation = useNavigation();
+  const router = useRouter();
+  
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  const allProducts = useMemo(
-    () =>
-      categories.map((category) => ({
-        ...category,
-        products: category.subcategories.flatMap((sub) =>
-          sub.products.map((product) => ({
-            ...product,
-            category: category.name,
-            subcategory: sub.name,
-            code: sub.code,
-          }))
-        ),
-      })),
-    []
-  );
+  const {
+    products,
+    selectedProduct,
+    loading,
+    loadingDetail,
+    error,
+    fetchProductById,
+    clearSelectedProduct,
+  } = useProducts('electricidad');
 
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
   const [searchText, setSearchText] = useState<string>('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -67,93 +55,113 @@ export default function Electricidad() {
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
-  const selectedProduct = useMemo(() => {
-    for (const category of allProducts) {
-      const found = category.products.find((p) => p.id === selectedProductId);
-      if (found) return found;
-    }
-    return null;
-  }, [allProducts, selectedProductId]);
+  // ✅ Subcategorías dinámicas extraídas de la API
+  const subcategories = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { id: string; label: string }[] = [];
 
-  const filteredProducts = useMemo(() => {
-    const lowerSearch = searchText.toLowerCase().trim();
-    return allProducts
-      .map((category) => ({
-        ...category,
-        products: category.products.filter((product) => {
-          const matchesSearch =
-            !lowerSearch ||
-            product.name.toLowerCase().includes(lowerSearch) ||
-            product.code?.toLowerCase().includes(lowerSearch);
-          const matchesFilter =
-            selectedFilters.length === 0 ||
-            selectedFilters.some((f) => product.code?.startsWith(f));
-          return matchesSearch && matchesFilter;
-        }),
-      }))
-      .filter((category) => category.products.length > 0);
-  }, [allProducts, searchText, selectedFilters]);
+    products.forEach((p) => {
+      const code = p.subcategory_code;
+      const name = p.subcategory_name; 
+      if (code && !seen.has(code)) {
+        seen.add(code);
+        result.push({
+          id: code,
+          label: name ? `${code} ${name}` : code,
+        });
+      }
+    });
 
-  const handleToggleMeasures = (productId: string) => {
-    setExpandedId(expandedId === productId ? null : productId);
+    // Ordenar por código
+    return result.sort((a, b) => a.id.localeCompare(b.id));
+  }, [products]);
+
+  const handleOpenProduct = (id: string) => {
+    fetchProductById(id);
+  };
+
+  const filteredProducts: ProductSummary[] = useMemo(() => {
+    return products.filter((product) => {
+      const lowerSearch = searchText.toLowerCase().trim();
+      const matchesSearch =
+        !lowerSearch ||
+        product.product_name.toLowerCase().includes(lowerSearch) ||
+        product.subcategory_code?.toLowerCase().includes(lowerSearch);
+      const matchesFilter =
+        selectedFilters.length === 0 ||
+        selectedFilters.some((f) => product.subcategory_code?.startsWith(f));
+      return matchesSearch && matchesFilter;
+    });
+  }, [products, searchText, selectedFilters]);
+
+  // Maneja la visualización de medidas técnicas en PDF
+  const handleViewMeasures = (pdfPage: string) => {
+    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
   };
 
   return (
     <>
       <CategoryLayout
         header={
-          <View style={{ position: 'relative' }}>
-            <Header
-              onSearch={setSearchText}
-              showBackButton={true}
-              onMenuHover={() => setSidebarVisible(true)}
-            />
-            {/* Capa invisible sobre el ícono hamburguesa */}
-            <TouchableOpacity
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: 60,
-                height: '100%',
-              }}
-              onPress={() => setSidebarVisible((prev) => !prev)}
-            />
-          </View>
+          <Header
+            onSearch={setSearchText}
+            showBackButton={true}
+            onMenuHover={() => setSidebarVisible(true)}
+          />
         }
         sidebar={
           <FilterSidebar
             title="Electricidad"
-            subcategories={SUBCATEGORIES}
+            subcategories={subcategories}
             onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
           />
         }
       >
-        {filteredProducts.map((category) => (
-          <View key={category.name}>
-            <View style={electricidadStyles.productsContainer}>
-              {category.products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  carouselIndex={carouselIndexes[product.id] ?? 0}
-                  expandedId={expandedId}
-                  onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() => handleToggleMeasures(product.id)}
-                  onImagePress={setSelectedMeasureImage}
-                  onNextImage={() => goToNext(product.id, product.images?.length || 0)}
-                  onPreviousImage={() => goToPrevious(product.id, product.images?.length || 0)}
-                />
-              ))}
-            </View>
+        {/* Estado de carga */}
+        {loading && (
+          <View style={{ padding: 40, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="#CC0000" />
           </View>
-        ))}
+        )}
 
-        {filteredProducts.length === 0 && (
+        {/* Error */}
+        {error && !loading && (
           <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>
-              No se encontraron productos.
-            </Text>
+            <Text style={{ color: '#CC0000', fontSize: 14 }}>{error}</Text>
+          </View>
+        )}
+
+        {/* Lista de productos */}
+        {!loading && (
+          <View style={electricidadStyles.productsContainer}>
+            {filteredProducts.map((product) => {
+              // 👇 Calcular el número real de imágenes para el carrusel
+              const rawImages = Array.isArray(product.product_image) 
+                ? product.product_image 
+                : typeof product.product_image === 'string' && product.product_image.trim() !== ''
+                  ? [product.product_image] 
+                  : [];
+              
+              const totalImages = rawImages.length;
+
+              return (
+                <ProductCard
+                  key={product.product_id}
+                  product={product}
+                  carouselIndex={carouselIndexes[product.product_id] ?? 0}
+                  onPress={() => handleOpenProduct(product.product_id)}
+                  onViewMeasures={() => handleViewMeasures(product.pdf_page)}
+                  onNextImage={() => goToNext(product.product_id, totalImages)}
+                  onPreviousImage={() => goToPrevious(product.product_id, totalImages)}
+                />
+              );
+            })}
+          </View>
+        )}
+
+        {!loading && filteredProducts.length === 0 && !error && (
+          <View style={{ alignItems: 'center', padding: 20 }}>
+            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
           </View>
         )}
 
@@ -166,11 +174,13 @@ export default function Electricidad() {
         categories={SIDEBAR_CATEGORIES}
       />
 
+      {/* Modal de producto */}
       <ProductModal
-        visible={Boolean(selectedProduct)}
+        visible={Boolean(selectedProduct) || loadingDetail}
         product={selectedProduct}
-        carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
-        onClose={() => setSelectedProductId(null)}
+        loading={loadingDetail}
+        carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
+        onClose={clearSelectedProduct}
       />
 
       <ImageModal
