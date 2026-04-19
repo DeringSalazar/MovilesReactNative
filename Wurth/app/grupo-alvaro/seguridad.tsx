@@ -1,32 +1,23 @@
+import { useNavigation } from 'expo-router';
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import { useNavigation } from 'expo-router';
-import Header from '../../components/Header';
+
 import CategoryLayout from '../../components/CategoryLayout';
 import FilterSidebar from '../../components/Filter';
-import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
+import Sidebar from '../../components/Sidebar';
+
 import { categories } from '../../constants/seguridad';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { seguridadStyles } from '../../styles/seguridad.styles';
 
-interface Category {
-  title: string;
-  image: any;
-  icon: string;
-  href?: string;
-}
 
-const FILTER_CATEGORIES = [
-  { id: '09.01', label: '09.01 Gafas de protección' },
-  { id: '09.02', label: '09.02 Guantes de seguridad' },
-  { id: '09.05', label: '09.05 Cintas de seguridad' },
-];
-
-const mainCategories: Category[] = [
-  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc' },
+// 🔹 mismas categorías globales
+const mainCategories = [
+  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
   { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
   { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
   { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
@@ -38,6 +29,15 @@ const mainCategories: Category[] = [
   { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
   { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
+
+
+// 🔹 subcategorías (reemplaza el drawer viejo)
+const SUBCATEGORIES = [
+  { id: '09.01', label: '09.01 Gafas de protección' },
+  { id: '09.02', label: '09.02 Guantes de seguridad' },
+  { id: '09.05', label: '09.05 Cintas de seguridad' },
+];
+
 
 export default function Seguridad() {
   const navigation = useNavigation();
@@ -65,7 +65,7 @@ export default function Seguridad() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
-  const [searchText, setSearchText] = useState<string>('');
+  const [searchText, setSearchText] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
@@ -81,6 +81,7 @@ export default function Seguridad() {
 
   const filteredProducts = useMemo(() => {
     const lowerSearch = searchText.toLowerCase().trim();
+
     return allProducts
       .map((category) => ({
         ...category,
@@ -117,8 +118,10 @@ export default function Seguridad() {
         sidebar={
           <FilterSidebar
             title="Seguridad e Higiene"
-            subcategories={FILTER_CATEGORIES}
-            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+            subcategories={SUBCATEGORIES}
+            onFilterChange={(filters) =>
+              setSelectedFilters(filters.subcategories)
+            }
           />
         }
       >
@@ -132,10 +135,16 @@ export default function Seguridad() {
                   carouselIndex={carouselIndexes[product.id] ?? 0}
                   expandedId={expandedId}
                   onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() => handleToggleMeasures(product.id)}
+                  onToggleMeasures={() =>
+                    handleToggleMeasures(product.id)
+                  }
                   onImagePress={setSelectedMeasureImage}
-                  onNextImage={() => goToNext(product.id, product.images?.length || 0)}
-                  onPreviousImage={() => goToPrevious(product.id, product.images?.length || 0)}
+                  onNextImage={() =>
+                    goToNext(product.id, product.images?.length || 0)
+                  }
+                  onPreviousImage={() =>
+                    goToPrevious(product.id, product.images?.length || 0)
+                  }
                 />
               ))}
             </View>

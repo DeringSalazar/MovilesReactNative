@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   Image,
   Modal,
   Pressable,
@@ -8,20 +9,13 @@ import {
   Text,
   View,
 } from 'react-native';
-
-interface Product {
-  id: string;
-  name: string;
-  subtitle?: string;
-  images?: any[];
-  features?: string[];
-  applications?: string[];
-}
+import type { ProductDetail } from '../types/products'; 
 
 interface ProductModalProps {
   visible: boolean;
-  product: Product | null;
+  product: ProductDetail | null;
   carouselIndex: number;
+  loading: boolean;
   onClose: () => void;
 }
 
@@ -29,107 +23,121 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   visible,
   product,
   carouselIndex,
+  loading,
   onClose,
-}) => (
-  <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-    <Pressable style={styles.modalBackdrop} onPress={onClose}>
-      <Pressable style={styles.modalCard}>
-        {product && (
-          <>
-            {/* ── Header compacto ── */}
-            <View style={styles.modalHeader}>
-              <View style={styles.headerAccent} />
-              <View style={styles.headerTextBlock}>
-                <Text style={styles.modalTitle} numberOfLines={1}>
-                  {product.name}
-                </Text>
-                {product.subtitle && (
-                  <Text style={styles.modalSubtitle} numberOfLines={1}>
-                    {product.subtitle}
+}) => {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.modalBackdrop} onPress={onClose}>
+        {/* ⚠️ stopPropagation para que el card no cierre al tocarlo */}
+        <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
+
+          {loading && !product ? (
+            // ── Estado de carga ──
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#CC0000" />
+              <Text style={styles.loadingText}>Cargando producto...</Text>
+            </View>
+          ) : product ? (
+            // ── Contenido del producto ──
+            <>
+              <View style={styles.modalHeader}>
+                <View style={styles.headerAccent} />
+                <View style={styles.headerTextBlock}>
+                  <Text style={styles.modalTitle} numberOfLines={1}>
+                    {product.product_name}
                   </Text>
-                )}
-              </View>
-              <View style={styles.refBadge}>
-                <Text style={styles.refText}>REF: {product.id}</Text>
-              </View>
-              <Pressable onPress={onClose} style={styles.closeIconButton}>
-                <Text style={styles.closeIconText}>✕</Text>
-              </Pressable>
-            </View>
-
-            <View style={styles.divider} />
-
-            {/* ── Cuerpo horizontal: imagen | info ── */}
-            <View style={styles.body}>
-              {/* Columna izquierda — Imagen */}
-              {product.images && product.images.length > 0 && (
-                <View style={styles.imageColumn}>
-                  <View style={styles.imageWrapper}>
-                    <Image
-                      source={product.images[carouselIndex]}
-                      style={styles.modalImage}
-                      resizeMode="contain"
-                    />
-                  </View>
+                  {product.subcategory_name && (
+                    <Text style={styles.modalSubtitle} numberOfLines={1}>
+                      {product.subcategory_name}
+                    </Text>
+                  )}
                 </View>
-              )}
+                <View style={styles.refBadge}>
+                  <Text style={styles.refText}>REF: {product.product_id}</Text>
+                </View>
+                <Pressable onPress={onClose} style={styles.closeIconButton}>
+                  <Text style={styles.closeIconText}>✕</Text>
+                </Pressable>
+              </View>
 
-              {/* Columna derecha — Características + Aplicaciones */}
-              <ScrollView
-                style={styles.infoColumn}
-                contentContainerStyle={styles.infoContent}
-                showsVerticalScrollIndicator={false}
-              >
-                {product.features && product.features.length > 0 && (
-                  <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                      <View style={styles.sectionAccentBar} />
-                      <Text style={styles.modalSectionTitle}>Características</Text>
-                    </View>
-                    <View style={styles.itemsContainer}>
-                      {product.features.map((item, index) => (
-                        <View key={index} style={styles.itemRow}>
-                          <View style={styles.bullet} />
-                          <Text style={styles.modalItem}>{item}</Text>
-                        </View>
-                      ))}
+              <View style={styles.divider} />
+
+              <View style={styles.body}>
+                {/* Columna imagen */}
+                {product.images && product.images.length > 0 && (
+                  <View style={styles.imageColumn}>
+                    <View style={styles.imageWrapper}>
+                      <Image
+                        source={
+                          typeof product.images[carouselIndex] === 'string'
+                            ? { uri: product.images[carouselIndex] as string }
+                            : (product.images[carouselIndex] as { uri: string })
+                        }
+                        style={styles.modalImage}
+                        resizeMode="contain"
+                      />
                     </View>
                   </View>
                 )}
 
-                {product.applications && product.applications.length > 0 && (
-                  <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                      <View style={styles.sectionAccentBar} />
-                      <Text style={styles.modalSectionTitle}>Aplicaciones</Text>
+                {/* Columna info */}
+                <ScrollView
+                  style={styles.infoColumn}
+                  contentContainerStyle={styles.infoContent}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {product.features && product.features.length > 0 && (
+                    <View style={styles.section}>
+                      <View style={styles.sectionHeader}>
+                        <View style={styles.sectionAccentBar} />
+                        <Text style={styles.modalSectionTitle}>Características</Text>
+                      </View>
+                      <View style={styles.itemsContainer}>
+                        {product.features.map((item, index) => (
+                          <View key={index} style={styles.itemRow}>
+                            <View style={styles.bullet} />
+                            <Text style={styles.modalItem}>{item}</Text>
+                          </View>
+                        ))}
+                      </View>
                     </View>
-                    <View style={styles.itemsContainer}>
-                      {product.applications.map((item, index) => (
-                        <View key={index} style={styles.itemRow}>
-                          <View style={styles.bullet} />
-                          <Text style={styles.modalItem}>{item}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                )}
-              </ScrollView>
-            </View>
+                  )}
 
-            {/* ── Footer ── */}
-            <View style={styles.divider} />
-            <View style={styles.footer}>
-              <Pressable onPress={onClose} style={styles.closeButton}>
-                <Text style={styles.closeButtonText}>Cerrar ficha</Text>
-              </Pressable>
-            </View>
-          </>
-        )}
+                  {product.applications && product.applications.length > 0 && (
+                    <View style={styles.section}>
+                      <View style={styles.sectionHeader}>
+                        <View style={styles.sectionAccentBar} />
+                        <Text style={styles.modalSectionTitle}>Aplicaciones</Text>
+                      </View>
+                      <View style={styles.itemsContainer}>
+                        {product.applications.map((item, index) => (
+                          <View key={index} style={styles.itemRow}>
+                            <View style={styles.bullet} />
+                            <Text style={styles.modalItem}>{item}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  )}
+                </ScrollView>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.footer}>
+                <Pressable onPress={onClose} style={styles.closeButton}>
+                  <Text style={styles.closeButtonText}>Cerrar ficha</Text>
+                </Pressable>
+              </View>
+            </>
+          ) : null}
+
+        </Pressable>
       </Pressable>
-    </Pressable>
-  </Modal>
-);
-
+    </Modal>
+  );
+};
 const styles = StyleSheet.create({
   modalBackdrop: {
     flex: 1,
@@ -323,5 +331,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 13,
     letterSpacing: 0.5,
+  },
+  loadingContainer: {
+    minHeight: 260,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  loadingText: {
+    marginTop: 12,
+    color: '#666666',
+    fontSize: 14,
   },
 });

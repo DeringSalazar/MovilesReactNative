@@ -1,30 +1,23 @@
-import React, { useMemo, useState, useLayoutEffect } from 'react';
-import { Text, View } from 'react-native';
 import { useNavigation } from 'expo-router';
-import Header from '../../components/Header';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
+
 import CategoryLayout from '../../components/CategoryLayout';
 import FilterSidebar from '../../components/Filter';
-import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
+import Sidebar from '../../components/Sidebar';
+
 import { categories } from '../../constants/maquinas';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { maquinasStyles } from '../../styles/maquinas.styles';
 
-interface Category {
-  title: string;
-  image: any;
-  icon: string;
-  href?: string;
-}
 
-const FILTER_CATEGORIES = [
-  { id: '08.01', label: '08.01 Herramientas neumáticas' },
-];
-
-const mainCategories: Category[] = [
-  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc' },
+// 🔹 mismas categorías principales (puedes reutilizar las de Químicos si ya las tienes en un archivo global)
+const mainCategories = [
+  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
   { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
   { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
   { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
@@ -37,6 +30,13 @@ const mainCategories: Category[] = [
   { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
 
+
+// 🔹 filtros de máquinas (puedes agregar más después)
+const SUBCATEGORIES = [
+  { id: '08.01', label: '08.01 Herramientas neumáticas' },
+];
+
+
 export default function Maquinas() {
   const navigation = useNavigation();
 
@@ -44,6 +44,7 @@ export default function Maquinas() {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
+  // 🔹 Normalización de productos
   const allProducts = useMemo(
     () =>
       categories.map((category) => ({
@@ -63,12 +64,13 @@ export default function Maquinas() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
-  const [searchText, setSearchText] = useState<string>('');
+  const [searchText, setSearchText] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
+  // 🔹 producto seleccionado
   const selectedProduct = useMemo(() => {
     for (const category of allProducts) {
       const found = category.products.find((p) => p.id === selectedProductId);
@@ -77,6 +79,7 @@ export default function Maquinas() {
     return null;
   }, [allProducts, selectedProductId]);
 
+  // 🔹 filtro + búsqueda
   const filteredProducts = useMemo(() => {
     const lowerSearch = searchText.toLowerCase().trim();
 
@@ -115,9 +118,11 @@ export default function Maquinas() {
         }
         sidebar={
           <FilterSidebar
-            title="Maquinas"
-            subcategories={FILTER_CATEGORIES}
-            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+            title="Máquinas"
+            subcategories={SUBCATEGORIES}
+            onFilterChange={(filters) =>
+              setSelectedFilters(filters.subcategories)
+            }
           />
         }
       >
@@ -131,10 +136,16 @@ export default function Maquinas() {
                   carouselIndex={carouselIndexes[product.id] ?? 0}
                   expandedId={expandedId}
                   onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() => handleToggleMeasures(product.id)}
+                  onToggleMeasures={() =>
+                    handleToggleMeasures(product.id)
+                  }
                   onImagePress={setSelectedMeasureImage}
-                  onNextImage={() => goToNext(product.id, product.images?.length || 0)}
-                  onPreviousImage={() => goToPrevious(product.id, product.images?.length || 0)}
+                  onNextImage={() =>
+                    goToNext(product.id, product.images?.length || 0)
+                  }
+                  onPreviousImage={() =>
+                    goToPrevious(product.id, product.images?.length || 0)
+                  }
                 />
               ))}
             </View>
@@ -143,7 +154,9 @@ export default function Maquinas() {
 
         {filteredProducts.length === 0 && (
           <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
+            <Text style={{ fontSize: 16, color: '#666' }}>
+              No se encontraron productos.
+            </Text>
           </View>
         )}
       </CategoryLayout>
@@ -160,6 +173,7 @@ export default function Maquinas() {
         carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
         onClose={() => setSelectedProductId(null)}
       />
+
       <ImageModal
         visible={Boolean(selectedMeasureImage)}
         imageSource={selectedMeasureImage}
@@ -168,4 +182,3 @@ export default function Maquinas() {
     </>
   );
 }
-
