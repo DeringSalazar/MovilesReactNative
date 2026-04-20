@@ -4,7 +4,6 @@ import { useNavigation, useRouter } from 'expo-router';
 import CategoryLayout from '../../components/CategoryLayout';
 import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
@@ -157,7 +156,6 @@ export default function Auto() {
                     </View>
                 )}
 
-                <Footer />
             </CategoryLayout>
 
             <Sidebar

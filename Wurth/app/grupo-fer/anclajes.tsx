@@ -161,7 +161,7 @@ export default function Anclajes() {
               </View>
             )}
 
-            <Footer />
+           
           </CategoryLayout>
         </View>
       </View>
