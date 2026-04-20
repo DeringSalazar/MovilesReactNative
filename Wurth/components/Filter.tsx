@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
 import {
-    Animated,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    useWindowDimensions,
-    View,
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from 'react-native';
 
 export type SubCategory = {
@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   wrapper: {
     padding: 12,
     width: 220,
+     alignSelf: 'stretch',
   },
   sidebar: {
     backgroundColor: '#fff',
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: '#f0f0f0',
+    // flex: 1,
   },
   accordionHeader: {
     flexDirection: 'row',

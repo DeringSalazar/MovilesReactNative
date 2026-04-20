@@ -22,24 +22,24 @@ export default function CategoryLayout({
       {/* SCROLL EXTERNO: todo hace scroll junto */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
 
-        {/* BODY: sidebar + contenido lado a lado */}
+        {/* BODY: contenido + sidebar lado a lado */}
         <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
 
-          {/* SIDEBAR opcional */}
-          {sidebar}
-
-          {/* CONTENIDO principal */}
+          {/* CONTENIDO principal primero */}
           <View style={{ flex: 1 }}>
             {children}
           </View>
 
-        </View>
-
-        {/* FOOTER siempre al final del scroll */}
-        <Footer />
-
-      </ScrollView>
+          {/* SIDEBAR a la derecha */}
+          {sidebar}
 
     </View>
+
+        {/* FOOTER siempre al final del scroll */ }
+  <Footer />
+
+      </ScrollView >
+
+    </View >
   );
 }

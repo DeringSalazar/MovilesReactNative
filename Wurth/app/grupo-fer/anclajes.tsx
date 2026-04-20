@@ -1,7 +1,8 @@
-import React, { useMemo, useState, useLayoutEffect } from 'react';
+import { useNavigation, usePathname } from 'expo-router';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import { useNavigation } from 'expo-router';
 import CategoryLayout from '../../components/CategoryLayout';
+import CategorySidebar from '../../components/CategorySidebar';
 import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
 import { ImageModal } from '../../components/ImageModal';
@@ -16,7 +17,16 @@ interface Category {
   title: string;
   image: any;
   icon: string;
-  href?: '/grupo-fer/auto' | '/grupo-fer/anclajes' | '/grupo-iby/electricidad' | '/grupo-iby/herramientas' | '/grupo-erik/quimicos' | '/grupo-erik/tornilleria' | '/orsy-Agro/orsy' | '/orsy-Agro/agro' | '/grupo-alvaro/maquinas' | '/grupo-alvaro/seguridad'  ;
+  href?: '/grupo-fer/auto'
+  | '/grupo-fer/anclajes'
+  | '/grupo-iby/electricidad'
+  | '/grupo-iby/herramientas'
+  | '/grupo-erik/quimicos'
+  | '/grupo-erik/tornilleria'
+  | '/orsy-Agro/orsy'
+  | '/orsy-Agro/agro'
+  | '/grupo-alvaro/maquinas'
+  | '/grupo-alvaro/seguridad';
 }
 
 const mainCategories: Category[] = [
@@ -42,12 +52,12 @@ const FILTER_CATEGORIES = [
 
 export default function Anclajes() {
   const navigation = useNavigation();
+  const pathname = usePathname();
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
+    navigation.setOptions({ headerShown: false });
   }, [navigation]);
+
   const allProducts = useMemo(
     () =>
       categories.map((category) => ({
@@ -83,7 +93,6 @@ export default function Anclajes() {
 
   const filteredProducts = useMemo(() => {
     const lowerSearch = searchText.toLowerCase().trim();
-
     return allProducts
       .map((category) => ({
         ...category,
@@ -92,11 +101,9 @@ export default function Anclajes() {
             !lowerSearch ||
             product.name.toLowerCase().includes(lowerSearch) ||
             product.code?.toLowerCase().includes(lowerSearch);
-
           const matchesFilter =
             selectedFilters.length === 0 ||
             selectedFilters.some((f) => product.code?.startsWith(f));
-
           return matchesSearch && matchesFilter;
         }),
       }))
@@ -109,45 +116,56 @@ export default function Anclajes() {
 
   return (
     <>
-      <CategoryLayout
-        header={<Header onSearch={setSearchText} showBackButton={true} onMenuHover={() => setSidebarVisible(true)} />}
-        sidebar={
-          <FilterSidebar
-            title="Anclajes"
-            subcategories={FILTER_CATEGORIES}
-            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
-          />
-        }
-      >
-        {filteredProducts.map((category) => (
-          <View key={category.name}>
-            <View style={anclajesStyles.productsContainer}>
-              {category.products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  carouselIndex={carouselIndexes[product.id] ?? 0}
-                  expandedId={expandedId}
-                  onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() => handleToggleMeasures(product.id)}
-                  onImagePress={setSelectedMeasureImage}
-                  onNextImage={() => goToNext(product.id, product.images?.length || 0)}
-                  onPreviousImage={() =>
-                    goToPrevious(product.id, product.images?.length || 0)
-                  }
-                />
-              ))}
-            </View>
-          </View>
-        ))}
+      <View style={{ flex: 1, flexDirection: 'row' }}>
 
-        {filteredProducts.length === 0 && (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
-          </View>
-        )}
+        {/* CATEGORY SIDEBAR IZQUIERDO */}
+        <CategorySidebar
+          categories={mainCategories}
+          activeHref={pathname}
+        />
 
-      </CategoryLayout>
+        {/* CONTENIDO */}
+        <View style={{ flex: 1 }}>
+          <CategoryLayout
+            header={<Header onSearch={setSearchText} showBackButton={true} onMenuHover={() => setSidebarVisible(true)} />}
+            sidebar={
+              <FilterSidebar
+                title="Anclajes"
+                subcategories={FILTER_CATEGORIES}
+                onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+              />
+            }
+          >
+            {filteredProducts.map((category) => (
+              <View key={category.name}>
+                <View style={anclajesStyles.productsContainer}>
+                  {category.products.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      carouselIndex={carouselIndexes[product.id] ?? 0}
+                      expandedId={expandedId}
+                      onPress={() => setSelectedProductId(product.id)}
+                      onToggleMeasures={() => handleToggleMeasures(product.id)}
+                      onImagePress={setSelectedMeasureImage}
+                      onNextImage={() => goToNext(product.id, product.images?.length || 0)}
+                      onPreviousImage={() => goToPrevious(product.id, product.images?.length || 0)}
+                    />
+                  ))}
+                </View>
+              </View>
+            ))}
+
+            {filteredProducts.length === 0 && (
+              <View style={{ alignItems: 'center', padding: 20 }}>
+                <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
+              </View>
+            )}
+
+          </CategoryLayout>
+        </View>
+
+      </View>
 
       <Sidebar
         visible={sidebarVisible}
