@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
-import { Animated,Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useRef, useState } from 'react';
+import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
 import Footer from '../../components/Footer';
