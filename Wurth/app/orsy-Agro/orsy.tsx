@@ -15,6 +15,23 @@ import { useProducts } from '../../hooks/useProducts';
 import { orsyStyles } from '../../styles/orsy.styles';
 import type { ProductSummary } from '../../types/products';
 
+// Mapeo local de imágenes por product_id
+const LOCAL_IMAGES: Record<string, any[]> = {
+  'pasadores-elasticos-pequenos': [require('../../assets/images/10.00/10.01.png')],
+  'pasadores-elasticos-grandes': [require('../../assets/images/10.00/10.02.png')],
+  'pasadores-din94': [require('../../assets/images/10.00/10.03.png')],
+  'arandelas-estanqueidad-aluminio': [require('../../assets/images/10.00/10.04.png')],
+  'arandelas-estanqueidad-cobre': [require('../../assets/images/10.00/10.05.png')],
+  'arandelas-estanqueidad-tapones-aceite': [require('../../assets/images/10.00/10.06.png')],
+  'cjto-oring-pulgadas': [require('../../assets/images/10.00/10.07.png')],
+  'cjto-juntas-toricas': [require('../../assets/images/10.00/10.08.png')],
+  'cjto-engrasadores': [require('../../assets/images/10.00/10.09.png')],
+  'cjto-brocas-sds-plus': [require('../../assets/images/10.00/10.10.png')],
+  'fusibles-ato': [require('../../assets/images/10.00/10.11.png')],
+  'fusibles-mini-max': [require('../../assets/images/10.00/10.12.png')],
+  'punteras-aisladas': [require('../../assets/images/10.00/10.13.png')],
+};
+
 const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
   { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
   { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
@@ -131,19 +148,16 @@ export default function Orsy() {
             {!loading && (
               <View style={orsyStyles.productsContainer}>
                 {filteredProducts.map((product) => {
-                  console.log('Product:', product);
-                  const rawImages = Array.isArray(product.product_image)
-                    ? product.product_image
-                    : typeof product.product_image === 'string' && product.product_image.trim() !== ''
-                      ? [product.product_image]
-                      : [];
-
-                  const totalImages = rawImages.length;
+                  // Convertir objetos require a string URIs
+                  const localImages = (LOCAL_IMAGES[product.product_id] || []).map(img => 
+                    typeof img === 'string' ? img : img.uri
+                  );
+                  const totalImages = localImages.length;
 
                   return (
                     <ProductCard
                       key={product.product_id}
-                      product={product}
+                      product={{ ...product, product_image: localImages }}
                       carouselIndex={carouselIndexes[product.product_id] ?? 0}
                       onPress={() => handleOpenProduct(product.product_id)}
                       onViewMeasures={() => handleViewMeasures(product.pdf_page)}
@@ -160,8 +174,6 @@ export default function Orsy() {
                 <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
               </View>
             )}
-
-           
           </CategoryLayout>
         </View>
       </View>
@@ -174,7 +186,7 @@ export default function Orsy() {
 
       <ProductModal
         visible={Boolean(selectedProduct) || loadingDetail}
-        product={selectedProduct}
+        product={selectedProduct ? { ...selectedProduct, product_image: LOCAL_IMAGES[selectedProduct.product_id] || [] } : null}
         loading={loadingDetail}
         carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
         onClose={clearSelectedProduct}
