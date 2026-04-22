@@ -29,6 +29,30 @@ const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
   { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
 
+// Mapeo dinámico de imágenes desde rutas de la API
+const getAnclajesImages = (imagePath: string | string[] | null | undefined): any[] => {
+  if (!imagePath) return [];
+  
+  const paths = Array.isArray(imagePath) ? imagePath : [imagePath];
+  
+  // Todas las imágenes disponibles en assets/anclajes
+  const imageMap: Record<string, any> = {
+    '05.01.01p261.png': require('../../assets/anclajes/anclajes05.01.01p261.png'),
+    '05.02.01p263.png': require('../../assets/anclajes/05.02.01p263.png'),
+    '05.03.01p264.png': require('../../assets/anclajes/05.03.01p264.png'),
+    '05.03.02p265.png': require('../../assets/anclajes/05.03.02p265.png'),
+    '05.03.03.01p266.png': require('../../assets/anclajes/05.03.03.01p266.png'),
+    '05.03.03.02p266.png': require('../../assets/anclajes/05.03.03.02p266.png'),
+    '05.03.04p267.png': require('../../assets/anclajes/05.03.04p267.png.png'),
+    '05.04.01p268.png': require('../../assets/anclajes/anclajes05.04.01p268.png'),
+  };
+  
+  return paths.map(path => {
+    const filename = typeof path === 'string' ? path.split('/').pop() : '';
+    return filename && filename in imageMap ? imageMap[filename] : null;
+  }).filter(img => img !== null);
+};
+
 export default function Anclajes() {
   const navigation = useNavigation();
   const pathname = usePathname();
@@ -132,18 +156,15 @@ export default function Anclajes() {
               <View style={anclajesStyles.productsContainer}>
                 {filteredProducts.map((product) => {
                   console.log('Product:', product);
-                  const rawImages = Array.isArray(product.product_image)
-                    ? product.product_image
-                    : typeof product.product_image === 'string' && product.product_image.trim() !== ''
-                      ? [product.product_image]
-                      : [];
-
-                  const totalImages = rawImages.length;
+                  const localImages = getAnclajesImages(product.product_image).map(img => 
+                    typeof img === 'string' ? img : img.uri
+                  );
+                  const totalImages = localImages.length;
 
                   return (
                     <ProductCard
                       key={product.product_id}
-                      product={product}
+                      product={{ ...product, product_image: localImages }}
                       carouselIndex={carouselIndexes[product.product_id] ?? 0}
                       onPress={() => handleOpenProduct(product.product_id)}
                       onViewMeasures={() => handleViewMeasures(product.pdf_page)}
@@ -174,7 +195,7 @@ export default function Anclajes() {
 
       <ProductModal
         visible={Boolean(selectedProduct) || loadingDetail}
-        product={selectedProduct}
+        product={selectedProduct ? { ...selectedProduct, images: getAnclajesImages(selectedProduct.images).map(img => typeof img === 'string' ? img : img.uri) } : null}
         loading={loadingDetail}
         carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
         onClose={clearSelectedProduct}

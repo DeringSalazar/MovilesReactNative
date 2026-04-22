@@ -15,23 +15,132 @@ import { useProducts } from '../../hooks/useProducts';
 import type { ProductSummary } from '../../types/products';
 
 const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
-  { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
-  { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
-  { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
-  { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
-  { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
-  { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
-  { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
-  { title: 'Maquinas', icon: 'cog', href: '/grupo-alvaro/maquinas' },
-  { title: 'Seguridad e Higiene', icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
-  { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
-  { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
+    { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
+    { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
+    { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+    { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
+    { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+    { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
+    { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
+    { title: 'Maquinas', icon: 'cog', href: '/grupo-alvaro/maquinas' },
+    { title: 'Seguridad e Higiene', icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
+    { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
+    { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
 
+// Mapeo dinámico de imágenes desde rutas de la API
+const getAutoImages = (imagePath: string | string[] | null | undefined): any[] => {
+    if (!imagePath) return [];
+
+    const paths = Array.isArray(imagePath) ? imagePath : [imagePath];
+
+    // Todas las imágenes disponibles en assets/autoYCargo
+    const imageMap: Record<string, any> = {
+        '04.01.01.01p241.png': require('../../assets/autoYCargo/04.01.01.01p241.png'),
+        '04.01.01.02p241.png': require('../../assets/autoYCargo/04.01.01.02p241.png'),
+        '04.01.02p242.png': require('../../assets/autoYCargo/04.01.02p242.png'),
+        '04.02.01.01p243.png': require('../../assets/autoYCargo/04.02.01.01p243.png'),
+        '04.02.01.02p243.png': require('../../assets/autoYCargo/04.02.01.02p243.png'),
+        '04.02.02p243.png': require('../../assets/autoYCargo/04.02.02p243.png'),
+        '04.02.03.01p244.png': require('../../assets/autoYCargo/04.02.03.01p244.png'),
+        '04.02.03.02p244.png': require('../../assets/autoYCargo/04.02.03.02p244.png'),
+        '04.02.04.01p245.png': require('../../assets/autoYCargo/04.02.04.01p245.png'),
+        '04.02.04.02p245.png': require('../../assets/autoYCargo/04.02.04.02p245.png'),
+        '04.02.05.01p246.png': require('../../assets/autoYCargo/04.02.05.01p246.png'),
+        '04.02.05.02p246.png': require('../../assets/autoYCargo/04.02.05.02p246.png'),
+        '04.02.06p247.png': require('../../assets/autoYCargo/04.02.06p247.png'),
+        '04.02.07p248.png': require('../../assets/autoYCargo/04.02.07p248.png'),
+        '04.03.01p250.png': require('../../assets/autoYCargo/04.03.01.png'),
+        '04.03.02p250.png': require('../../assets/autoYCargo/04.03.02.png'),
+        '04.03.03p250.png': require('../../assets/autoYCargo/04.03.03.png'),
+        '04.03.04p250.png': require('../../assets/autoYCargo/04.03.04.png'),
+        '04.03.05p250.png': require('../../assets/autoYCargo/04.03.05.png'),
+        '04.03.06p250.png': require('../../assets/autoYCargo/04.03.06.png'),
+        '04.03.07p250.png': require('../../assets/autoYCargo/04.03.07.png'),
+        '04.03.08p250.png': require('../../assets/autoYCargo/04.03.08.png'),
+        '04.03.09p250.png': require('../../assets/autoYCargo/04.03.09.png'),
+        '04.03.10p250.png': require('../../assets/autoYCargo/04.03.10.png'),
+        '04.03.11p250.png': require('../../assets/autoYCargo/04.03.11.png'),
+        '04.03.12p250.png': require('../../assets/autoYCargo/04.03.12.png'),
+        '04.03.13p250.png': require('../../assets/autoYCargo/04.03.13.png'),
+        '04.03.14p250.png': require('../../assets/autoYCargo/04.03.14.png'),
+        '04.03.15p250.png': require('../../assets/autoYCargo/04.03.15.png'),
+        '04.03.16p250.png': require('../../assets/autoYCargo/04.03.16.png'),
+        '04.03.17p250.png': require('../../assets/autoYCargo/04.03.17.png'),
+        '04.03.18p250.png': require('../../assets/autoYCargo/04.03.18.png'),
+        '04.03.19p250.png': require('../../assets/autoYCargo/04.03.19.png'),
+        '04.03.20p250.png': require('../../assets/autoYCargo/04.03.20.png'),
+        '04.03.21p250.png': require('../../assets/autoYCargo/04.03.21.png'),
+        '04.03.22p250.png': require('../../assets/autoYCargo/04.03.22.png'),
+        '04.03.23p250.png': require('../../assets/autoYCargo/04.03.23.png'),
+        '04.03.24p250.png': require('../../assets/autoYCargo/04.03.24.png'),
+
+        '04.03.25p251.png': require('../../assets/autoYCargo/04.03.25.png'),
+        '04.03.26p251.png': require('../../assets/autoYCargo/04.03.26.png'),
+        '04.03.27p251.png': require('../../assets/autoYCargo/04.03.27.png'),
+        '04.03.28p251.png': require('../../assets/autoYCargo/04.03.28.png'),
+        '04.03.29p251.png': require('../../assets/autoYCargo/04.03.29.png'),
+        '04.03.30p251.png': require('../../assets/autoYCargo/04.03.30.png'),
+        '04.03.31p251.png': require('../../assets/autoYCargo/04.03.31.png'),
+        '04.03.32p251.png': require('../../assets/autoYCargo/04.03.32.png'),
+        '04.03.33p251.png': require('../../assets/autoYCargo/04.03.33.png'),
+        '04.03.34p251.png': require('../../assets/autoYCargo/04.03.34.png'),
+        '04.03.35p251.png': require('../../assets/autoYCargo/04.03.35.png'),
+        '04.03.36p251.png': require('../../assets/autoYCargo/04.03.36.png'),
+        '04.03.37p251.png': require('../../assets/autoYCargo/04.03.37.png'),
+        '04.03.38p251.png': require('../../assets/autoYCargo/04.03.38.png'),
+        '04.03.39p251.png': require('../../assets/autoYCargo/04.03.39.png'),
+        '04.03.40p251.png': require('../../assets/autoYCargo/04.03.40.png'),
+        '04.03.41p251.png': require('../../assets/autoYCargo/04.03.41.png'),
+        '04.03.42p251.png': require('../../assets/autoYCargo/04.03.42.png'),
+        '04.03.43p251.png': require('../../assets/autoYCargo/04.03.43.png'),
+        '04.03.44p251.png': require('../../assets/autoYCargo/04.03.44.png'),
+        '04.03.45p251.png': require('../../assets/autoYCargo/04.03.45.png'),
+        '04.03.46p251.png': require('../../assets/autoYCargo/04.03.46.png'),
+
+        '04.03.47p252.png': require('../../assets/autoYCargo/04.03.47.png'),
+        '04.03.48p252.png': require('../../assets/autoYCargo/04.03.48.png'),
+        '04.03.49p252.png': require('../../assets/autoYCargo/04.03.49.png'),
+        '04.03.50p252.png': require('../../assets/autoYCargo/04.03.50.png'),
+        '04.03.51p252.png': require('../../assets/autoYCargo/04.03.51.png'),
+        '04.03.52p252.png': require('../../assets/autoYCargo/04.03.52.png'),
+        '04.03.53p252.png': require('../../assets/autoYCargo/04.03.53.png'),
+        '04.03.54p252.png': require('../../assets/autoYCargo/04.03.54.png'),
+        '04.03.55p252.png': require('../../assets/autoYCargo/04.03.55.png'),
+        '04.03.56p252.png': require('../../assets/autoYCargo/04.03.56.png'),
+        '04.03.57p252.png': require('../../assets/autoYCargo/04.03.57.png'),
+
+        '04.03.58p253.png': require('../../assets/autoYCargo/04.03.58.png'),
+        '04.03.59p253.png': require('../../assets/autoYCargo/04.03.59.png'),
+        '04.03.60p253.png': require('../../assets/autoYCargo/04.03.60.png'),
+        '04.03.61p253.png': require('../../assets/autoYCargo/04.03.61.png'),
+        '04.03.62p253.png': require('../../assets/autoYCargo/04.03.62.png'),
+        '04.03.63p253.png': require('../../assets/autoYCargo/04.03.63.png'),
+
+        '04.03.64p254.png': require('../../assets/autoYCargo/04.03.64.png'),
+        '04.03.65p254.png': require('../../assets/autoYCargo/04.03.65.png'),
+        '04.03.66p254.png': require('../../assets/autoYCargo/04.03.66.png'),
+        '04.03.67p254.png': require('../../assets/autoYCargo/04.03.67.png'),
+        '04.03.68p254.png': require('../../assets/autoYCargo/04.03.68.png'),
+        '04.03.69p254.png': require('../../assets/autoYCargo/04.03.69.png'),
+        '04.03.70p254.png': require('../../assets/autoYCargo/04.03.70.png'),
+        '04.03.71p254.png': require('../../assets/autoYCargo/04.03.71.png'),
+        '04.04.01p255.png': require('../../assets/autoYCargo/autoYCargo04.04.01p255.png'),
+        '04.04.02p256.png': require('../../assets/autoYCargo/autoYCargo04.04.02p256.png'),
+        '04.05.01p257.png': require('../../assets/autoYCargo/04.05.01p257.png'),
+        '04.05.02p258.png': require('../../assets/autoYCargo/04.05.02p258.png'),
+    };
+
+    return paths.map(path => {
+        const filename = typeof path === 'string' ? path.split('/').pop() : '';
+        return filename && filename in imageMap ? imageMap[filename] : null;
+    }).filter(img => img !== null);
+};
+
 export default function Auto() {
-  const navigation = useNavigation();
-  const pathname = usePathname();
-  const router = useRouter();
+    const navigation = useNavigation();
+    const pathname = usePathname();
+    const router = useRouter();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -133,18 +242,15 @@ export default function Auto() {
                         {!loading && (
                             <View style={autoStyles.productsContainer}>
                                 {filteredProducts.map((product) => {
-                                    const rawImages = Array.isArray(product.product_image)
-                                        ? product.product_image
-                                        : typeof product.product_image === 'string' && product.product_image.trim() !== ''
-                                            ? [product.product_image]
-                                            : [];
-
-                                    const totalImages = rawImages.length;
+                                    const localImages = getAutoImages(product.product_image).map(img => 
+                                      typeof img === 'string' ? img : img.uri
+                                    );
+                                    const totalImages = localImages.length;
 
                                     return (
                                         <ProductCard
                                             key={product.product_id}
-                                            product={product}
+                                            product={{ ...product, product_image: localImages }}
                                             carouselIndex={carouselIndexes[product.product_id] ?? 0}
                                             onPress={() => handleOpenProduct(product.product_id)}
                                             onViewMeasures={() => handleViewMeasures(product.pdf_page)}
@@ -174,7 +280,7 @@ export default function Auto() {
 
             <ProductModal
                 visible={Boolean(selectedProduct) || loadingDetail}
-                product={selectedProduct}
+                product={selectedProduct ? { ...selectedProduct, images: getAutoImages(selectedProduct.images).map(img => typeof img === 'string' ? img : img.uri) } : null}
                 loading={loadingDetail}
                 carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
                 onClose={clearSelectedProduct}
