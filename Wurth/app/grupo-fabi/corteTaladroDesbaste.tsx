@@ -110,7 +110,7 @@ export default function Electricidad() {
         }
         sidebar={
           <FilterSidebar
-            title="Corte,Taladro y Desbaste"
+            title="Corte/Taladro/Desbaste"
             subcategories={subcategories}
             onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
           />
