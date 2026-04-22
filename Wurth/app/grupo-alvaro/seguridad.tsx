@@ -1,108 +1,99 @@
-import { useNavigation } from 'expo-router';
-import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
-
-import CategoryLayout from '../../components/CategoryLayout';
-import FilterSidebar from '../../components/Filter';
+import React, { useLayoutEffect, useState, useMemo } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { useNavigation, useRouter } from 'expo-router';
 import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
 import Sidebar from '../../components/Sidebar';
-
-import { categories } from '../../constants/seguridad';
+import FilterSidebar from '../../components/Filter';
+import CategoryLayout from '../../components/CategoryLayout';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { seguridadStyles } from '../../styles/seguridad.styles';
+import { useProducts } from '../../hooks/useProducts';
+import type { ProductSummary } from '../../types/products';
 
 
-// 🔹 mismas categorías globales
-const mainCategories = [
-  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
-  { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
-  { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
-  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
-  { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
-  { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
-  { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
-  { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
-  { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
-  { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
-  { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
+const SIDEBAR_CATEGORIES = [
+  { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
+  { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
+  { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas', icon: 'cog', href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene', icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
+  { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
+  { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
-
-
-// 🔹 subcategorías (reemplaza el drawer viejo)
-const SUBCATEGORIES = [
-  { id: '09.01', label: '09.01 Gafas de protección' },
-  { id: '09.02', label: '09.02 Guantes de seguridad' },
-  { id: '09.05', label: '09.05 Cintas de seguridad' },
-];
-
 
 export default function Seguridad() {
   const navigation = useNavigation();
+  const router = useRouter();
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  const allProducts = useMemo(
-    () =>
-      categories.map((category) => ({
-        ...category,
-        products: category.subcategories.flatMap((sub) =>
-          sub.products.map((product) => ({
-            ...product,
-            category: category.name,
-            subcategory: sub.name,
-            code: sub.code,
-          }))
-        ),
-      })),
-    []
-  );
+  const {
+    products,
+    selectedProduct,
+    loading,
+    loadingDetail,
+    error,
+    fetchProductById,
+    clearSelectedProduct,
+  } = useProducts('seguridad');
 
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState<string>('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
-  const selectedProduct = useMemo(() => {
-    for (const category of allProducts) {
-      const found = category.products.find((p) => p.id === selectedProductId);
-      if (found) return found;
-    }
-    return null;
-  }, [allProducts, selectedProductId]);
+  // Subcategorías dinámicas extraídas de la API
+  const subcategories = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { id: string; label: string }[] = [];
 
-  const filteredProducts = useMemo(() => {
-    const lowerSearch = searchText.toLowerCase().trim();
+    products.forEach((p) => {
+      const code = p.subcategory_code;
+      const name = p.subcategory_name;
+      if (code && !seen.has(code)) {
+        seen.add(code);
+        result.push({
+          id: code,
+          label: name ? `${code} ${name}` : code,
+        });
+      }
+    });
 
-    return allProducts
-      .map((category) => ({
-        ...category,
-        products: category.products.filter((product) => {
-          const matchesSearch =
-            !lowerSearch ||
-            product.name.toLowerCase().includes(lowerSearch) ||
-            product.code?.toLowerCase().includes(lowerSearch);
+    return result.sort((a, b) => a.id.localeCompare(b.id));
+  }, [products]);
 
-          const matchesFilter =
-            selectedFilters.length === 0 ||
-            selectedFilters.some((f) => product.code?.startsWith(f));
+  const handleOpenProduct = (id: string) => {
+    fetchProductById(id);
+  };
 
-          return matchesSearch && matchesFilter;
-        }),
-      }))
-      .filter((category) => category.products.length > 0);
-  }, [allProducts, searchText, selectedFilters]);
+  const filteredProducts: ProductSummary[] = useMemo(() => {
+    return products.filter((product) => {
+      const lowerSearch = searchText.toLowerCase().trim();
+      const matchesSearch =
+        !lowerSearch ||
+        product.product_name.toLowerCase().includes(lowerSearch) ||
+        product.subcategory_code?.toLowerCase().includes(lowerSearch);
+      const matchesFilter =
+        selectedFilters.length === 0 ||
+        selectedFilters.some((f) => product.subcategory_code?.startsWith(f));
+      return matchesSearch && matchesFilter;
+    });
+  }, [products, searchText, selectedFilters]);
 
-  const handleToggleMeasures = (productId: string) => {
-    setExpandedId(expandedId === productId ? null : productId);
+  const handleViewMeasures = (pdfPage: string) => {
+    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
   };
 
   return (
@@ -118,59 +109,74 @@ export default function Seguridad() {
         sidebar={
           <FilterSidebar
             title="Seguridad e Higiene"
-            subcategories={SUBCATEGORIES}
-            onFilterChange={(filters) =>
-              setSelectedFilters(filters.subcategories)
-            }
+            subcategories={subcategories}
+            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
           />
         }
       >
-        {filteredProducts.map((category) => (
-          <View key={category.name}>
-            <View style={seguridadStyles.productsContainer}>
-              {category.products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  carouselIndex={carouselIndexes[product.id] ?? 0}
-                  expandedId={expandedId}
-                  onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() =>
-                    handleToggleMeasures(product.id)
-                  }
-                  onImagePress={setSelectedMeasureImage}
-                  onNextImage={() =>
-                    goToNext(product.id, product.images?.length || 0)
-                  }
-                  onPreviousImage={() =>
-                    goToPrevious(product.id, product.images?.length || 0)
-                  }
-                />
-              ))}
-            </View>
-          </View>
-        ))}
-
-        {filteredProducts.length === 0 && (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>
-              No se encontraron productos.
-            </Text>
+        {/* Estado de carga */}
+        {loading && (
+          <View style={{ padding: 40, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="#CC0000" />
           </View>
         )}
+
+        {/* Error */}
+        {error && !loading && (
+          <View style={{ alignItems: 'center', padding: 20 }}>
+            <Text style={{ color: '#CC0000', fontSize: 14 }}>{error}</Text>
+          </View>
+        )}
+
+        {/* Lista de productos */}
+        {!loading && (
+          <View style={seguridadStyles.productsContainer}>
+            {filteredProducts.map((product) => {
+              const rawImages = Array.isArray(product.product_image)
+                ? product.product_image
+                : typeof product.product_image === 'string' && product.product_image.trim() !== ''
+                  ? [product.product_image]
+                  : [];
+
+              const totalImages = rawImages.length;
+
+              return (
+                <ProductCard
+                  key={product.product_id}
+                  product={product}
+                  carouselIndex={carouselIndexes[product.product_id] ?? 0}
+                  onPress={() => handleOpenProduct(product.product_id)}
+                  onViewMeasures={() => handleViewMeasures(product.pdf_page)}
+                  onNextImage={() => goToNext(product.product_id, totalImages)}
+                  onPreviousImage={() => goToPrevious(product.product_id, totalImages)}
+                />
+              );
+            })}
+          </View>
+        )}
+
+        {!loading && filteredProducts.length === 0 && !error && (
+          <View style={{ alignItems: 'center', padding: 20 }}>
+            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
+          </View>
+        )}
+
+        <Footer />
       </CategoryLayout>
 
       <Sidebar
         visible={sidebarVisible}
         onClose={() => setSidebarVisible(false)}
-        categories={mainCategories}
+        categories={SIDEBAR_CATEGORIES}
       />
 
+      {/* Modal de producto */}
       <ProductModal
-        visible={Boolean(selectedProduct)}
+        visible={Boolean(selectedProduct) || loadingDetail}
         product={selectedProduct}
-        carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
-        onClose={() => setSelectedProductId(null)}
+        loading={loadingDetail}
+        carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
+        onClose={clearSelectedProduct}
       />
 
       <ImageModal
