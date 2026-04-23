@@ -16,7 +16,22 @@ import { orsyStyles } from '../../styles/orsy.styles';
 import type { ProductSummary } from '../../types/products';
 
 // Mapeo local de imágenes por product_id - AGRO
-const LOCAL_IMAGES_AGRO: Record<string, any[]> = {};
+const LOCAL_IMAGES_AGRO: Record<string, any[]> = {
+  'bloque-sal': [require('../../assets/images/11.00/11.01p1.png')],
+  'bloque-mineral-universal': [require('../../assets/images/11.00/11.01p2.png')],
+  'bloque-mineral-vacuno': [require('../../assets/images/11.00/11.01p3.png')],
+  'chupete-agua-lechones': [require('../../assets/images/11.00/11.01p4.png')],
+  'chupete-agua-porcino': [require('../../assets/images/11.00/11.01p5.png')],
+  'pezonera-hdl': [require('../../assets/images/11.00/11.02p1.png')],
+  'mangueras-leche-goma': [require('../../assets/images/11.00/11.02p2.png')],
+  'filtros-leche': [require('../../assets/images/11.00/11.02p3.png')],
+  'sellador-pezones-yodo': [require('../../assets/images/11.00/11.03p1.png')],
+  'glumoncat': [require('../../assets/images/11.00/11.03p2.png')],
+  'degramat-solido': [require('../../assets/images/11.00/11.03p3.png')],
+  'contral': [require('../../assets/images/11.00/11.03p4.png')],
+  'rumisec-granulado': [require('../../assets/images/11.00/11.03p5.png')],
+  'lazo-morro-porcino': [require('../../assets/images/11.00/11.04p1.png')],
+};
 
 const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
   { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
