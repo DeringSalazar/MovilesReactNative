@@ -8,6 +8,7 @@ import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import ProductCard from '../../components/ProductCard';
 import Sidebar from '../../components/Sidebar';
+import { useWindowDimensions } from 'react-native';
 
 interface Category {
   title: string;
@@ -47,8 +48,15 @@ export default function Home() {
     { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
   ];
 
-  const { width } = Dimensions.get('window');
-  const cardWidth = (width - 40) / 3;
+  const { width } = useWindowDimensions();
+  const getColumns = () => {
+  if (width > 1200) return 4;
+  if (width > 768) return 3;
+  return 2;
+};
+
+const columns = getColumns();
+const cardWidth = Math.min(width / columns, 450);
   const scrollRef = useRef<ScrollView>(null);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -177,7 +185,7 @@ export default function Home() {
               snapToAlignment="center"
               contentContainerStyle={{ paddingHorizontal: 10 }}
             >
-              <ProductCard name="Broca HSS-Co" price={12.99} image="https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777" width={cardWidth} />
+              <ProductCard name="Broca HSS-Co" price={12.99} image="https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777" width={cardWidth}  />
               <ProductCard name="Taladro TEENO" price={299.99} image="https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp" width={cardWidth} />
               <ProductCard name="Ponchadora RJ45" price={20.99} image="https://www.irs.com.co/cdn/shop/products/Capturadepantalla2022-05-11105142_900x.jpg?v=1652285505" width={cardWidth} />
               <ProductCard name="Tornillo para madera" price={5.00} image="https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg" width={cardWidth} />
@@ -204,8 +212,6 @@ export default function Home() {
   );
 }
 
-const { width } = Dimensions.get('window');
-const cardWidth = (width - 60) / 3;
 
 const styles = StyleSheet.create({
   section: {
