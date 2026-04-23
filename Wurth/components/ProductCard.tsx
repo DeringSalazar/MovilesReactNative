@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type Props = {
   name: string;
@@ -48,10 +48,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 15,
-    marginHorizontal: 8,
+    marginHorizontal: 8, // Un poco más de aire entre cartas
     alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 280, 
+    justifyContent: 'space-between', // Separa imagen de texto y botón
+    height: 250, 
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',  
+    justifyContent: 'center', // Centrado vertical de la imagen
+    alignItems: 'center',     // Centrado horizontal de la imagen
   },
   image: {
     width: '90%',
@@ -74,13 +74,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
-
+  // ... resto de estilos (name, price)
   name: {
     fontSize: 14,
     fontWeight: '700',
     textAlign: 'center',
     color: '#333',
-    height: 40, 
+    height: 40, // Espacio para dos líneas
   },
   price: {
     color: '#d32f2f',
@@ -90,13 +90,14 @@ const styles = StyleSheet.create({
   },
  button: {
     backgroundColor: '#d32f2f',
-    paddingVertical: 10,     
-    paddingHorizontal: 15,    
+    paddingVertical: 10,      // Aumentamos un poco para que no sea tan delgado
+    paddingHorizontal: 15,    // Lo equilibramos con el vertical
     alignSelf: 'center',      
     width: 'auto',            
-    minWidth: 100,         
+    minWidth: 100,            // Le damos una base sólida para que se vea cuadrado
     
-    borderRadius: 8,    
+    // CAMBIO CLAVE: Bordes redondeados pero manteniendo forma cuadrada
+    borderRadius: 8,          // Un valor entre 4 y 10 da ese look "cuadrado moderno"
     
     marginTop: 10,          
     alignItems: 'center',
