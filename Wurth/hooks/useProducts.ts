@@ -7,7 +7,7 @@ import type {
   UseProductsReturn,
 } from '../types/products';
 
-const BASE_URL = 'http://localhost:3000'; 
+const BASE_URL = 'https://api-moviles-lilac.vercel.app'; 
 
 export function useProducts(category: string): UseProductsReturn {
   const [products, setProducts] = useState<ProductSummary[]>([]);
