@@ -186,7 +186,13 @@ export default function Orsy() {
 
       <ProductModal
         visible={Boolean(selectedProduct) || loadingDetail}
-        product={selectedProduct ? { ...selectedProduct, product_image: LOCAL_IMAGES[selectedProduct.product_id] || [] } : null}
+        product={selectedProduct ? { 
+          ...selectedProduct, 
+          // Convertir objetos require a URIs y usar la propiedad correcta "images"
+          images: (LOCAL_IMAGES[selectedProduct.product_id] || []).map(img => 
+            typeof img === 'string' ? img : img.uri
+          )
+        } : null}
         loading={loadingDetail}
         carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
         onClose={clearSelectedProduct}
