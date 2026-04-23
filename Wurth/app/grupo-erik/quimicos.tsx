@@ -1,10 +1,9 @@
-import { useNavigation } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import CategoryLayout from '../../components/CategoryLayout';
 import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
-import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
 import Sidebar from '../../components/Sidebar';
@@ -13,9 +12,8 @@ import { categories } from '../../constants/quimicos';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { anclajesStyles } from '../../styles/anclajes.styles';
 
-
 const mainCategories = [
-  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc',  href: '/grupo-fabi/corteTaladroDesbaste' },
+  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
   { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
   { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
   { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
@@ -23,7 +21,7 @@ const mainCategories = [
   { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
   { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
   { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
-  { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check' , href: '/grupo-alvaro/seguridad'},
+  { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
   { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
   { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
@@ -38,6 +36,7 @@ const SUBCATEGORIES = [
 
 export default function Quimicos() {
   const navigation = useNavigation();
+  const router = useRouter();
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -59,12 +58,10 @@ export default function Quimicos() {
     []
   );
 
-  const [expandedId, setExpandedId] = useState(null);
-  const [selectedProductId, setSelectedProductId] = useState(null);
-  const [selectedMeasureImage, setSelectedMeasureImage] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [sidebarVisible, setSidebarVisible] = useState(false); 
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
@@ -86,17 +83,20 @@ export default function Quimicos() {
             !lowerSearch ||
             product.name.toLowerCase().includes(lowerSearch) ||
             product.code?.toLowerCase().includes(lowerSearch);
+
           const matchesFilter =
             selectedFilters.length === 0 ||
             selectedFilters.some((f) => product.code?.startsWith(f));
+
           return matchesSearch && matchesFilter;
         }),
       }))
       .filter((category) => category.products.length > 0);
   }, [allProducts, searchText, selectedFilters]);
 
-  const handleToggleMeasures = (productId) => {
-    setExpandedId(expandedId === productId ? null : productId);
+  const handleViewMeasures = (pdfPage: string) => {
+    if (!pdfPage) return;
+    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
   };
 
   return (
@@ -106,7 +106,7 @@ export default function Quimicos() {
           <Header
             onSearch={setSearchText}
             showBackButton={true}
-            onMenuHover={() => setSidebarVisible(true)} 
+            onMenuHover={() => setSidebarVisible(true)}
           />
         }
         sidebar={
@@ -127,12 +127,8 @@ export default function Quimicos() {
                   key={product.id}
                   product={product}
                   carouselIndex={carouselIndexes[product.id] ?? 0}
-                  expandedId={expandedId}
                   onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() =>
-                    handleToggleMeasures(product.id)
-                  }
-                  onImagePress={setSelectedMeasureImage}
+                  onViewMeasures={() => handleViewMeasures(product.pdfPage)}
                   onNextImage={() =>
                     goToNext(product.id, product.images?.length || 0)
                   }
@@ -165,12 +161,6 @@ export default function Quimicos() {
         product={selectedProduct}
         carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
         onClose={() => setSelectedProductId(null)}
-      />
-
-      <ImageModal
-        visible={Boolean(selectedMeasureImage)}
-        imageSource={selectedMeasureImage}
-        onClose={() => setSelectedMeasureImage(null)}
       />
     </>
   );

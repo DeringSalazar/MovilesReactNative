@@ -1,14 +1,13 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { useNavigation } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 
 import CategoryLayout from '../../components/CategoryLayout';
 import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
 
-import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
 
@@ -36,11 +35,15 @@ const SUBCATEGORIES = [
   { id: '03.03', label: '03.03 Normalizado DIN' },
   { id: '03.04', label: '03.04 Pías / autoperforantes' },
   { id: '03.05', label: '03.05 Remaches y tuercas remachables' },
+  { id: '03.06', label: '03.06 Seguros' },
+  { id: '03.07', label: '03.07 Tornillería madera' },
+  { id: '03.08', label: '03.08 Tornillería métrica' },
+  { id: '03.09', label: '03.09 Tuercas' },
 ];
 
 export default function Tornilleria() {
-
   const navigation = useNavigation();
+  const router = useRouter();
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -62,20 +65,16 @@ export default function Tornilleria() {
     []
   );
 
-  const [expandedId, setExpandedId] = useState(null);
-  const [selectedProductId, setSelectedProductId] = useState(null);
-  const [selectedMeasureImage, setSelectedMeasureImage] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
   const selectedProduct = useMemo(() => {
     for (const category of allProducts) {
-      const found = category.products.find(
-        (p) => p.id === selectedProductId
-      );
+      const found = category.products.find((p) => p.id === selectedProductId);
       if (found) return found;
     }
     return null;
@@ -88,7 +87,6 @@ export default function Tornilleria() {
       .map((category) => ({
         ...category,
         products: category.products.filter((product) => {
-
           const matchesSearch =
             !lowerSearch ||
             product.name.toLowerCase().includes(lowerSearch) ||
@@ -101,15 +99,14 @@ export default function Tornilleria() {
             );
 
           return matchesSearch && matchesFilter;
-
         }),
       }))
       .filter((category) => category.products.length > 0);
-
   }, [allProducts, searchText, selectedFilters]);
 
-  const handleToggleMeasures = (productId) => {
-    setExpandedId(expandedId === productId ? null : productId);
+  const handleViewMeasures = (pdfPage: string) => {
+    if (!pdfPage) return;
+    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
   };
 
   return (
@@ -132,7 +129,6 @@ export default function Tornilleria() {
           />
         }
       >
-
         {filteredProducts.map((category) => (
           <View key={category.name}>
             <View style={anclajesStyles.productsContainer}>
@@ -141,12 +137,8 @@ export default function Tornilleria() {
                   key={product.id}
                   product={product}
                   carouselIndex={carouselIndexes[product.id] ?? 0}
-                  expandedId={expandedId}
                   onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() =>
-                    handleToggleMeasures(product.id)
-                  }
-                  onImagePress={setSelectedMeasureImage}
+                  onViewMeasures={() => handleViewMeasures(product.pdfPage)}
                   onNextImage={() =>
                     goToNext(product.id, product.images?.length || 0)
                   }
@@ -166,7 +158,6 @@ export default function Tornilleria() {
             </Text>
           </View>
         )}
-
       </CategoryLayout>
 
       <Sidebar
@@ -182,12 +173,6 @@ export default function Tornilleria() {
           carouselIndexes[selectedProduct?.id ?? ''] ?? 0
         }
         onClose={() => setSelectedProductId(null)}
-      />
-
-      <ImageModal
-        visible={Boolean(selectedMeasureImage)}
-        imageSource={selectedMeasureImage}
-        onClose={() => setSelectedMeasureImage(null)}
       />
     </>
   );
