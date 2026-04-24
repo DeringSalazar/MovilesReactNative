@@ -24,7 +24,6 @@ const LOCAL_IMAGES: Record<string, any[]> = {
   'lentes-seguridad-profilo': [require('../../assets/seguridad/09.01p4.jpg')],
   'lentes-seguridad-trendus': [
     require('../../assets/seguridad/09.01p5.jpg'),
-    require('../../assets/seguridad/09.01p5.png'),
   ],
 
   // 09.02 - Guantes (7 productos, imágenes p1-p7)
