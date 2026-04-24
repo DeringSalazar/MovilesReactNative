@@ -18,9 +18,9 @@ type Props = {
 
 export default function CategoryCard({ title, image, href }: Props) {
   const { width } = useWindowDimensions();
-  const cardWidth = width / 4;
+  const columns = width < 768 ? 3 : 4;
+  const cardWidth = (width - 40) / columns;
   const imageSize = cardWidth * 0.55;
-
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
