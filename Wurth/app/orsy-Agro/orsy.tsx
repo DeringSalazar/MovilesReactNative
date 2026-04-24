@@ -1,365 +1,208 @@
-import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
-import {
-  Animated,
-  Image as RNImage,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useNavigation } from 'expo-router';
-import Header from '../../components/Header';
+import { useNavigation, usePathname, useRouter, type Href } from 'expo-router';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
+import CategoryLayout from '../../components/CategoryLayout';
+import CategorySidebar from '../../components/CategorySidebar';
+import FilterSidebar from '../../components/Filter';
 import Footer from '../../components/Footer';
+import Header from '../../components/Header';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
-import { SearchBar } from '../../components/SearchBar';
-import { categories } from '../../constants/orsy';
+import Sidebar from '../../components/Sidebar';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
-import { anclajesStyles } from '../../styles/anclajes.styles';
+import { useProducts } from '../../hooks/useProducts';
+import { orsyStyles } from '../../styles/orsy.styles';
+import type { ProductSummary } from '../../types/products';
 
-const FILTER_CATEGORIES = [
-  { id: '10.01', label: '10.01 OSRY' }
-  
+// Mapeo local de imágenes por product_id
+const LOCAL_IMAGES: Record<string, any[]> = {
+  'pasadores-elasticos-pequenos': [require('../../assets/images/10.00/10.01.png')],
+  'pasadores-elasticos-grandes': [require('../../assets/images/10.00/10.02.png')],
+  'pasadores-din94': [require('../../assets/images/10.00/10.03.png')],
+  'arandelas-estanqueidad-aluminio': [require('../../assets/images/10.00/10.04.png')],
+  'arandelas-estanqueidad-cobre': [require('../../assets/images/10.00/10.05.png')],
+  'arandelas-estanqueidad-tapones-aceite': [require('../../assets/images/10.00/10.06.png')],
+  'cjto-oring-pulgadas': [require('../../assets/images/10.00/10.07.png')],
+  'cjto-juntas-toricas': [require('../../assets/images/10.00/10.08.png')],
+  'cjto-engrasadores': [require('../../assets/images/10.00/10.09.png')],
+  'cjto-brocas-sds-plus': [require('../../assets/images/10.00/10.10.png')],
+  'fusibles-ato': [require('../../assets/images/10.00/10.11.png')],
+  'fusibles-mini-max': [require('../../assets/images/10.00/10.12.png')],
+  'punteras-aisladas': [require('../../assets/images/10.00/10.13.png')],
+};
+
+const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
+  { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
+  { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
+  { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas', icon: 'cog', href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene', icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
+  { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
+  { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
 ];
-
-const DRAWER_WIDTH = 220;
 
 export default function Orsy() {
   const navigation = useNavigation();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
+    navigation.setOptions({ headerShown: false });
   }, [navigation]);
-  const allProducts = useMemo(
-    () =>
-      categories.map((category) => ({
-        ...category,
-        products: category.subcategories.flatMap((sub) =>
-          sub.products.map((product) => ({
-            ...product,
-            category: category.name,
-            subcategory: sub.name,
-            code: sub.code,
-          }))
-        ),
-      })),
-    []
-  );
 
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const {
+    products,
+    selectedProduct,
+    loading,
+    loadingDetail,
+    error,
+    fetchProductById,
+    clearSelectedProduct,
+  } = useProducts('orsy');
+
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
   const [searchText, setSearchText] = useState<string>('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
-  // Animated value for drawer (slides from right)
-  const drawerAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
+  const subcategories = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { id: string; label: string }[] = [];
 
-  const openDrawer = () => {
-    setDrawerOpen(true);
-    Animated.timing(drawerAnim, {
-      toValue: 0,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
+    products.forEach((p) => {
+      const code = p.subcategory_code;
+      const name = p.subcategory_name;
+      if (code && !seen.has(code)) {
+        seen.add(code);
+        result.push({
+          id: code,
+          label: name ? `${code} ${name}` : code,
+        });
+      }
+    });
+
+    return result.sort((a, b) => a.id.localeCompare(b.id));
+  }, [products]);
+
+  const handleOpenProduct = (id: string) => {
+    fetchProductById(id);
   };
 
-  const closeDrawer = () => {
-    Animated.timing(drawerAnim, {
-      toValue: DRAWER_WIDTH,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => setDrawerOpen(false));
-  };
+  const filteredProducts: ProductSummary[] = useMemo(() => {
+    return products.filter((product) => {
+      const lowerSearch = searchText.toLowerCase().trim();
+      const matchesSearch =
+        !lowerSearch ||
+        product.product_name.toLowerCase().includes(lowerSearch) ||
+        product.subcategory_code?.toLowerCase().includes(lowerSearch);
+      const matchesFilter =
+        selectedFilters.length === 0 ||
+        selectedFilters.some((f) => product.subcategory_code?.startsWith(f));
+      return matchesSearch && matchesFilter;
+    });
+  }, [products, searchText, selectedFilters]);
 
-  const toggleFilter = (id: string) => {
-    setSelectedFilters((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-  };
-
-  const clearFilters = () => setSelectedFilters([]);
-
-  const selectedProduct = useMemo(() => {
-    for (const category of allProducts) {
-      const found = category.products.find((p) => p.id === selectedProductId);
-      if (found) return found;
+  const handleViewMeasures = (pdfPage: string) => {
+    console.log('PDF Page:', pdfPage);
+    if (!pdfPage) {
+      return;
     }
-    return null;
-  }, [allProducts, selectedProductId]);
-
-  const filteredProducts = useMemo(() => {
-    const lowerSearch = searchText.toLowerCase().trim();
-
-    return allProducts
-      .map((category) => ({
-        ...category,
-        products: category.products.filter((product) => {
-          const matchesSearch =
-            !lowerSearch ||
-            product.name.toLowerCase().includes(lowerSearch) ||
-            product.code?.toLowerCase().includes(lowerSearch);
-
-          const matchesFilter =
-            selectedFilters.length === 0 ||
-            selectedFilters.some((f) => product.code?.startsWith(f));
-
-          return matchesSearch && matchesFilter;
-        }),
-      }))
-      .filter((category) => category.products.length > 0);
-  }, [allProducts, searchText, selectedFilters]);
-
-  const handleToggleMeasures = (productId: string) => {
-    setExpandedId(expandedId === productId ? null : productId);
+    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
   };
 
   return (
-    <View style={anclajesStyles.container}>
-      {/* Main content */}
-      <ScrollView contentContainerStyle={anclajesStyles.scrollContent}>
-        <Header onSearch={setSearchText} showBackButton={true}/>
-        {filteredProducts.map((category) => (
-          <View key={category.name}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                paddingHorizontal: 0,
-                gap: 0,
-              }}
-            >
-             
-            </View>
+    <>
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        <CategorySidebar categories={SIDEBAR_CATEGORIES} activeHref={pathname} />
 
-            <View style={anclajesStyles.productsContainer}>
-              {category.products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  carouselIndex={carouselIndexes[product.id] ?? 0}
-                  expandedId={expandedId}
-                  onPress={() => setSelectedProductId(product.id)}
-                  onToggleMeasures={() => handleToggleMeasures(product.id)}
-                  onImagePress={setSelectedMeasureImage}
-                  onNextImage={() => goToNext(product.id, product.images?.length || 0)}
-                  onPreviousImage={() =>
-                    goToPrevious(product.id, product.images?.length || 0)
-                  }
-                />
-              ))}
-            </View>
-          </View>
-        ))}
-
-        {filteredProducts.length === 0 && (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
-          </View>
-        )}
-
-        <Footer />
-      </ScrollView>
-
-      {/* Overlay backdrop */}
-      {drawerOpen && (
-        <TouchableOpacity
-          style={filterStyles.overlay}
-          activeOpacity={1}
-          onPress={closeDrawer}
-        />
-      )}
-
-      {/* Sliding filter drawer (from right) */}
-      <Animated.View
-        style={[
-          filterStyles.drawer,
-          { transform: [{ translateX: drawerAnim }] },
-        ]}
-      >
-        <View style={filterStyles.drawerHeader}>
-          <Text style={filterStyles.drawerTitle}>Filtrar por</Text>
-          <TouchableOpacity onPress={closeDrawer}>
-            <Text style={filterStyles.closeBtn}>✕</Text>
-          </TouchableOpacity>
-        </View>
-
-        {FILTER_CATEGORIES.map((item) => {
-          const active = selectedFilters.includes(item.id);
-          return (
-            <TouchableOpacity
-              key={item.id}
-              style={[filterStyles.filterItem, active && filterStyles.filterItemActive]}
-              onPress={() => toggleFilter(item.id)}
-              activeOpacity={0.7}
-            >
-              <View style={[filterStyles.checkbox, active && filterStyles.checkboxActive]}>
-                {active && <Text style={filterStyles.checkmark}>✓</Text>}
+        <View style={{ flex: 1 }}>
+          <CategoryLayout
+            header={<Header onSearch={setSearchText} showBackButton={true} onMenuHover={() => setSidebarVisible(true)} />}
+            sidebar={
+              <FilterSidebar
+                title="Orsy"
+                subcategories={subcategories}
+                onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+              />
+            }
+          >
+            {loading && (
+              <View style={{ padding: 40, alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#CC0000" />
               </View>
-              <Text
-                style={[filterStyles.filterLabel, active && filterStyles.filterLabelActive]}
-              >
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+            )}
 
-        {selectedFilters.length > 0 && (
-          <TouchableOpacity style={filterStyles.clearBtn} onPress={clearFilters}>
-            <Text style={filterStyles.clearBtnText}>Limpiar filtros</Text>
-          </TouchableOpacity>
-        )}
-      </Animated.View>
+            {error && !loading && (
+              <View style={{ alignItems: 'center', padding: 20 }}>
+                <Text style={{ color: '#CC0000', fontSize: 14 }}>{error}</Text>
+              </View>
+            )}
+
+            {!loading && (
+              <View style={orsyStyles.productsContainer}>
+                {filteredProducts.map((product) => {
+                  // Convertir objetos require a string URIs
+                  const localImages = (LOCAL_IMAGES[product.product_id] || []).map(img => 
+                    typeof img === 'string' ? img : img.uri
+                  );
+                  const totalImages = localImages.length;
+
+                  return (
+                    <ProductCard
+                      key={product.product_id}
+                      product={{ ...product, product_image: localImages }}
+                      carouselIndex={carouselIndexes[product.product_id] ?? 0}
+                      onPress={() => handleOpenProduct(product.product_id)}
+                      onViewMeasures={() => handleViewMeasures(product.pdf_page)}
+                      onNextImage={() => goToNext(product.product_id, totalImages)}
+                      onPreviousImage={() => goToPrevious(product.product_id, totalImages)}
+                    />
+                  );
+                })}
+              </View>
+            )}
+
+            {!loading && filteredProducts.length === 0 && !error && (
+              <View style={{ alignItems: 'center', padding: 20 }}>
+                <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
+              </View>
+            )}
+          </CategoryLayout>
+        </View>
+      </View>
+
+      <Sidebar
+        visible={sidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+        categories={SIDEBAR_CATEGORIES}
+      />
 
       <ProductModal
-        visible={Boolean(selectedProduct)}
-        product={selectedProduct}
-        carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
-        onClose={() => setSelectedProductId(null)}
+        visible={Boolean(selectedProduct) || loadingDetail}
+        product={selectedProduct ? { 
+          ...selectedProduct, 
+          // Convertir objetos require a URIs y usar la propiedad correcta "images"
+          images: (LOCAL_IMAGES[selectedProduct.product_id] || []).map(img => 
+            typeof img === 'string' ? img : img.uri
+          )
+        } : null}
+        loading={loadingDetail}
+        carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
+        onClose={clearSelectedProduct}
       />
+
       <ImageModal
         visible={Boolean(selectedMeasureImage)}
         imageSource={selectedMeasureImage}
         onClose={() => setSelectedMeasureImage(null)}
       />
-    </View>
+    </>
   );
 }
-
-const filterStyles = StyleSheet.create({
-  filterButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    backgroundColor: '#D32F2F',
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-    marginRight: 10,
-  },
-  filterButtonIcon: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-    fontFamily: 'Open Sans',
-  },
-  badge: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: '#222',
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 3,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    zIndex: 10,
-  },
-  drawer: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: DRAWER_WIDTH,
-    backgroundColor: '#fff',
-    zIndex: 20,
-    paddingTop: 20,
-    paddingHorizontal: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: -3, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 10,
-  },
-  drawerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingBottom: 12,
-  },
-  drawerTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#222',
-  },
-  closeBtn: {
-    fontSize: 18,
-    color: '#888',
-    paddingHorizontal: 4,
-  },
-  filterItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    marginBottom: 6,
-    backgroundColor: '#f5f5f5',
-  },
-  filterItemActive: {
-    backgroundColor: '#fff0f0',
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  checkboxActive: {
-    borderColor: '#CC0000',
-    backgroundColor: '#CC0000',
-  },
-  checkmark: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: 'bold',
-    lineHeight: 15,
-  },
-  filterLabel: {
-    fontSize: 13,
-    color: '#444',
-    flexShrink: 1,
-  },
-  filterLabelActive: {
-    color: '#CC0000',
-    fontWeight: '600',
-  },
-  clearBtn: {
-    marginTop: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#CC0000',
-    alignItems: 'center',
-  },
-  clearBtnText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 13,
-  },
-});
