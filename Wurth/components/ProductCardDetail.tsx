@@ -1,6 +1,6 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import type { ProductSummary } from '../types/products'; 
+import { Image, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import type { ProductSummary } from '../types/products';
 
 interface ProductCardProps {
   product: ProductSummary;
@@ -19,25 +19,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onNextImage,
   onPreviousImage,
 }) => {
-  const rawImages = product.product_image;
-const images: string[] = Array.isArray(rawImages) 
-  ? rawImages 
-  : typeof rawImages === 'string' && rawImages.trim() !== ''
-    ? [rawImages] 
-    : [];
+  const { width } = useWindowDimensions();
+  const cardWidth = width < 768 ? (width - 40) / 2 : '30%';
+  const minHeight = width < 768 ? 200 : 360;
 
-    console.log('Imágenes del producto:', images); // Debug: Ver qué imágenes llegan  
+  const rawImages = product.product_image;
+  const images: string[] = Array.isArray(rawImages) 
+    ? rawImages 
+    : typeof rawImages === 'string' && rawImages.trim() !== ''
+      ? [rawImages] 
+      : [];
+
+  console.log('Imágenes del producto:', images);
   
-  // Prevenir índice fuera de rango
   const safeIndex = images.length > 0 ? carouselIndex % images.length : 0;
   const currentImage = images[safeIndex];
   const hasManyImages = images.length > 1;
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { width: cardWidth, minHeight }]}>
       {/* ── Carrusel de imagen ── */}
       <View style={styles.imageCarousel}>
-        {/* Imagen primero */}
         <Pressable onPress={onPress} style={styles.imageTapArea}>
           {currentImage ? (
             <Image
@@ -52,7 +54,6 @@ const images: string[] = Array.isArray(rawImages)
           )}
         </Pressable>
 
-        {/* Flechas DESPUÉS para que queden encima (zIndex) */}
         {hasManyImages && (
           <Pressable 
             style={[styles.carouselArrow, styles.carouselArrowLeft]} 
@@ -71,7 +72,6 @@ const images: string[] = Array.isArray(rawImages)
         )}
       </View>
 
-      {/* Puntos indicadores */}
       {hasManyImages && (
         <View style={styles.carouselDots}>
           {images.map((_, index) => (
@@ -94,7 +94,6 @@ const images: string[] = Array.isArray(rawImages)
         )}
       </Pressable>
 
-      {/* Botón para ver medidas */}
       <Pressable onPress={onViewMeasures} style={styles.measureToggle}>
         <Text style={styles.measureToggleText}>Ver medidas</Text>
       </Pressable>
@@ -104,12 +103,10 @@ const images: string[] = Array.isArray(rawImages)
 
 const styles = StyleSheet.create({
   card: {
-    width: '30%',
     padding: 10,
     marginVertical: 12,
     marginHorizontal: 4,
     backgroundColor: '#FFFFFF',
-    minHeight: 360,
     borderRadius: 12,
     elevation: 3,
     shadowColor: '#000',
@@ -122,7 +119,7 @@ const styles = StyleSheet.create({
     width: '100%', 
     height: 140, 
     borderRadius: 8,
-    zIndex: 1, // ← Imagen detrás de las flechas
+    zIndex: 1,
   },
   placeholderImage: {
     width: '100%',
@@ -141,8 +138,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageTapArea: { width: '100%' },
-  
-  // 👇 Estilos unificados para flechas con zIndex explícito
   carouselArrow: {
     position: 'absolute',
     top: '40%',
@@ -152,11 +147,10 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2, // ← Flechas SIEMPRE encima
+    zIndex: 2,
   },
   carouselArrowLeft: { left: 4 },
   carouselArrowRight: { right: 4 },
-  
   carouselArrowText: { color: '#FFF', fontSize: 14, fontWeight: '700' },
   carouselDots: {
     flexDirection: 'row',
@@ -200,7 +194,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
   },
-  // Estilos reservados por si los necesitas después
   measureContainer: {
     marginTop: 8,
     backgroundColor: '#F9F9F9',
