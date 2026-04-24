@@ -7,6 +7,7 @@ import {
     ScrollView,
     StyleSheet,
     View,
+    useWindowDimensions,
 } from 'react-native';
 
 type Category = {
@@ -24,6 +25,7 @@ const COLLAPSED_WIDTH = 56;
 const EXPANDED_WIDTH = 240;
 
 export default function CategorySidebar({ categories, activeHref }: CategorySidebarProps) {
+    const { width } = useWindowDimensions();
     const widthAnim = useRef(new Animated.Value(COLLAPSED_WIDTH)).current;
 
     const expand = () => {
@@ -48,6 +50,9 @@ export default function CategorySidebar({ categories, activeHref }: CategorySide
         inputRange: [COLLAPSED_WIDTH, EXPANDED_WIDTH * 0.7, EXPANDED_WIDTH],
         outputRange: [0, 0, 1],
     });
+
+    // En móvil no se muestra — usa el hamburguesa
+    if (width < 768) return null;
 
     return (
         <Animated.View

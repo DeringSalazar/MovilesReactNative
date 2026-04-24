@@ -21,7 +21,6 @@ export default function ProductCard({ name, price, image, width, onPress }: Prop
 
       <View style={styles.infoContainer}>
         <Text style={styles.name} numberOfLines={2}>{name}</Text>
-        <Text style={styles.price}>${price.toFixed(2)}</Text>
       </View>
 
       <TouchableOpacity
