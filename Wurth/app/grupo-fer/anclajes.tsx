@@ -4,7 +4,6 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import CategoryLayout from '../../components/CategoryLayout';
 import CategorySidebar from '../../components/CategorySidebar';
 import FilterSidebar from '../../components/Filter';
-import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import { ImageModal } from '../../components/ImageModal';
 import { ProductCard } from '../../components/ProductCardDetail';
@@ -131,7 +130,7 @@ export default function Anclajes() {
 
         <View style={{ flex: 1 }}>
           <CategoryLayout
-            header={<Header onSearch={setSearchText} showBackButton={true} onMenuHover={() => setSidebarVisible(true)} />}
+            header={<Header onSearch={setSearchText} showBackButton={true} onMenuPress={() => setSidebarVisible(true)} />}
             sidebar={
               <FilterSidebar
                 title="Anclajes"
