@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import { useNavigation, useRouter } from 'expo-router';
+import { useNavigation, usePathname, useRouter, type Href } from 'expo-router';
 
 import CategoryLayout from '../../components/CategoryLayout';
+import CategorySidebar from '../../components/CategorySidebar';
 import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
@@ -11,10 +12,22 @@ import { ProductModal } from '../../components/ProductModal';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { anclajesStyles } from '../../styles/anclajes.styles';
 
-// ─── CAMBIA ESTO con tu cloud name de Cloudinary ───────────────────────────
 const CLOUDINARY_BASE = 'https://res.cloudinary.com/drmpxxugi/image/upload';
 const API_BASE = 'https://api-moviles-lilac.vercel.app';
-// ───────────────────────────────────────────────────────────────────────────
+
+const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
+  { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
+  { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
+  { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas', icon: 'cog', href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene', icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
+  { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
+  { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
+];
 
 interface ProductSummary {
   category_slug: string;
@@ -38,20 +51,6 @@ interface ProductDetail {
   pdf_page?: string;
 }
 
-const mainCategories = [
-  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'),       icon: 'disc',                   href: '/grupo-fabi/corteTaladroDesbaste' },
-  { title: 'Químicos',                  image: require('../../assets/quimicos.jpeg'),     icon: 'flask',                  href: '/grupo-erik/quimicos' },
-  { title: 'Tornillería',               image: require('../../assets/tornilleria.png'),   icon: 'screwdriver',            href: '/grupo-erik/tornilleria' },
-  { title: 'Auto y Cargo',              image: require('../../assets/autoYcargo.jpeg'),   icon: 'car',                    href: '/grupo-fer/auto' },
-  { title: 'Anclajes',                  image: require('../../assets/anclaje.png'),       icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
-  { title: 'Electricidad',              image: require('../../assets/electrecidad.png'),  icon: 'flash',                  href: '/grupo-iby/electricidad' },
-  { title: 'Herramientas',              image: require('../../assets/herramientas.jpeg'), icon: 'tools',                  href: '/grupo-iby/herramientas' },
-  { title: 'Maquinas',                  image: require('../../assets/maquinas.jpeg'),     icon: 'cog',                    href: '/grupo-alvaro/maquinas' },
-  { title: 'Seguridad e Higiene',       image: require('../../assets/seguridad.jpeg'),    icon: 'shield-check',           href: '/grupo-alvaro/seguridad' },
-  { title: 'Orsy',                      image: require('../../assets/orsy.jpeg'),         icon: 'archive',                href: '/orsy-Agro/orsy' },
-  { title: 'Agro',                      image: require('../../assets/agronomia.png'),     icon: 'sprout',                 href: '/orsy-Agro/agro' },
-];
-
 function toCloudinaryUrl(path: string): string {
   if (!path) return '';
   if (path.startsWith('http')) return path;
@@ -61,6 +60,7 @@ function toCloudinaryUrl(path: string): string {
 
 export default function Quimicos() {
   const navigation = useNavigation();
+  const pathname = usePathname();
   const router = useRouter();
 
   useLayoutEffect(() => {
@@ -78,7 +78,6 @@ export default function Quimicos() {
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
-  // 1. Cargar listado desde API
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -95,7 +94,6 @@ export default function Quimicos() {
     return () => { cancelled = true; };
   }, []);
 
-  // 2. Cargar detalle + PDF cuando se abre un producto
   useEffect(() => {
     if (!selectedProductId) {
       setSelectedProduct(null);
@@ -131,7 +129,6 @@ export default function Quimicos() {
     return () => { cancelled = true; };
   }, [selectedProductId]);
 
-  // Subcategorías dinámicas para el filtro lateral
   const subcategories = useMemo(() => {
     const seen   = new Set<string>();
     const result: { id: string; label: string }[] = [];
@@ -144,7 +141,6 @@ export default function Quimicos() {
     return result.sort((a, b) => a.id.localeCompare(b.id));
   }, [allProducts]);
 
-  // Filtrado por búsqueda y filtros laterales
   const filteredProducts = useMemo(() => {
     const lowerSearch = searchText.toLowerCase().trim();
     return allProducts.filter((p) => {
@@ -160,7 +156,6 @@ export default function Quimicos() {
     });
   }, [allProducts, searchText, selectedFilters]);
 
-  // Navegar al PDF
   const handleViewMeasures = useCallback(async (productId: string) => {
     if (selectedProduct?.product_id === productId && selectedProduct.pdf_page) {
       router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(selectedProduct.pdf_page)}`);
@@ -179,59 +174,65 @@ export default function Quimicos() {
 
   return (
     <>
-      <CategoryLayout
-        header={
-          <Header
-            onSearch={setSearchText}
-            showBackButton={true}
-            onMenuHover={() => setSidebarVisible(true)}
-          />
-        }
-        sidebar={
-          <FilterSidebar
-            title="Químicos"
-            subcategories={subcategories}
-            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
-          />
-        }
-      >
-        {loadingList ? (
-          <View style={{ alignItems: 'center', padding: 40 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>Cargando productos…</Text>
-          </View>
-        ) : (
-          <View style={anclajesStyles.productsContainer}>
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.product_id}
-                product={{
-                  product_id:       product.product_id,
-                  product_name:     product.product_name,
-                  subcategory_code: product.subcategory_code,
-                  subcategory_name: product.subcategory_name,
-                  product_image:    toCloudinaryUrl(product.product_image),
-                }}
-                carouselIndex={carouselIndexes[product.product_id] ?? 0}
-                onPress={() => setSelectedProductId(product.product_id)}
-                onViewMeasures={() => handleViewMeasures(product.product_id)}
-                onNextImage={() => goToNext(product.product_id, 1)}
-                onPreviousImage={() => goToPrevious(product.product_id, 1)}
-              />
-            ))}
-          </View>
-        )}
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        <CategorySidebar categories={SIDEBAR_CATEGORIES} activeHref={pathname} />
 
-        {!loadingList && filteredProducts.length === 0 && (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
-          </View>
-        )}
-      </CategoryLayout>
+        <View style={{ flex: 1 }}>
+          <CategoryLayout
+            header={
+              <Header
+                onSearch={setSearchText}
+                showBackButton={true}
+                onMenuHover={() => setSidebarVisible(true)}
+              />
+            }
+            sidebar={
+              <FilterSidebar
+                title="Químicos"
+                subcategories={subcategories}
+                onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+              />
+            }
+          >
+            {loadingList ? (
+              <View style={{ alignItems: 'center', padding: 40 }}>
+                <Text style={{ fontSize: 16, color: '#666' }}>Cargando productos…</Text>
+              </View>
+            ) : (
+              <View style={anclajesStyles.productsContainer}>
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.product_id}
+                    product={{
+                      product_id:       product.product_id,
+                      product_name:     product.product_name,
+                      subcategory_code: product.subcategory_code,
+                      subcategory_name: product.subcategory_name,
+                      product_image:    toCloudinaryUrl(product.product_image),
+                    }}
+                    carouselIndex={carouselIndexes[product.product_id] ?? 0}
+                    onPress={() => setSelectedProductId(product.product_id)}
+                    onViewMeasures={() => handleViewMeasures(product.product_id)}
+                    onNextImage={() => goToNext(product.product_id, 1)}
+                    onPreviousImage={() => goToPrevious(product.product_id, 1)}
+                  />
+                ))}
+              </View>
+            )}
+
+            {!loadingList && filteredProducts.length === 0 && (
+              <View style={{ alignItems: 'center', padding: 20 }}>
+                <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
+              </View>
+            )}
+          </CategoryLayout>
+        </View>
+      </View>
 
       <Sidebar
         visible={sidebarVisible}
         onClose={() => setSidebarVisible(false)}
-        categories={mainCategories}
+        categories={SIDEBAR_CATEGORIES}
       />
 
       <ProductModal
