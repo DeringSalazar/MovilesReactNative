@@ -1,38 +1,63 @@
-import { useNavigation, useRouter } from 'expo-router';
-import React, { useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useNavigation, useRouter } from 'expo-router';
+
 import CategoryLayout from '../../components/CategoryLayout';
 import FilterSidebar from '../../components/Filter';
 import Header from '../../components/Header';
+import Sidebar from '../../components/Sidebar';
 import { ProductCard } from '../../components/ProductCardDetail';
 import { ProductModal } from '../../components/ProductModal';
-import Sidebar from '../../components/Sidebar';
-
-import { categories } from '../../constants/quimicos';
 import { useMultipleCarousels } from '../../hooks/useMultipleCarousels';
 import { anclajesStyles } from '../../styles/anclajes.styles';
 
+// ─── CAMBIA ESTO con tu cloud name de Cloudinary ───────────────────────────
+const CLOUDINARY_BASE = 'https://res.cloudinary.com/drmpxxugi/image/upload';
+const API_BASE = 'https://api-moviles-lilac.vercel.app';
+// ───────────────────────────────────────────────────────────────────────────
+
+interface ProductSummary {
+  category_slug: string;
+  category_name: string;
+  subcategory_code: string;
+  subcategory_name: string;
+  product_id: string;
+  product_name: string;
+  product_image: string;
+}
+
+interface ProductDetail {
+  product_id: string;
+  product_name: string;
+  category_name: string;
+  subcategory_code: string;
+  subcategory_name: string;
+  features: string[];
+  applications: string[];
+  images: string[];
+  pdf_page?: string;
+}
+
 const mainCategories = [
-  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
-  { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
-  { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
-  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
-  { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
-  { title: 'Electricidad', image: require('../../assets/electrecidad.png'), icon: 'flash', href: '/grupo-iby/electricidad' },
-  { title: 'Herramientas', image: require('../../assets/herramientas.jpeg'), icon: 'tools', href: '/grupo-iby/herramientas' },
-  { title: 'Maquinas', image: require('../../assets/maquinas.jpeg'), icon: 'cog', href: '/grupo-alvaro/maquinas' },
-  { title: 'Seguridad e Higiene', image: require('../../assets/seguridad.jpeg'), icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
-  { title: 'Orsy', image: require('../../assets/orsy.jpeg'), icon: 'archive', href: '/orsy-Agro/orsy' },
-  { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
+  { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'),       icon: 'disc',                   href: '/grupo-fabi/corteTaladroDesbaste' },
+  { title: 'Químicos',                  image: require('../../assets/quimicos.jpeg'),     icon: 'flask',                  href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería',               image: require('../../assets/tornilleria.png'),   icon: 'screwdriver',            href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo',              image: require('../../assets/autoYcargo.jpeg'),   icon: 'car',                    href: '/grupo-fer/auto' },
+  { title: 'Anclajes',                  image: require('../../assets/anclaje.png'),       icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad',              image: require('../../assets/electrecidad.png'),  icon: 'flash',                  href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas',              image: require('../../assets/herramientas.jpeg'), icon: 'tools',                  href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas',                  image: require('../../assets/maquinas.jpeg'),     icon: 'cog',                    href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene',       image: require('../../assets/seguridad.jpeg'),    icon: 'shield-check',           href: '/grupo-alvaro/seguridad' },
+  { title: 'Orsy',                      image: require('../../assets/orsy.jpeg'),         icon: 'archive',                href: '/orsy-Agro/orsy' },
+  { title: 'Agro',                      image: require('../../assets/agronomia.png'),     icon: 'sprout',                 href: '/orsy-Agro/agro' },
 ];
 
-const SUBCATEGORIES = [
-  { id: '02.01', label: '02.01 Selladores y juntas químicas' },
-  { id: '02.02', label: '02.02 Adhesivos y pegamento' },
-  { id: '02.03', label: '02.03 Limpiadores y disolventes' },
-  { id: '02.04', label: '02.04 Lubricantes y penetrantes' },
-  { id: '02.05', label: '02.05 Imprimaciones y lacas' },
-];
+function toCloudinaryUrl(path: string): string {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  const filename = path.split('/').pop();
+  return `${CLOUDINARY_BASE}/${filename}`;
+}
 
 export default function Quimicos() {
   const navigation = useNavigation();
@@ -42,62 +67,115 @@ export default function Quimicos() {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  const allProducts = useMemo(
-    () =>
-      categories.map((category) => ({
-        ...category,
-        products: category.subcategories.flatMap((sub) =>
-          sub.products.map((product) => ({
-            ...product,
-            category: category.name,
-            subcategory: sub.name,
-            code: sub.code,
-          }))
-        ),
-      })),
-    []
-  );
-
+  const [allProducts, setAllProducts]             = useState<ProductSummary[]>([]);
+  const [loadingList, setLoadingList]             = useState(true);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [searchText, setSearchText] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct]     = useState<ProductDetail | null>(null);
+  const [loadingDetail, setLoadingDetail]         = useState(false);
+  const [searchText, setSearchText]               = useState('');
+  const [selectedFilters, setSelectedFilters]     = useState<string[]>([]);
+  const [sidebarVisible, setSidebarVisible]       = useState(false);
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
-  const selectedProduct = useMemo(() => {
-    for (const category of allProducts) {
-      const found = category.products.find((p) => p.id === selectedProductId);
-      if (found) return found;
-    }
-    return null;
-  }, [allProducts, selectedProductId]);
+  // 1. Cargar listado desde API
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res  = await fetch(`${API_BASE}/quimicos`);
+        const data: ProductSummary[] = await res.json();
+        if (!cancelled) setAllProducts(data);
+      } catch (e) {
+        console.error('Error cargando químicos:', e);
+      } finally {
+        if (!cancelled) setLoadingList(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
+  // 2. Cargar detalle + PDF cuando se abre un producto
+  useEffect(() => {
+    if (!selectedProductId) {
+      setSelectedProduct(null);
+      return;
+    }
+    let cancelled = false;
+    setLoadingDetail(true);
+    setSelectedProduct(null);
+
+    (async () => {
+      try {
+        const [detailRes, pdfRes] = await Promise.all([
+          fetch(`${API_BASE}/quimicos/${selectedProductId}`),
+          fetch(`${API_BASE}/quimicos/${selectedProductId}/pdf`),
+        ]);
+        const detail: ProductDetail          = await detailRes.json();
+        const pdfData: { pdf_page?: string } = pdfRes.ok ? await pdfRes.json() : {};
+
+        if (!cancelled) {
+          setSelectedProduct({
+            ...detail,
+            images: (detail.images ?? []).map(toCloudinaryUrl),
+            pdf_page: pdfData.pdf_page,
+          });
+        }
+      } catch (e) {
+        console.error('Error cargando detalle:', e);
+      } finally {
+        if (!cancelled) setLoadingDetail(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [selectedProductId]);
+
+  // Subcategorías dinámicas para el filtro lateral
+  const subcategories = useMemo(() => {
+    const seen   = new Set<string>();
+    const result: { id: string; label: string }[] = [];
+    allProducts.forEach((p) => {
+      if (p.subcategory_code && !seen.has(p.subcategory_code)) {
+        seen.add(p.subcategory_code);
+        result.push({ id: p.subcategory_code, label: `${p.subcategory_code} ${p.subcategory_name}` });
+      }
+    });
+    return result.sort((a, b) => a.id.localeCompare(b.id));
+  }, [allProducts]);
+
+  // Filtrado por búsqueda y filtros laterales
   const filteredProducts = useMemo(() => {
     const lowerSearch = searchText.toLowerCase().trim();
-    return allProducts
-      .map((category) => ({
-        ...category,
-        products: category.products.filter((product) => {
-          const matchesSearch =
-            !lowerSearch ||
-            product.name.toLowerCase().includes(lowerSearch) ||
-            product.code?.toLowerCase().includes(lowerSearch);
-
-          const matchesFilter =
-            selectedFilters.length === 0 ||
-            selectedFilters.some((f) => product.code?.startsWith(f));
-
-          return matchesSearch && matchesFilter;
-        }),
-      }))
-      .filter((category) => category.products.length > 0);
+    return allProducts.filter((p) => {
+      const matchesSearch =
+        !lowerSearch ||
+        p.product_name.toLowerCase().includes(lowerSearch) ||
+        p.subcategory_code?.toLowerCase().includes(lowerSearch) ||
+        p.subcategory_name?.toLowerCase().includes(lowerSearch);
+      const matchesFilter =
+        selectedFilters.length === 0 ||
+        selectedFilters.some((f) => p.subcategory_code?.startsWith(f));
+      return matchesSearch && matchesFilter;
+    });
   }, [allProducts, searchText, selectedFilters]);
 
-  const handleViewMeasures = (pdfPage: string) => {
-    if (!pdfPage) return;
-    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
-  };
+  // Navegar al PDF
+  const handleViewMeasures = useCallback(async (productId: string) => {
+    if (selectedProduct?.product_id === productId && selectedProduct.pdf_page) {
+      router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(selectedProduct.pdf_page)}`);
+      return;
+    }
+    try {
+      const res  = await fetch(`${API_BASE}/quimicos/${productId}/pdf`);
+      const data = await res.json();
+      if (data.pdf_page) {
+        router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(data.pdf_page)}`);
+      }
+    } catch (e) {
+      console.error('Error obteniendo PDF:', e);
+    }
+  }, [selectedProduct, router]);
 
   return (
     <>
@@ -112,40 +190,40 @@ export default function Quimicos() {
         sidebar={
           <FilterSidebar
             title="Químicos"
-            subcategories={SUBCATEGORIES}
-            onFilterChange={(filters) =>
-              setSelectedFilters(filters.subcategories)
-            }
+            subcategories={subcategories}
+            onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
           />
         }
       >
-        {filteredProducts.map((category) => (
-          <View key={category.name}>
-            <View style={anclajesStyles.productsContainer}>
-              {category.products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  carouselIndex={carouselIndexes[product.id] ?? 0}
-                  onPress={() => setSelectedProductId(product.id)}
-                  onViewMeasures={() => handleViewMeasures(product.pdfPage)}
-                  onNextImage={() =>
-                    goToNext(product.id, product.images?.length || 0)
-                  }
-                  onPreviousImage={() =>
-                    goToPrevious(product.id, product.images?.length || 0)
-                  }
-                />
-              ))}
-            </View>
+        {loadingList ? (
+          <View style={{ alignItems: 'center', padding: 40 }}>
+            <Text style={{ fontSize: 16, color: '#666' }}>Cargando productos…</Text>
           </View>
-        ))}
+        ) : (
+          <View style={anclajesStyles.productsContainer}>
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.product_id}
+                product={{
+                  product_id:       product.product_id,
+                  product_name:     product.product_name,
+                  subcategory_code: product.subcategory_code,
+                  subcategory_name: product.subcategory_name,
+                  product_image:    toCloudinaryUrl(product.product_image),
+                }}
+                carouselIndex={carouselIndexes[product.product_id] ?? 0}
+                onPress={() => setSelectedProductId(product.product_id)}
+                onViewMeasures={() => handleViewMeasures(product.product_id)}
+                onNextImage={() => goToNext(product.product_id, 1)}
+                onPreviousImage={() => goToPrevious(product.product_id, 1)}
+              />
+            ))}
+          </View>
+        )}
 
-        {filteredProducts.length === 0 && (
+        {!loadingList && filteredProducts.length === 0 && (
           <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 16, color: '#666' }}>
-              No se encontraron productos.
-            </Text>
+            <Text style={{ fontSize: 16, color: '#666' }}>No se encontraron productos.</Text>
           </View>
         )}
       </CategoryLayout>
@@ -157,9 +235,10 @@ export default function Quimicos() {
       />
 
       <ProductModal
-        visible={Boolean(selectedProduct)}
+        visible={Boolean(selectedProductId)}
         product={selectedProduct}
-        carouselIndex={carouselIndexes[selectedProduct?.id ?? ''] ?? 0}
+        loading={loadingDetail}
+        carouselIndex={carouselIndexes[selectedProductId ?? ''] ?? 0}
         onClose={() => setSelectedProductId(null)}
       />
     </>
