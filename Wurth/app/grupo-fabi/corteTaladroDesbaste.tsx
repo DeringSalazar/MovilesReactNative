@@ -157,28 +157,28 @@ export default function CorteTaladroDesbaste() {
     router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
   };
 
-  return (
-    <>
-      <View style={{ flex: 1, flexDirection: 'row' }}>
-        <CategorySidebar categories={SIDEBAR_CATEGORIES} activeHref={pathname} />
+ return (
+  <>
+    <View style={{ flex: 1, flexDirection: 'row' }}>
+      <CategorySidebar categories={SIDEBAR_CATEGORIES} activeHref={pathname} />
 
-        <View style={{ flex: 1 }}>
-          <CategoryLayout
-            header={
-              <Header
-                onSearch={setSearchText}
-                showBackButton={true}
-                onMenuHover={() => setSidebarVisible(true)}
-              />
-            }
-            sidebar={
-              <FilterSidebar
-                title="Corte/Taladro/Desbaste"
-                subcategories={subcategories}
-                onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
-              />
-            }
-          >
+      <View style={{ flex: 1 }}>
+        <CategoryLayout
+          header={
+            <Header
+              onSearch={setSearchText}
+              showBackButton={true}
+              onMenuPress={() => setSidebarVisible(true)}
+            />
+          }
+          sidebar={
+            <FilterSidebar
+              title="Corte/Taladro/Desbaste"
+              subcategories={subcategories}
+              onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+            />
+          }
+        >
             {loading && (
               <View style={{ padding: 40, alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#CC0000" />
