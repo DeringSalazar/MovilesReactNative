@@ -45,7 +45,7 @@ export default function Seguridad() {
     error,
     fetchProductById,
     clearSelectedProduct,
-  } = useProducts('seguridad');
+  } = useProducts('seguridad-higiene');
 
   const [selectedMeasureImage, setSelectedMeasureImage] = useState<any>(null);
   const [searchText, setSearchText] = useState<string>('');
