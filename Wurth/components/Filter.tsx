@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
   wrapper: {
     padding: 12,
     width: 220,
-     alignSelf: 'stretch',
   },
   sidebar: {
     backgroundColor: '#fff',

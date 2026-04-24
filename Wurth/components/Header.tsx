@@ -26,6 +26,7 @@ export default function Header({ onSearch, showBackButton = false, onMenuHover }
             <TouchableOpacity
               // @ts-ignore - Soporte Web
               onMouseEnter={onMenuHover}
+              onPress={onMenuHover}
               style={{ padding: 5 }}
             >
               <MaterialCommunityIcons name="menu" size={30} color="#fff" />
