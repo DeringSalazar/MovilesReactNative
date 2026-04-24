@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated,Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
 import CategorySidebar from '../../components/CategorySidebar';
@@ -254,6 +254,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 25,
   },
+
+  card: {
+    width: '30%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  gridDestacados: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    width: '100%',
+  },
+
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -261,19 +276,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
   },
+
   subtitleDestacados: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
   },
+
+  verMasText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+
   sectionDestacados: {
     paddingVertical: 20,
     backgroundColor: '#7A7A7A',
   },
+
   carouselContainer: {
     position: 'relative',
     paddingHorizontal: 10,
   },
+
   arrowBtn: {
     position: 'absolute',
     zIndex: 10,
@@ -285,8 +310,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   leftArrow: { left: 5 },
   rightArrow: { right: 5 },
+
   arrowText: {
     fontSize: 18,
     fontWeight: 'bold',
