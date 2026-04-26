@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
 import {
   Animated,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions,
 } from 'react-native';
 
 export type SubCategory = {
@@ -21,20 +22,44 @@ interface FilterSidebarProps {
   title?: string;
   subcategories: SubCategory[];
   onFilterChange?: (filters: Filters) => void;
+  // Drawer controlado desde afuera en móvil
+  drawerVisible?: boolean;
+  onDrawerClose?: () => void;
 }
 
 export default function FilterSidebar({
   title = 'Filtros',
   subcategories,
   onFilterChange,
+  drawerVisible = false,
+  onDrawerClose,
 }: FilterSidebarProps) {
   const { width } = useWindowDimensions();
-  const isNarrow = width < 768;
+  const isMobile = width < 768;
 
   const [selected, setSelected] = useState<string[]>([]);
   const [expanded, setExpanded] = useState(true);
 
   const animHeight = useRef(new Animated.Value(1)).current;
+  const drawerAnim = useRef(new Animated.Value(260)).current;
+
+  // Sincronizar animación con drawerVisible
+  React.useEffect(() => {
+    if (drawerVisible) {
+      Animated.spring(drawerAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        speed: 20,
+        bounciness: 4,
+      }).start();
+    } else {
+      Animated.timing(drawerAnim, {
+        toValue: 260,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [drawerVisible]);
 
   const toggleAccordion = () => {
     Animated.timing(animHeight, {
@@ -63,13 +88,90 @@ export default function FilterSidebar({
     outputRange: [0, 600],
   });
 
-  if (isNarrow) return null;
+  const filterContent = (
+    <>
+      <View style={styles.divider} />
 
+      {selected.length > 0 && (
+        <View style={styles.activeRow}>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>
+              {selected.length} activo{selected.length > 1 ? 's' : ''}
+            </Text>
+          </View>
+          <TouchableOpacity onPress={clearAll}>
+            <Text style={styles.clearBtn}>Limpiar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <Text style={styles.sectionTitle}>Subcategorías</Text>
+
+      {subcategories.length === 0 ? (
+        <Text style={styles.emptyText}>Sin subcategorías</Text>
+      ) : (
+        subcategories.map((item, index) => {
+          const isSelected = selected.includes(item.id);
+          const isLast = index === subcategories.length - 1;
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={[
+                styles.checkRow,
+                isSelected && styles.checkRowSelected,
+                isLast && styles.checkRowLast,
+              ]}
+              onPress={() => toggleItem(item.id)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.checkbox, isSelected && styles.checkboxSelected]}>
+                {isSelected && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <Text style={[styles.checkLabel, isSelected && styles.checkLabelSelected]}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })
+      )}
+    </>
+  );
+
+  // ── MÓVIL: drawer controlado desde afuera ─────────────────────────────────
+  if (isMobile) {
+    if (!drawerVisible) return null;
+    return (
+      <>
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={onDrawerClose}
+        />
+        <Animated.View
+          style={[styles.drawer, { transform: [{ translateX: drawerAnim }] }]}
+        >
+          <View style={styles.drawerHeader}>
+            <View style={styles.titleRow}>
+              <View style={styles.titleAccent} />
+              <Text style={styles.title}>{title}</Text>
+            </View>
+            <TouchableOpacity onPress={onDrawerClose}>
+              <Text style={styles.closeBtn}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {filterContent}
+          </ScrollView>
+        </Animated.View>
+      </>
+    );
+  }
+
+  // ── DESKTOP: sidebar fijo ─────────────────────────────────────────────────
   return (
     <View style={styles.wrapper}>
       <View style={styles.sidebar}>
-
-        {/* HEADER acordeón */}
         <TouchableOpacity
           style={styles.accordionHeader}
           onPress={toggleAccordion}
@@ -82,55 +184,8 @@ export default function FilterSidebar({
           <Text style={styles.chevron}>{expanded ? '▲' : '▼'}</Text>
         </TouchableOpacity>
 
-        {/* CONTENIDO animado */}
         <Animated.View style={{ maxHeight, overflow: 'hidden' }}>
-
-          <View style={styles.divider} />
-
-          {/* Badge filtros activos */}
-          {selected.length > 0 && (
-            <View style={styles.activeRow}>
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>
-                  {selected.length} activo{selected.length > 1 ? 's' : ''}
-                </Text>
-              </View>
-              <TouchableOpacity onPress={clearAll}>
-                <Text style={styles.clearBtn}>Limpiar</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <Text style={styles.sectionTitle}>Subcategorías</Text>
-
-          {subcategories.length === 0 ? (
-            <Text style={styles.emptyText}>Sin subcategorías</Text>
-          ) : (
-            subcategories.map((item, index) => {
-              const isSelected = selected.includes(item.id);
-              const isLast = index === subcategories.length - 1;
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[
-                    styles.checkRow,
-                    isSelected && styles.checkRowSelected,
-                    isLast && styles.checkRowLast,
-                  ]}
-                  onPress={() => toggleItem(item.id)}
-                  activeOpacity={0.7}
-                >
-                  <View style={[styles.checkbox, isSelected && styles.checkboxSelected]}>
-                    {isSelected && <Text style={styles.checkmark}>✓</Text>}
-                  </View>
-                  <Text style={[styles.checkLabel, isSelected && styles.checkLabelSelected]}>
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })
-          )}
-
+          {filterContent}
         </Animated.View>
       </View>
     </View>
@@ -153,7 +208,6 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: '#f0f0f0',
-    // flex: 1,
   },
   accordionHeader: {
     flexDirection: 'row',
@@ -162,6 +216,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     backgroundColor: '#fff',
+  },
+  chevron: {
+    fontSize: 10,
+    color: '#bbb',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 98,
+  },
+  drawer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 260,
+    backgroundColor: '#fff',
+    zIndex: 99,
+    paddingTop: 20,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: -3, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 10,
+    borderBottomLeftRadius: 14,
+    borderBottomRightRadius: 14,
+  },
+  drawerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  closeBtn: {
+    fontSize: 18,
+    color: '#888',
   },
   titleRow: {
     flexDirection: 'row',
@@ -179,10 +274,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#1a1a1a',
     letterSpacing: 0.2,
-  },
-  chevron: {
-    fontSize: 10,
-    color: '#bbb',
   },
   divider: {
     height: 1,
