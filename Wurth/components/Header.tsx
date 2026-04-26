@@ -7,13 +7,19 @@ import { SearchBar } from './SearchBar';
 interface HeaderProps {
   onSearch?: (text: string) => void;
   showBackButton?: boolean;
-  onMenuPress?: () => void; // 🔹 nombre corregido
+  onMenuPress?: () => void;
+  showSearch?: boolean; 
 }
 
-export default function Header({ onSearch, showBackButton = false, onMenuPress }: HeaderProps) {
+export default function Header({ 
+  onSearch, 
+  showBackButton = false, 
+  onMenuPress,
+  showSearch = true 
+}: HeaderProps) {
 
   const { width } = useWindowDimensions();
-  const isMobile = width < 768; // 🔹 breakpoint
+  const isMobile = width < 768;
 
   return (
     <LinearGradient
@@ -25,42 +31,31 @@ export default function Header({ onSearch, showBackButton = false, onMenuPress }
       <View style={styles.container}>
         <View style={styles.row}>
 
-          {/* IZQUIERDA */}
           <View style={styles.left}>
-
-            {/* 🔹 BOTÓN SOLO EN MÓVIL */}
             {isMobile && (
-              <TouchableOpacity
-                onPress={onMenuPress}
-                style={styles.menuBtn}
-              >
+              <TouchableOpacity onPress={onMenuPress} style={styles.menuBtn}>
                 <MaterialCommunityIcons name="menu" size={30} color="#fff" />
               </TouchableOpacity>
             )}
-
-            {/* 🔹 LOGO */}
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => router.push('/(tabs)')}
               style={styles.logoGroup}
             >
-              <Image
-                source={require('../assets/Logo.png')}
-                style={styles.logoImage}
-              />
+              <Image source={require('../assets/Logo.png')} style={styles.logoImage} />
               <Text style={styles.logo}>WÜRTH</Text>
             </TouchableOpacity>
-
           </View>
 
-          {/* DERECHA */}
-          <SearchBar
-            placeholder="Buscar"
-            showButton={false}
-            containerStyle={styles.searchContainer}
-            inputStyle={styles.input}
-            onSearch={onSearch}
-          />
+          {showSearch && (
+            <SearchBar
+              placeholder="Buscar"
+              showButton={false}
+              containerStyle={styles.searchContainer}
+              inputStyle={styles.input}
+              onSearch={onSearch}
+            />
+          )}
 
         </View>
       </View>
