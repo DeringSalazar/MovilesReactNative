@@ -29,7 +29,7 @@ const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
 ];
 
 // Mapeo dinámico de imágenes desde rutas de la API
-const getAutoImages = (imagePath: string | string[] | null | undefined): any[] => {
+const getAutoImages = (imagePath: string | string[] | null | undefined): (any | string)[] => {
     if (!imagePath) return [];
 
     const paths = Array.isArray(imagePath) ? imagePath : [imagePath];
@@ -132,8 +132,19 @@ const getAutoImages = (imagePath: string | string[] | null | undefined): any[] =
     };
 
     return paths.map(path => {
+        // Si es una URL de YouTube o URL HTTP, pasarla directamente sin procesar
+        if (typeof path === 'string' && (path.includes('youtube.com') || path.includes('youtu.be') || path.startsWith('http'))) {
+            console.log('🎥 YouTube URL pasada directamente:', path.substring(0, 60));
+            return path;
+        }
+        
+        // Para rutas locales, intentar mapearlas
         const filename = typeof path === 'string' ? path.split('/').pop() : '';
-        return filename && filename in imageMap ? imageMap[filename] : null;
+        const mapped = filename && filename in imageMap ? imageMap[filename] : null;
+        if (mapped) {
+            console.log('📦 Imagen mapeada:', filename);
+        }
+        return mapped;
     }).filter(img => img !== null);
 };
 
@@ -242,15 +253,13 @@ export default function Auto() {
                         {!loading && (
                             <View style={autoStyles.productsContainer}>
                                 {filteredProducts.map((product) => {
-                                    const localImages = getAutoImages(product.product_image).map(img => 
-                                      typeof img === 'string' ? img : img.uri
-                                    );
-                                    const totalImages = localImages.length;
+                                    const processedImages = getAutoImages(product.product_image);
+                                    const totalImages = processedImages.length;
 
                                     return (
                                         <ProductCard
                                             key={product.product_id}
-                                            product={{ ...product, product_image: localImages }}
+                                            product={{ ...product, product_image: processedImages }}
                                             carouselIndex={carouselIndexes[product.product_id] ?? 0}
                                             onPress={() => handleOpenProduct(product.product_id)}
                                             onViewMeasures={() => handleViewMeasures(product.pdf_page)}

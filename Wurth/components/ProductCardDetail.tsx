@@ -1,6 +1,7 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import type { ProductSummary } from '../types/products';
+import { MediaDisplay } from './MediaDisplay';
 
 interface ProductCardProps {
   product: ProductSummary;
@@ -42,8 +43,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       <View style={styles.imageCarousel}>
         <Pressable onPress={onPress} style={styles.imageTapArea}>
           {currentImage ? (
-            <Image
-              source={{ uri: currentImage }}
+            <MediaDisplay
+              source={currentImage}
               style={styles.image}
               resizeMode="contain"
             />
