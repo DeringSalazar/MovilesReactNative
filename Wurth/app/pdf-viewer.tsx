@@ -8,20 +8,21 @@ const SERVER_URL = `https://api-moviles-lilac.vercel.app`;
 export default function PdfViewerScreen() {
   const params = useLocalSearchParams();
   const targetPage = parseInt(params.pdfPage?.toString() || '1');
+  const categorySlug = params.categorySlug?.toString() || '';
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const viewerUrl = `${SERVER_URL}/catalogo/viewer?page=${targetPage}`;
+  // Construir URL con ambos parámetros
+  const viewerUrl = `${SERVER_URL}/catalogo/viewer?page=${targetPage}&categorySlug=${encodeURIComponent(categorySlug)}`;
 
   React.useEffect(() => {
-    // Simula un pequeño delay para mostrar loading si es necesario
     const timer = setTimeout(() => {
       setLoading(false);
-    },500); 
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [targetPage]);
+  }, [targetPage, categorySlug]);
 
   if (loading) {
     return (
@@ -73,7 +74,6 @@ export default function PdfViewerScreen() {
         allowsInlineMediaPlayback={true}
         mediaPlaybackRequiresUserAction={false}
         scalesPageToFit={true}
-        allowsBackForwardNavigationGestures={false}
         scrollEnabled={true}
         {...(Platform.OS === 'android' && {
           setBuiltInZoomControls: true,
