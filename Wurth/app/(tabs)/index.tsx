@@ -14,17 +14,17 @@ interface Category {
   image: any;
   icon: string;
   href?:
-    | '/grupo-fer/auto'
-    | '/grupo-fer/anclajes'
-    | '/grupo-iby/electricidad'
-    | '/grupo-iby/herramientas'
-    | '/grupo-erik/quimicos'
-    | '/grupo-erik/tornilleria'
-    | '/orsy-Agro/orsy'
-    | '/orsy-Agro/agro'
-    | '/grupo-alvaro/seguridad'
-    | '/grupo-alvaro/maquinas'
-    | '/grupo-fabi/corteTaladroDesbaste';
+  | '/grupo-fer/auto'
+  | '/grupo-fer/anclajes'
+  | '/grupo-iby/electricidad'
+  | '/grupo-iby/herramientas'
+  | '/grupo-erik/quimicos'
+  | '/grupo-erik/tornilleria'
+  | '/orsy-Agro/orsy'
+  | '/orsy-Agro/agro'
+  | '/grupo-alvaro/seguridad'
+  | '/grupo-alvaro/maquinas'
+  | '/grupo-fabi/corteTaladroDesbaste';
 }
 
 export default function Home() {
@@ -102,7 +102,10 @@ export default function Home() {
       <View style={{ flex: 1 }}>
 
         {/* HEADER FIJO */}
-        <Header onMenuPress={() => setSidebarVisible(true)} />
+        <Header
+          onMenuPress={() => setSidebarVisible(true)}
+          showSearch={false}
+        />
 
         {/* CONTENIDO con scroll */}
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
