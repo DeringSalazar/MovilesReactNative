@@ -115,12 +115,11 @@ export default function Anclajes() {
     });
   }, [products, searchText, selectedFilters]);
 
-  const handleViewMeasures = (pdfPage: string) => {
-    console.log('PDF Page:', pdfPage);
-    if (!pdfPage) {
-      return;
-    }
-    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
+  const handleViewMeasures = (pdfPage: string, categorySlug: string) => {
+    const params = new URLSearchParams();
+    params.append('pdfPage', pdfPage);
+    params.append('categorySlug', categorySlug);
+    router.push(`/pdf-viewer?${params.toString()}`);
   };
 
   return (
@@ -166,7 +165,7 @@ export default function Anclajes() {
                       product={{ ...product, product_image: localImages }}
                       carouselIndex={carouselIndexes[product.product_id] ?? 0}
                       onPress={() => handleOpenProduct(product.product_id)}
-                      onViewMeasures={() => handleViewMeasures(product.pdf_page)}
+                      onViewMeasures={() => handleViewMeasures(product.pdf_page, product.category_slug)}
                       onNextImage={() => goToNext(product.product_id, totalImages)}
                       onPreviousImage={() => goToPrevious(product.product_id, totalImages)}
                     />

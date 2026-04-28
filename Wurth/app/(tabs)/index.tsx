@@ -49,6 +49,14 @@ export default function Home() {
     { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
   ];
 
+  {/*categorias iniciales*/ }
+  const homeCategories: Category[] = [
+  { title: 'Construcción', image: require('../../assets/construccion.png'), icon: 'brush' },
+  { title: 'Ferretería', image: require('../../assets/ferreteria.png'), icon: 'lightbulb' },
+  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'toolbox' },
+  ...categories,
+  ];
+
   const getColumns = () => {
     if (width > 1200) return 4;
     if (width > 768) return 3;
@@ -116,7 +124,7 @@ export default function Home() {
           {/* CATEGORÍAS */}
           <View style={styles.section}>
             <View style={styles.grid}>
-              {categories.slice(0, 6).map((item) => (
+              {homeCategories.slice(0, 3).map((item) => (
                 <TouchableOpacity
                   key={item.title}
                   onPress={() => item.href && router.push(item.href)}
@@ -141,7 +149,7 @@ export default function Home() {
                     }),
                   }],
                 }}>
-                  {categories.slice(6).map((item) => (
+                  {homeCategories.slice(3).map((item) => (
                     <CategoryCard
                       key={item.title}
                       title={item.title}
