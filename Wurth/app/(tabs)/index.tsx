@@ -13,18 +13,7 @@ interface Category {
   title: string;
   image: any;
   icon: string;
-  href?:
-  | '/grupo-fer/auto'
-  | '/grupo-fer/anclajes'
-  | '/grupo-iby/electricidad'
-  | '/grupo-iby/herramientas'
-  | '/grupo-erik/quimicos'
-  | '/grupo-erik/tornilleria'
-  | '/orsy-Agro/orsy'
-  | '/orsy-Agro/agro'
-  | '/grupo-alvaro/seguridad'
-  | '/grupo-alvaro/maquinas'
-  | '/grupo-fabi/corteTaladroDesbaste';
+  href?: string;
 }
 
 export default function Home() {
@@ -51,9 +40,9 @@ export default function Home() {
 
   {/*categorias iniciales*/ }
   const homeCategories: Category[] = [
-  { title: 'Construcción', image: require('../../assets/construccion.png'), icon: 'brush' },
-  { title: 'Ferretería', image: require('../../assets/ferreteria.png'), icon: 'lightbulb' },
-  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'toolbox' },
+  { title: 'Construcción', image: require('../../assets/construccion.png'), icon: 'brush', href: '/pdf-viewer?pdfPage=1&categorySlug=14' },
+  { title: 'Ferretería', image: require('../../assets/ferreteria.png'), icon: 'lightbulb', href: '/pdf-viewer?pdfPage=1&categorySlug=12' },
+  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'toolbox', href: '/pdf-viewer?pdfPage=1&categorySlug=13' },
   ...categories,
   ];
 

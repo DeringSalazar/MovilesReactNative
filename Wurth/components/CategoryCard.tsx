@@ -13,7 +13,7 @@ import {
 type Props = {
   title: string;
   image: ImageSourcePropType;
-  href?: Href;
+  href?: Href | string;
 };
 
 export default function CategoryCard({ title, image, href }: Props) {
