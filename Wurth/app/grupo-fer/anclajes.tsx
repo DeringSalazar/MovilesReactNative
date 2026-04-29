@@ -129,7 +129,7 @@ export default function Anclajes() {
 
         <View style={{ flex: 1 }}>
           <CategoryLayout
-            header={<Header onSearch={setSearchText} showBackButton={true} onMenuPress={() => setSidebarVisible(true)} />}
+               header={<Header onSearch={setSearchText} showBackButton={true} onMenuHover={() => setSidebarVisible(true)} />}
             sidebar={
               <FilterSidebar
                 title="Anclajes"
