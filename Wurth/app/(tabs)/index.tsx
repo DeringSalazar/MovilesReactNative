@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Carrusel from '../../components/Carrusel';
 import CategoryCard from '../../components/CategoryCard';
 import CategorySidebar from '../../components/CategorySidebar';
@@ -13,29 +13,20 @@ interface Category {
   title: string;
   image: any;
   icon: string;
-  href?:
-    | '/grupo-fer/auto'
-    | '/grupo-fer/anclajes'
-    | '/grupo-iby/electricidad'
-    | '/grupo-iby/herramientas'
-    | '/grupo-erik/quimicos'
-    | '/grupo-erik/tornilleria'
-    | '/orsy-Agro/orsy'
-    | '/orsy-Agro/agro'
-    | '/grupo-alvaro/seguridad'
-    | '/grupo-alvaro/maquinas'
-    | '/grupo-fabi/corteTaladroDesbaste';
+  href?: string;
 }
 
 export default function Home() {
   const router = useRouter();
   const pathname = usePathname();
+  const { width } = useWindowDimensions();
   const [showAll, setShowAll] = useState(false);
   const extraAnim = useRef(new Animated.Value(0)).current;
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const categories: Category[] = [
     { title: 'Corte, Taladro y Desbaste', image: require('../../assets/corte.jpeg'), icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
-    { title: 'Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
+    { title: '  Químicos', image: require('../../assets/quimicos.jpeg'), icon: 'flask', href: '/grupo-erik/quimicos' },
     { title: 'Tornillería', image: require('../../assets/tornilleria.png'), icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
     { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'car', href: '/grupo-fer/auto' },
     { title: 'Anclajes', image: require('../../assets/anclaje.png'), icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
@@ -47,11 +38,24 @@ export default function Home() {
     { title: 'Agro', image: require('../../assets/agronomia.png'), icon: 'sprout', href: '/orsy-Agro/agro' },
   ];
 
-  const { width } = Dimensions.get('window');
-  const cardWidth = (width - 40) / 3;
+  {/*categorias iniciales*/ }
+  const homeCategories: Category[] = [
+  { title: 'Construcción', image: require('../../assets/construccion.png'), icon: 'brush', href: '/pdf-viewer?pdfPage=1&categorySlug=14' },
+  { title: 'Ferretería', image: require('../../assets/ferreteria.png'), icon: 'lightbulb', href: '/pdf-viewer?pdfPage=1&categorySlug=12' },
+  { title: 'Auto y Cargo', image: require('../../assets/autoYcargo.jpeg'), icon: 'toolbox', href: '/pdf-viewer?pdfPage=1&categorySlug=13' },
+  ...categories,
+  ];
+
+  const getColumns = () => {
+    if (width > 1200) return 4;
+    if (width > 768) return 3;
+    return 2;
+  };
+
+  const columns = getColumns();
+  const cardWidth = Math.min(width / columns, 450);
   const scrollRef = useRef<ScrollView>(null);
   const [scrollOffset, setScrollOffset] = useState(0);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const handleToggle = () => {
     if (!showAll) {
@@ -92,120 +96,122 @@ export default function Home() {
         activeHref={pathname}
       />
 
-      {/* CONTENIDO con scroll */}
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+      <View style={{ flex: 1 }}>
 
-        <Header onMenuHover={() => setSidebarVisible(true)} />
-
-        <Sidebar
-          visible={sidebarVisible}
-          onClose={() => setSidebarVisible(false)}
-          categories={categories}
+        {/* HEADER FIJO */}
+        <Header
+          onMenuPress={() => setSidebarVisible(true)}
+          showSearch={false}
         />
 
-        {/* HERO */}
-        <Carrusel />
+        {/* CONTENIDO con scroll */}
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
 
-        {/* CATEGORÍAS */}
-        <View style={styles.section}>
-          <View style={styles.grid}>
-            {categories.slice(0, 6).map((item) => (
-              <TouchableOpacity
-                key={item.title}
-                onPress={() => item.href && router.push(item.href)}
-                activeOpacity={0.8}
-              >
-                <CategoryCard
-                  title={item.title}
-                  image={item.image}
-                />
+          {/* HERO */}
+          <Carrusel />
+
+          {/* CATEGORÍAS */}
+          <View style={styles.section}>
+            <View style={styles.grid}>
+              {homeCategories.slice(0, 3).map((item) => (
+                <TouchableOpacity
+                  key={item.title}
+                  onPress={() => item.href && router.push(item.href)}
+                  activeOpacity={0.8}
+                >
+                  <CategoryCard title={item.title} image={item.image} />
+                </TouchableOpacity>
+              ))}
+
+              {showAll && (
+                <Animated.View style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  gap: 10,
+                  width: '100%',
+                  opacity: extraAnim,
+                  transform: [{
+                    translateY: extraAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0],
+                    }),
+                  }],
+                }}>
+                  {homeCategories.slice(3).map((item) => (
+                    <CategoryCard
+                      key={item.title}
+                      title={item.title}
+                      image={item.image}
+                      href={item.href}
+                    />
+                  ))}
+                </Animated.View>
+              )}
+            </View>
+
+            <TouchableOpacity style={styles.redBtn} onPress={handleToggle}>
+              <Text style={styles.btnText}>
+                {showAll ? 'Ver menos' : 'Ver más'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* PRODUCTOS DESTACADOS */}
+          <View style={styles.sectionDestacados}>
+            <View style={styles.headerRow}>
+              <Text style={styles.subtitleDestacados}>Productos Destacados</Text>
+            </View>
+
+            <View style={styles.carouselContainer}>
+              <TouchableOpacity style={[styles.arrowBtn, styles.leftArrow]} onPress={scrollLeft}>
+                <Text style={styles.arrowText}>{'<'}</Text>
               </TouchableOpacity>
-            ))}
 
-            {/* Extra con animación fade + slide */}
-            {showAll && (
-              <Animated.View style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: 10,
-                width: '100%',
-                opacity: extraAnim,
-                transform: [{
-                  translateY: extraAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [20, 0],
-                  }),
-                }],
-              }}>
-                {categories.slice(6).map((item) => (
-                  <CategoryCard
-                    key={item.title}
-                    title={item.title}
-                    image={item.image}
-                    href={item.href}
-                  />
-                ))}
-              </Animated.View>
-            )}
+              <ScrollView
+                ref={scrollRef}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={cardWidth + 10}
+                decelerationRate="fast"
+                snapToAlignment="center"
+                contentContainerStyle={{ paddingHorizontal: 10 }}
+              >
+                <ProductCard name="Broca HSS-Co" price={12.99} image="https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777" width={cardWidth} />
+                <ProductCard name="Taladro TEENO" price={299.99} image="https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp" width={cardWidth} />
+                <ProductCard name="Ponchadora RJ45" price={20.99} image="https://www.irs.com.co/cdn/shop/products/Capturadepantalla2022-05-11105142_900x.jpg?v=1652285505" width={cardWidth} />
+                <ProductCard name="Tornillo para madera" price={5.00} image="https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg" width={cardWidth} />
+              </ScrollView>
+
+              <TouchableOpacity style={[styles.arrowBtn, styles.rightArrow]} onPress={scrollRight}>
+                <Text style={styles.arrowText}>{'>'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <TouchableOpacity style={styles.redBtn} onPress={handleToggle}>
-            <Text style={styles.btnText}>
-              {showAll ? 'Ver menos' : 'Ver más'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* PRODUCTOS DESTACADOS */}
-        <View style={styles.sectionDestacados}>
-          <View style={styles.headerRow}>
-            <Text style={styles.subtitleDestacados}>Productos Destacados</Text>
-          </View>
-
-          <View style={styles.carouselContainer}>
-            <TouchableOpacity style={[styles.arrowBtn, styles.leftArrow]} onPress={scrollLeft}>
-              <Text style={styles.arrowText}>{'<'}</Text>
-            </TouchableOpacity>
-
-            <ScrollView
-              ref={scrollRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={cardWidth + 10}
-              decelerationRate="fast"
-              snapToAlignment="center"
-              contentContainerStyle={{ paddingHorizontal: 10 }}
-            >
-              <ProductCard name="Broca HSS-Co" price={12.99} image="https://carbonestore.cr/cdn/shop/products/1_YT-4361.jpg?v=1616453777" width={cardWidth} />
-              <ProductCard name="Taladro TEENO" price={299.99} image="https://ferconce.com/wp-content/uploads/2022/02/TALADRO-095506.webp" width={cardWidth} />
-              <ProductCard name="Ponchadora RJ45" price={20.99} image="https://www.irs.com.co/cdn/shop/products/Capturadepantalla2022-05-11105142_900x.jpg?v=1652285505" width={cardWidth} />
-              <ProductCard name="Tornillo para madera" price={5.00} image="https://cr.epaenlinea.com/media/catalog/product/1/0/100010628.jpg_20250607204123917575.jpeg" width={cardWidth} />
-            </ScrollView>
-
-            <TouchableOpacity style={[styles.arrowBtn, styles.rightArrow]} onPress={scrollRight}>
-              <Text style={styles.arrowText}>{'>'}</Text>
+          {/* OFERTAS */}
+          <View style={styles.offer}>
+            <Text style={styles.offerText}>Ofertas especiales</Text>
+            <TouchableOpacity style={styles.blackBtn}>
+              <Text style={styles.btnText}>Ver ofertas</Text>
             </TouchableOpacity>
           </View>
-        </View>
 
-        {/* OFERTAS */}
-        <View style={styles.offer}>
-          <Text style={styles.offerText}>Ofertas especiales</Text>
-          <TouchableOpacity style={styles.blackBtn}>
-            <Text style={styles.btnText}>Ver ofertas</Text>
-          </TouchableOpacity>
-        </View>
+          <Footer />
 
-        <Footer />
+        </ScrollView>
+      </View>
 
-      </ScrollView>
+      {/* SIDEBAR HAMBURGUESA */}
+      <Sidebar
+        visible={sidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+        categories={categories}
+      />
+
     </View>
   );
 }
-
-const { width } = Dimensions.get('window');
-const cardWidth = (width - 60) / 3;
 
 const styles = StyleSheet.create({
   section: {

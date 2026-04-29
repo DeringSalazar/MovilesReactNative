@@ -1,7 +1,14 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Animated } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import React from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 interface SidebarProps {
   visible: boolean;
@@ -10,61 +17,81 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ visible, onClose, categories }: SidebarProps) {
-  if (!visible) return null;
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const sidebarWidth = Math.min(width * 0.75, 280);
+
+  if (!visible || !isMobile) return null;
 
   return (
-    <View 
-      style={styles.container}
-      // @ts-ignore - Para soporte Web hover
-      onMouseLeave={onClose} 
-    >
-      <View style={styles.header}>
-        <MaterialCommunityIcons name="menu" size={24} color="#fff" />
-        <Text style={styles.headerText}>Todas las Categorías</Text>
-      </View>
-
-      <FlatList
-        data={categories}
-        keyExtractor={(item) => item.title}
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={styles.item}
-            onPress={() => {
-            if (item.href) {
-                router.push(item.href);
-                onClose();
-            }   
-        }}
-        >
-            <View style={styles.itemLeft}>
-              <MaterialCommunityIcons name={item.icon || 'tag'} size={22} color="#fff" />
-              <Text style={styles.itemText}>{item.title}</Text>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={18} color="#444" />
-          </TouchableOpacity>
-        )}
+    <>
+      {/* OVERLAY: toca fuera para cerrar */}
+      <TouchableOpacity
+        style={styles.overlay}
+        activeOpacity={1}
+        onPress={onClose}
       />
-    </View>
+
+      {/* SIDEBAR */}
+      <View
+        style={[styles.container, { width: sidebarWidth }]}
+        // @ts-ignore - Soporte Web
+        onMouseLeave={onClose}
+      >
+        <View style={styles.header}>
+          <MaterialCommunityIcons name="menu" size={24} color="#fff" />
+          <Text style={styles.headerText}>Todas las Categorías</Text>
+        </View>
+
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item.title}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => {
+                if (item.href) {
+                  router.push(item.href);
+                  onClose();
+                }
+              }}
+            >
+              <View style={styles.itemLeft}>
+                <MaterialCommunityIcons name={item.icon || 'tag'} size={22} color="#fff" />
+                <Text style={styles.itemText} numberOfLines={1}>{item.title}</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={18} color="#444" />
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 998,
+  },
   container: {
     position: 'absolute',
     top: 84,
     left: 0,
-    width: 280,
     backgroundColor: '#000000',
     zIndex: 999,
-    borderRadius: 0,
     overflow: 'hidden',
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    //borderTopRightRadius: 15, // arriba derecha
-    borderBottomRightRadius: 15, // abajo derecha
+    borderBottomRightRadius: 15,
   },
   header: {
     backgroundColor: '#d32f2f',
@@ -89,10 +116,13 @@ const styles = StyleSheet.create({
   itemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
   },
   itemText: {
     color: '#fff',
     marginLeft: 15,
     fontSize: 15,
+    flex: 1,
   },
 });

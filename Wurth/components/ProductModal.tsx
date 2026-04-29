@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ActivityIndicator,
-  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -9,7 +8,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import type { ProductDetail } from '../types/products'; 
+import type { ProductDetail } from '../types/products';
+import { MediaDisplay } from './MediaDisplay'; 
 
 interface ProductModalProps {
   visible: boolean;
@@ -68,12 +68,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 {product.images && product.images.length > 0 && (
                   <View style={styles.imageColumn}>
                     <View style={styles.imageWrapper}>
-                      <Image
-                        source={
-                          typeof product.images[carouselIndex] === 'string'
-                            ? { uri: product.images[carouselIndex] as string }
-                            : (product.images[carouselIndex] as { uri: string })
-                        }
+                      <MediaDisplay
+                        source={product.images[carouselIndex] as string}
                         style={styles.modalImage}
                         resizeMode="contain"
                       />

@@ -1,16 +1,26 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SearchBar } from './SearchBar';
 
 interface HeaderProps {
   onSearch?: (text: string) => void;
   showBackButton?: boolean;
-  onMenuHover?: () => void;
+  onMenuPress?: () => void;
+  showSearch?: boolean; 
 }
 
-export default function Header({ onSearch, showBackButton = false, onMenuHover }: HeaderProps) {
+export default function Header({ 
+  onSearch, 
+  showBackButton = false, 
+  onMenuPress,
+  showSearch = true 
+}: HeaderProps) {
+
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   return (
     <LinearGradient
       colors={['#000000', '#242424', '#000000']}
@@ -21,40 +31,33 @@ export default function Header({ onSearch, showBackButton = false, onMenuHover }
       <View style={styles.container}>
         <View style={styles.row}>
 
-          {/* IZQUIERDA: menú + logo */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-            <TouchableOpacity
-              // @ts-ignore - Soporte Web
-              onMouseEnter={onMenuHover}
-              style={{ padding: 5 }}
-            >
-              <MaterialCommunityIcons name="menu" size={30} color="#fff" />
-            </TouchableOpacity>
-
+          <View style={styles.left}>
+            {isMobile && (
+              <TouchableOpacity onPress={onMenuPress} style={styles.menuBtn}>
+                <MaterialCommunityIcons name="menu" size={30} color="#fff" />
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => router.push('/(tabs)')}
               style={styles.logoGroup}
             >
-              <Image
-                source={require('../assets/Logo.png')}
-                style={styles.logoImage}
-              />
+              <Image source={require('../assets/Logo.png')} style={styles.logoImage} />
               <Text style={styles.logo}>WÜRTH</Text>
             </TouchableOpacity>
           </View>
 
-          {/* DERECHA: buscador */}
-          <SearchBar
-            placeholder="Buscar"
-            showButton={false}
-            containerStyle={styles.searchContainer}
-            inputStyle={styles.input}
-            onSearch={onSearch}
-          />
+          {showSearch && (
+            <SearchBar
+              placeholder="Buscar"
+              showButton={false}
+              containerStyle={styles.searchContainer}
+              inputStyle={styles.input}
+              onSearch={onSearch}
+            />
+          )}
 
         </View>
-
       </View>
     </LinearGradient>
   );
@@ -74,25 +77,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '100%',
   },
 
-  backButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+  left: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
 
-  backText: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
+  menuBtn: {
+    padding: 5,
   },
 
   logoGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexShrink: 0,
-    paddingRight: 10,
   },
 
   logo: {
@@ -100,26 +99,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginLeft: 4,
-    includeFontPadding: false,
   },
 
   logoImage: {
     width: 35,
     height: 35,
     resizeMode: 'contain',
-  },
-
-  nav: {
-    flexDirection: 'row',
-    flex: 2,
-    justifyContent: 'space-evenly',
-    marginHorizontal: 10,
-  },
-
-  link: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: 'bold',
   },
 
   input: {
@@ -136,8 +121,5 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 100,
     maxWidth: 300,
-    marginHorizontal: 0,
-    paddingVertical: 0,
-    gap: 0,
   },
 });
