@@ -35,44 +35,45 @@ const getCorteImages = (imagePath: string | string[] | null | undefined): any[] 
   const paths = Array.isArray(imagePath) ? imagePath : [imagePath];
 
   const imageMap: Record<string, any> = {
+    '01.01p1.png': require('../../assets/Corte/01.01p1.png'),
+    '01.01p2.png': require('../../assets/Corte/01.01p2.png'),
+    '01.01p4.png': require('../../assets/Corte/01.01p4.png'),
     '01.01p5.png': require('../../assets/Corte/01.01p5.png'),
     '01.01p6.png': require('../../assets/Corte/01.01p6.png'),
-    '01.01p8.png': require('../../assets/Corte/01.01p8.png'),
+    '01.01p7.png': require('../../assets/Corte/01.01p7.png'),
     '01.01p9.png': require('../../assets/Corte/01.01p9.png'),
     '01.01p10.png': require('../../assets/Corte/01.01p10.png'),
+    '01.01p11.1.png': require('../../assets/Corte/01.01p11.1.png'),
     '01.01p11.png': require('../../assets/Corte/01.01p11.png'),
+    '01.01p12.png': require('../../assets/Corte/01.01p12.png'),
     '01.01p13.png': require('../../assets/Corte/01.01p13.png'),
     '01.01p14.png': require('../../assets/Corte/01.01p14.png'),
     '01.01p15.png': require('../../assets/Corte/01.01p15.png'),
     '01.01p16.png': require('../../assets/Corte/01.01p16.png'),
     '01.01p17.png': require('../../assets/Corte/01.01p17.png'),
-    '01.01p18.png': require('../../assets/Corte/01.01p18.png'),
-    '01.01p19.png': require('../../assets/Corte/01.01p19.png'),
-    '01.01p20.png': require('../../assets/Corte/01.01p20.png'),
-    '01.01p21.png': require('../../assets/Corte/01.01p21.png'),
 
-    '01.02p22.png': require('../../assets/Corte/01.02p22.png'),
-    '01.02p25.png': require('../../assets/Corte/01.02p25.png'),
+    '01.02p18.png': require('../../assets/Corte/01.02p18.png'),
+    '01.02p21.png': require('../../assets/Corte/01.02p21.png'),
 
+    '01.03p22.png': require('../../assets/Corte/01.03p22.png'),
+    '01.03p23.png': require('../../assets/Corte/01.03p23.png'),
+    '01.03p24.png': require('../../assets/Corte/01.03p24.png'),
+    '01.03p25.png': require('../../assets/Corte/01.03p25.jpg'),
     '01.03p26.png': require('../../assets/Corte/01.03p26.png'),
-    '01.03p27.png': require('../../assets/Corte/01.03p27.png'),
-    '01.03p28.png': require('../../assets/Corte/01.03p28.png'),
-    '01.03p29.png': require('../../assets/Corte/01.03p29.jpg'),
-    '01.03p30.png': require('../../assets/Corte/01.03p30.png'),
 
-    '01.04p31.png': require('../../assets/Corte/01.04p31.png'),
+    '01.04p27.png': require('../../assets/Corte/01.04p27.png'),
 
-    '01.05p32.png': require('../../assets/Corte/01.05p32.png'),
-    '01.05p33.png': require('../../assets/Corte/01.05p33.png'),
-    '01.05p34.png': require('../../assets/Corte/01.05p34.png'),
+    '01.05p28.png': require('../../assets/Corte/01.05p28.png'),
+    '01.05p29.png': require('../../assets/Corte/01.05p29.png'),
+    '01.05p30.png': require('../../assets/Corte/01.05p30.png'),
 
-    '01.06p35.png': require('../../assets/Corte/01.06p35.png'),
+    '01.06p31.png': require('../../assets/Corte/01.06p31.png'),
 
-    '01.07p36.png': require('../../assets/Corte/01.07p36.png'),
+    '01.07p32.png': require('../../assets/Corte/01.07p32.png'),
 
-    '01.08p37.png': require('../../assets/Corte/01.08p37.png'),
+    '01.08p33.png': require('../../assets/Corte/01.08p33.png'),
 
-    '01.09p38.png': require('../../assets/Corte/01.09p38.png'),
+    '01.09p34.png': require('../../assets/Corte/01.09p34.png'),
   };
 
   return paths
@@ -152,33 +153,35 @@ export default function CorteTaladroDesbaste() {
     });
   }, [products, searchText, selectedFilters]);
 
-  const handleViewMeasures = (pdfPage: string) => {
-    if (!pdfPage) return;
-    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
+  const handleViewMeasures = (pdfPage: string, categorySlug: string) => {
+    const params = new URLSearchParams();
+    params.append('pdfPage', pdfPage);
+    params.append('categorySlug', categorySlug);
+    router.push(`/pdf-viewer?${params.toString()}`);
   };
 
- return (
-  <>
-    <View style={{ flex: 1, flexDirection: 'row' }}>
-      <CategorySidebar categories={SIDEBAR_CATEGORIES} activeHref={pathname} />
+  return (
+    <>
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        <CategorySidebar categories={SIDEBAR_CATEGORIES} activeHref={pathname} />
 
-      <View style={{ flex: 1 }}>
-        <CategoryLayout
-          header={
-            <Header
-              onSearch={setSearchText}
-              showBackButton={true}
-              onMenuPress={() => setSidebarVisible(true)}
-            />
-          }
-          sidebar={
-            <FilterSidebar
-              title="Corte/Taladro/Desbaste"
-              subcategories={subcategories}
-              onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
-            />
-          }
-        >
+        <View style={{ flex: 1 }}>
+          <CategoryLayout
+            header={
+              <Header
+                onSearch={setSearchText}
+                showBackButton={true}
+                onMenuPress={() => setSidebarVisible(true)}
+              />
+            }
+            sidebar={
+              <FilterSidebar
+                title="Corte/Taladro/Desbaste"
+                subcategories={subcategories}
+                onFilterChange={(filters) => setSelectedFilters(filters.subcategories)}
+              />
+            }
+          >
             {loading && (
               <View style={{ padding: 40, alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#CC0000" />
@@ -206,7 +209,7 @@ export default function CorteTaladroDesbaste() {
                       product={{ ...product, product_image: localImages }}
                       carouselIndex={carouselIndexes[product.product_id] ?? 0}
                       onPress={() => handleOpenProduct(product.product_id)}
-                      onViewMeasures={() => handleViewMeasures(product.pdf_page)}
+                      onViewMeasures={() => handleViewMeasures(product.pdf_page, product.category_slug)}
                       onNextImage={() => goToNext(product.product_id, totalImages)}
                       onPreviousImage={() => goToPrevious(product.product_id, totalImages)}
                     />
