@@ -127,10 +127,10 @@ export const categories = [
               'Montaje.',
             ],
             images: [
-              require('../assets/seguridad/pu micro.png'),
+              require('../assets/seguridad/09.02p7.jpg'),
             ],
             measuresImages: [
-              require('../assets/seguridad/pu micro - medidas.png'),
+              require('../assets/seguridad/09.02p7.jpg'),
             ],
           },
 
@@ -157,10 +157,10 @@ export const categories = [
               'Inspección.',
             ],
             images: [
-              require('../assets/seguridad/nitrilo negro.png'),
+              require('../assets/seguridad/09.02p2.jpg'),
             ],
             measuresImages: [
-              require('../assets/seguridad/nitrilo negro-medidas.png'),
+              require('../assets/seguridad/09.02p2.jpg'),
             ],
           },
 
@@ -187,10 +187,10 @@ export const categories = [
               'Manipulación de piezas.',
             ],
             images: [
-              require('../assets/seguridad/nitrilo gris.png'),
+              require('../assets/seguridad/09.02p6.jpg'),
             ],
             measuresImages: [
-              require('../assets/seguridad/nitrilo gris-medidas.png'),
+              require('../assets/seguridad/09.02p6.jpg'),
             ],
           },
         ],
