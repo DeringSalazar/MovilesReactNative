@@ -16,17 +16,17 @@ const CLOUDINARY_BASE = 'https://res.cloudinary.com/drmpxxugi/image/upload';
 const API_BASE = 'https://api-moviles-lilac.vercel.app';
 
 const SIDEBAR_CATEGORIES: { title: string; icon: string; href: Href }[] = [
-  { title: 'Corte, Taladro y Desbaste', icon: 'disc', href: '/grupo-fabi/corteTaladroDesbaste' },
-  { title: 'Químicos', icon: 'flask', href: '/grupo-erik/quimicos' },
-  { title: 'Tornillería', icon: 'screwdriver', href: '/grupo-erik/tornilleria' },
-  { title: 'Auto y Cargo', icon: 'car', href: '/grupo-fer/auto' },
-  { title: 'Anclajes', icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
-  { title: 'Electricidad', icon: 'flash', href: '/grupo-iby/electricidad' },
-  { title: 'Herramientas', icon: 'tools', href: '/grupo-iby/herramientas' },
-  { title: 'Maquinas', icon: 'cog', href: '/grupo-alvaro/maquinas' },
-  { title: 'Seguridad e Higiene', icon: 'shield-check', href: '/grupo-alvaro/seguridad' },
-  { title: 'Orsy', icon: 'archive', href: '/orsy-Agro/orsy' },
-  { title: 'Agro', icon: 'sprout', href: '/orsy-Agro/agro' },
+  { title: 'Corte, Taladro y Desbaste', icon: 'disc',                   href: '/grupo-fabi/corteTaladroDesbaste' },
+  { title: 'Químicos',                  icon: 'flask',                  href: '/grupo-erik/quimicos' },
+  { title: 'Tornillería',               icon: 'screwdriver',            href: '/grupo-erik/tornilleria' },
+  { title: 'Auto y Cargo',              icon: 'car',                    href: '/grupo-fer/auto' },
+  { title: 'Anclajes',                  icon: 'screw-machine-flat-top', href: '/grupo-fer/anclajes' },
+  { title: 'Electricidad',              icon: 'flash',                  href: '/grupo-iby/electricidad' },
+  { title: 'Herramientas',             icon: 'tools',                  href: '/grupo-iby/herramientas' },
+  { title: 'Maquinas',                  icon: 'cog',                    href: '/grupo-alvaro/maquinas' },
+  { title: 'Seguridad e Higiene',       icon: 'shield-check',           href: '/grupo-alvaro/seguridad' },
+  { title: 'Orsy',                      icon: 'archive',                href: '/orsy-Agro/orsy' },
+  { title: 'Agro',                      icon: 'sprout',                 href: '/orsy-Agro/agro' },
 ];
 
 interface ProductSummary {
@@ -78,6 +78,7 @@ export default function Quimicos() {
 
   const { carouselIndexes, goToNext, goToPrevious } = useMultipleCarousels();
 
+  // 1. Cargar listado desde API
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -94,6 +95,7 @@ export default function Quimicos() {
     return () => { cancelled = true; };
   }, []);
 
+  // 2. Cargar detalle + PDF cuando se abre un producto
   useEffect(() => {
     if (!selectedProductId) {
       setSelectedProduct(null);
@@ -156,16 +158,17 @@ export default function Quimicos() {
     });
   }, [allProducts, searchText, selectedFilters]);
 
+  // Navegar al PDF — igual que tornillería pero con categorySlug de quimicos
   const handleViewMeasures = useCallback(async (productId: string) => {
     if (selectedProduct?.product_id === productId && selectedProduct.pdf_page) {
-      router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(selectedProduct.pdf_page)}`);
+      router.push(`/pdf-viewer?page=${encodeURIComponent(selectedProduct.pdf_page)}&categorySlug=02`);
       return;
     }
     try {
       const res  = await fetch(`${API_BASE}/quimicos/${productId}/pdf`);
       const data = await res.json();
-      if (data.pdf_page) {
-        router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(data.pdf_page)}`);
+      if (data.pdf_page) {  // ← snake_case, no data.pdfPage
+        router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(data.pdf_page)}&categorySlug=02`);
       }
     } catch (e) {
       console.error('Error obteniendo PDF:', e);
@@ -183,7 +186,7 @@ export default function Quimicos() {
               <Header
                 onSearch={setSearchText}
                 showBackButton={true}
-                onMenuHover={() => setSidebarVisible(true)}
+                onMenuPress={() => setSidebarVisible(true)}
               />
             }
             sidebar={
