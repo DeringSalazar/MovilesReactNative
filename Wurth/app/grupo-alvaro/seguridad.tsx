@@ -130,9 +130,8 @@ export default function Seguridad() {
     });
   }, [products, searchText, selectedFilters]);
 
-  const handleViewMeasures = (pdfPage: string, categorySlug: string) => {
-    if (!pdfPage || !categorySlug) return;
-
+  const handleViewMeasures = (pdfPage: string ,categorySlug: string) => {
+    if (!pdfPage) return;
     const params = new URLSearchParams();
     params.append('pdfPage', pdfPage);
     params.append('categorySlug', categorySlug);

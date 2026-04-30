@@ -162,7 +162,7 @@ export default function Maquinas() {
   }, [products, searchText, selectedFilters]);
 
   const handleViewMeasures = (pdfPage: string, categorySlug: string) => {
-    if (!pdfPage || !categorySlug) return;
+    if (!pdfPage) return;
 
     const params = new URLSearchParams();
     params.append('pdfPage', pdfPage);
