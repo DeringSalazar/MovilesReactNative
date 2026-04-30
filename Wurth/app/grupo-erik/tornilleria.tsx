@@ -161,16 +161,16 @@ export default function Tornilleria() {
   }, [allProducts, searchText, selectedFilters]);
 
   // Navegar al PDF
-  const handleViewMeasures = useCallback(async (productId: string) => {
+const handleViewMeasures = useCallback(async (productId: string) => {
     if (selectedProduct?.product_id === productId && selectedProduct.pdf_page) {
-      router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(selectedProduct.pdf_page)}`);
+      router.push(`/pdf-viewer?page=${encodeURIComponent(selectedProduct.pdf_page)}&categorySlug=03`);
       return;
     }
     try {
       const res  = await fetch(`${API_BASE}/tornilleria/${productId}/pdf`);
       const data = await res.json();
       if (data.pdf_page) {
-        router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(data.pdf_page)}`);
+        router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(data.pdf_page)}&categorySlug=03`);
       }
     } catch (e) {
       console.error('Error obteniendo PDF:', e);
