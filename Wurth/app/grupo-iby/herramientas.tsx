@@ -104,12 +104,7 @@ export default function Herramientas() {
         {/* CONTENIDO PRINCIPAL */}
         <View style={{ flex: 1 }}>
           <CategoryLayout
-            header={
-              <Header
-                onSearch={setSearchText}
-                showBackButton={true}
-              />
-            }
+           header={<Header onSearch={setSearchText} showBackButton={true} onMenuPress={() => setSidebarVisible(true)} />}
             sidebar={
               <FilterSidebar
                 title="Herramientas"

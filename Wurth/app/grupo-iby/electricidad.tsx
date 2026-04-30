@@ -107,12 +107,7 @@ const handleViewMeasures = (pdfPage: string, categorySlug: string) => {
         {/* CONTENIDO PRINCIPAL */}
         <View style={{ flex: 1 }}>
           <CategoryLayout
-            header={
-              <Header
-                onSearch={setSearchText}
-                showBackButton={true}
-              />
-            }
+           header={<Header onSearch={setSearchText} showBackButton={true} onMenuPress={() => setSidebarVisible(true)} />}
             sidebar={
               <FilterSidebar
                 title="Electricidad"
