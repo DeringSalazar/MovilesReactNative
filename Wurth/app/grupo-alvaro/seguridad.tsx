@@ -27,16 +27,13 @@ const LOCAL_IMAGES: Record<string, any[]> = {
   ],
 
   // 09.02 - Guantes (7 productos, imágenes p1-p7)
-  'guantes-de-puntos-doble-cara': [require('../../assets/seguridad/09.02p1.jpg')],
+  'guantes-de-puntos-doble-cara': [require('../../assets/seguridad/09.02p5.jpg')],
   'guantes-desechables-nitrilo-negro': [require('../../assets/seguridad/09.02p2.jpg')],
   'guantes-nitrilo-gris': [require('../../assets/seguridad/09.02p3.jpg')],
-  'guantes-nitrilo-microespuma': [require('../../assets/seguridad/09.02p4.jpg')],
-  'guantes-pu': [require('../../assets/seguridad/09.02p5.jpg')],
-  'guantes-pu-microporoso-negro': [
-    require('../../assets/seguridad/09.02p6.jpg'),
-    require('../../assets/seguridad/09.02p7.jpg'),
-  ],
-  'guantes-punto-gris': [require('../../assets/seguridad/09.02p7.jpg')],
+  'guantes-nitrilo-microespuma': [require('../../assets/seguridad/09.02p7.jpg')],
+  'guantes-pu': [require('../../assets/seguridad/09.02p6.jpg')],
+  'guantes-pu-microporoso-negro': [ require('../../assets/seguridad/09.02p1.jpg')],
+  'guantes-punto-gris': [require('../../assets/seguridad/09.02p4.jpg')],
 
   // 09.04 - Higiene (7 productos, imágenes p1-p7)
   'absorbente-especial-aceite': [require('../../assets/seguridad/09.04p1.jpg')],
