@@ -161,10 +161,26 @@ export default function Maquinas() {
     });
   }, [products, searchText, selectedFilters]);
 
-  const handleViewMeasures = (pdfPage: string) => {
-    if (!pdfPage) return;
-    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
+  const handleViewMeasures = (pdfPage: string, categorySlug: string) => {
+    if (!pdfPage || !categorySlug) return;
+
+    const params = new URLSearchParams();
+    params.append('pdfPage', pdfPage);
+    params.append('categorySlug', categorySlug);
+    router.push(`/pdf-viewer?${params.toString()}`);
   };
+
+  const selectedProductWithImages = selectedProduct
+    ? {
+        ...selectedProduct,
+        images:
+          (LOCAL_IMAGES[selectedProduct.product_id] || []).length > 0
+            ? (LOCAL_IMAGES[selectedProduct.product_id] || []).map((img) =>
+                typeof img === 'string' ? img : img.uri
+              )
+            : selectedProduct.images ?? null,
+      }
+    : null;
 
   return (
     <>
@@ -173,7 +189,7 @@ export default function Maquinas() {
 
         <View style={{ flex: 1 }}>
           <CategoryLayout
-            header={<Header onSearch={setSearchText} showBackButton={true} onMenuHover={() => setSidebarVisible(true)} />}
+            header={<Header onSearch={setSearchText} showBackButton={true} onMenuPress={() => setSidebarVisible(true)} />}
             sidebar={
               <FilterSidebar
                 title="Máquinas"
@@ -208,7 +224,7 @@ export default function Maquinas() {
                       product={{ ...product, product_image: localImages }}
                       carouselIndex={carouselIndexes[product.product_id] ?? 0}
                       onPress={() => handleOpenProduct(product.product_id)}
-                      onViewMeasures={() => handleViewMeasures(product.pdf_page)}
+                      onViewMeasures={() => handleViewMeasures(product.pdf_page, product.category_slug)}
                       onNextImage={() => goToNext(product.product_id, totalImages)}
                       onPreviousImage={() => goToPrevious(product.product_id, totalImages)}
                     />
@@ -223,7 +239,6 @@ export default function Maquinas() {
               </View>
             )}
 
-            <Footer />
           </CategoryLayout>
         </View>
       </View>
@@ -236,12 +251,7 @@ export default function Maquinas() {
 
       <ProductModal
         visible={Boolean(selectedProduct) || loadingDetail}
-        product={selectedProduct ? {
-          ...selectedProduct,
-          images: (LOCAL_IMAGES[selectedProduct.product_id] || []).map(img =>
-            typeof img === 'string' ? img : img.uri
-          )
-        } : null}
+        product={selectedProductWithImages}
         loading={loadingDetail}
         carouselIndex={carouselIndexes[selectedProduct?.product_id ?? ''] ?? 0}
         onClose={clearSelectedProduct}
