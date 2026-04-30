@@ -109,12 +109,12 @@ export default function Orsy() {
     });
   }, [products, searchText, selectedFilters]);
 
-  const handleViewMeasures = (pdfPage: string) => {
+  const handleViewMeasures = (pdfPage: string, categorySlug: string) => {
     console.log('PDF Page:', pdfPage);
-    if (!pdfPage) {
-      return;
-    }
-    router.push(`/pdf-viewer?pdfPage=${encodeURIComponent(pdfPage)}`);
+    const params = new URLSearchParams();
+    params.append('pdfPage', pdfPage);
+    params.append('categorySlug', categorySlug);
+    router.push(`/pdf-viewer?${params.toString()}`);
   };
 
   return (
@@ -124,7 +124,7 @@ export default function Orsy() {
 
         <View style={{ flex: 1 }}>
           <CategoryLayout
-            header={<Header onSearch={setSearchText} showBackButton={true} onMenuHover={() => setSidebarVisible(true)} />}
+            header={<Header onSearch={setSearchText} showBackButton={true} onMenuPress={() => setSidebarVisible(true)} />}
             sidebar={
               <FilterSidebar
                 title="Orsy"
@@ -160,7 +160,7 @@ export default function Orsy() {
                       product={{ ...product, product_image: localImages }}
                       carouselIndex={carouselIndexes[product.product_id] ?? 0}
                       onPress={() => handleOpenProduct(product.product_id)}
-                      onViewMeasures={() => handleViewMeasures(product.pdf_page)}
+                      onViewMeasures={() => handleViewMeasures(product.pdf_page, product.category_slug)}
                       onNextImage={() => goToNext(product.product_id, totalImages)}
                       onPreviousImage={() => goToPrevious(product.product_id, totalImages)}
                     />
